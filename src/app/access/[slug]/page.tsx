@@ -1,15 +1,18 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { getEnrollments, getProgress, updateProgress } from "@/lib/db";
+import { getEnrollments, getProgress, updateProgress, getCourseMaterials } from "@/lib/db";
 import { getCourseBySlug } from "@/lib/content";
 import { ProgressTracker } from "@/components/progress-tracker";
 import { CourseThumbnail } from "@/components/course-thumbnail";
+import { VideoPlayer } from "@/components/video-player";
 
 export default async function CourseAccessPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ module?: string }>;
 }) {
   const { userId } = await auth();
   if (!userId) {
@@ -18,8 +21,6 @@ export default async function CourseAccessPage({
 
   const clerkUser = await currentUser();
   const userEmail = clerkUser?.primaryEmailAddress?.emailAddress ?? "";
-  
-  // Fallback if clerkUser is null (shouldn't happen after auth check)
 
   const { slug } = await params;
   const course = await getCourseBySlug(slug);
@@ -28,7 +29,6 @@ export default async function CourseAccessPage({
     redirect("/access");
   }
 
-  // After redirect, course is not null
   const safeCourse = course;
 
   const enrollments = await getEnrollments(userEmail);
@@ -37,6 +37,15 @@ export default async function CourseAccessPage({
   if (!hasAccess) {
     redirect(`/checkout/${safeCourse.slug}`);
   }
+
+  // Get current module from query param
+  const { module: moduleParam } = await searchParams;
+  const currentModuleIndex = moduleParam ? parseInt(moduleParam) : 0;
+  const validModuleIndex = Math.max(0, Math.min(currentModuleIndex, safeCourse.modules.length - 1));
+
+  // Fetch materials for this course
+  const materials = await getCourseMaterials(safeCourse.slug);
+  const currentMaterial = materials.find((m) => m.module_index === validModuleIndex);
 
   const progress = await getProgress(userEmail, safeCourse.slug);
   const completedModules = progress.filter((p) => p.completed).map((p) => p.module_index);
@@ -51,7 +60,6 @@ export default async function CourseAccessPage({
     const completedCount = updatedProgress.filter((p) => p.completed).length;
     
     if (completedCount === totalModules) {
-      // Generate certificate
       try {
         await fetch("/api/certificates", {
           method: "POST",
@@ -61,6 +69,14 @@ export default async function CourseAccessPage({
       } catch (err) {
         console.error("Certificate generation failed:", err);
       }
+    }
+  }
+
+  async function handleVideoProgress(moduleIndex: number, progressPct: number) {
+    "use server";
+    // Auto-complete when watched >80%
+    if (progressPct >= 80 && !completedModules.includes(moduleIndex)) {
+      await updateProgress(userEmail, courseSlug, moduleIndex, true);
     }
   }
 
@@ -91,25 +107,59 @@ export default async function CourseAccessPage({
 
         <div className="grid gap-8 lg:grid-cols-[1.5fr_1fr]">
           <div className="space-y-6">
-            {/* Course Thumbnail */}
-            <div className="overflow-hidden rounded-2xl border border-[#F0E8D8]">
-              <CourseThumbnail title={safeCourse.title} category={safeCourse.category} large />
-            </div>
+            {/* Material Viewer - Video or Article */}
+            {currentMaterial ? (
+              <div className="overflow-hidden rounded-2xl border border-[#F0E8D8] bg-white shadow-sm">
+                {currentMaterial.video_url ? (
+                  <VideoPlayer
+                    src={currentMaterial.video_url}
+                    title={currentMaterial.title}
+                    onProgress={(pct) => handleVideoProgress(validModuleIndex, pct)}
+                  />
+                ) : currentMaterial.content ? (
+                  <div className="p-6">
+                    <h2 className="text-xl font-bold text-[#2D5016]">{currentMaterial.title}</h2>
+                    <div className="mt-4 prose prose-sm max-w-none text-[#444444]"
+                      dangerouslySetInnerHTML={{ __html: currentMaterial.content }}
+                    />
+                    <button
+                      onClick={() => handleModuleComplete(validModuleIndex)}
+                      className="mt-6 rounded-xl bg-[#7AB648] px-6 py-2.5 text-sm font-bold text-white transition hover:bg-[#5C8A36]"
+                    >
+                      Tandai Selesai ✓
+                    </button>
+                  </div>
+                ) : (
+                  <div className="p-10 text-center">
+                    <p className="text-sm text-[#444444]">Konten sedang dipersiapkan</p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* Show course thumbnail if no material */
+              <div className="overflow-hidden rounded-2xl border border-[#F0E8D8]">
+                <CourseThumbnail title={safeCourse.title} category={safeCourse.category} large />
+              </div>
+            )}
 
-            {/* Module List */}
+            {/* Module List with Navigation */}
             <div className="rounded-2xl border border-[#F0E8D8] bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-extrabold text-[#2D5016]">Konten Course</h2>
+                <h2 className="text-xl font-extrabold text-[#2D5016]">Modul Course</h2>
                 <span className="text-sm text-[#444444]">{completedCount}/{totalModules} selesai</span>
               </div>
               <div className="mt-4 space-y-2">
                 {safeCourse.modules.map((module, index) => {
                   const isCompleted = completedModules.includes(index);
+                  const isActive = index === validModuleIndex;
                   return (
-                    <div
+                    <Link
                       key={index}
-                      className={`group flex items-center gap-3 rounded-xl border px-4 py-3 transition ${
-                        isCompleted
+                      href={`/access/${safeCourse.slug}?module=${index}`}
+                      className={`flex items-center gap-3 rounded-xl border px-4 py-3 transition ${
+                        isActive
+                          ? "border-[#F5A62A] bg-[#FFF3D6]"
+                          : isCompleted
                           ? "border-[#7AB648]/30 bg-[#E8F5E9]"
                           : "border-[#F0E8D8] bg-[#FEFBF5] hover:border-[#F5A62A]"
                       }`}
@@ -121,19 +171,46 @@ export default async function CourseAccessPage({
                           </svg>
                         </div>
                       ) : (
-                        <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#FFF3D6] text-xs font-bold text-[#F5A62A]">
+                        <div className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                          isActive ? "bg-[#F5A62A] text-white" : "bg-[#FFF3D6] text-[#F5A62A]"
+                        }`}>
                           {index + 1}
                         </div>
                       )}
-                      <span className={`flex-1 text-sm ${isCompleted ? "text-[#2D5016] font-medium" : "text-[#444444]"}`}>
-                        {module}
-                      </span>
+                      <span className={`flex-1 text-sm ${isCompleted ? "text-[#2D5016] font-medium" : "text-[#444444]"}`}>{module}</span>
                       {isCompleted && (
                         <span className="text-xs font-semibold text-[#7AB648]">Selesai</span>
                       )}
-                    </div>
+                      {isActive && !isCompleted && (
+                        <span className="text-xs font-semibold text-[#F5A62A]">Sedang dibuka</span>
+                      )}
+                    </Link>
                   );
                 })}
+              </div>
+
+              {/* Next/Prev Navigation */}
+              <div className="mt-4 flex justify-between">
+                <Link
+                  href={`/access/${safeCourse.slug}${validModuleIndex > 0 ? `?module=${validModuleIndex - 1}` : ""}`}
+                  className={`rounded-lg border px-4 py-2 text-sm font-semibold transition ${
+                    validModuleIndex > 0
+                      ? "border-[#2D5016] text-[#2D5016] hover:bg-[#2D5016] hover:text-white"
+                      : "border-[#F0E8D8] text-[#CCC] cursor-not-allowed pointer-events-none"
+                  }`}
+                >
+                  ← Sebelumnya
+                </Link>
+                <Link
+                  href={`/access/${safeCourse.slug}${validModuleIndex < totalModules - 1 ? `?module=${validModuleIndex + 1}` : ""}`}
+                  className={`rounded-lg border px-4 py-2 text-sm font-semibold transition ${
+                    validModuleIndex < totalModules - 1
+                      ? "border-[#2D5016] text-[#2D5016] hover:bg-[#2D5016] hover:text-white"
+                      : "border-[#F0E8D8] text-[#CCC] cursor-not-allowed pointer-events-none"
+                  }`}
+                >
+                  Selanjutnya →
+                </Link>
               </div>
             </div>
           </div>
@@ -205,7 +282,7 @@ export default async function CourseAccessPage({
                 ))}
               </div>
             </div>
-          </div>
+            </div>
         </div>
       </div>
     </div>
