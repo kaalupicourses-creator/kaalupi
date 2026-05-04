@@ -9,7 +9,7 @@ export default async function CodeReviewPage() {
     redirect("/login?redirect=/dashboard/code-review");
   }
 
-  const user = await auth().then((a) => a.userId ? fetch(`/api/user`) : null);
+  const clerkUser = await auth().then((a) => a.userId ? { userId: a.userId } : null);
   const enrollments = await getEnrollments(userId);
   const courses = await getCourses();
   const enrolledCourses = courses.filter((c) => enrollments.includes(c.slug));

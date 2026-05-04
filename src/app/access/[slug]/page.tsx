@@ -18,6 +18,8 @@ export default async function CourseAccessPage({
 
   const clerkUser = await currentUser();
   const userEmail = clerkUser?.primaryEmailAddress?.emailAddress ?? "";
+  
+  // Fallback if clerkUser is null (shouldn't happen after auth check)
 
   const { slug } = await params;
   const course = await getCourseBySlug(slug);
