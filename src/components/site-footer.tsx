@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { siteConfig } from "@/lib/data";
 
 const navLinks = [
@@ -18,14 +17,8 @@ export function SiteFooter() {
       <div className="mx-auto max-w-7xl px-6 py-12">
         <div className="grid gap-10 md:grid-cols-4">
           <div className="md:col-span-2">
-            <Link href="/" className="flex items-center gap-2">
-              <Image
-                src="/logo.png"
-                alt="Kaalupi"
-                width={140}
-                height={40}
-                className="h-10 w-auto brightness-0 invert"
-              />
+            <Link href="/" className="text-2xl font-black text-white tracking-tight">
+              Kaalupi
             </Link>
             <p className="mt-4 max-w-md text-sm leading-7 text-white/70">
               {siteConfig.description}

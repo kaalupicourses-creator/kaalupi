@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { UserButton, useAuth } from "@clerk/nextjs";
 
 const links = [
@@ -17,16 +16,8 @@ export function SiteHeaderClient() {
   return (
     <header className="sticky top-0 z-40 border-b border-[#F0E8D8] bg-[#FEFBF5]/95 backdrop-blur-sm">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-6 py-4">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <Image
-            src="/logo.png"
-            alt="Kaalupi"
-            width={140}
-            height={40}
-            className="h-10 w-auto"
-            priority
-          />
+        <Link href="/" className="text-2xl font-black text-[#2D5016] tracking-tight">
+          Kaalupi
         </Link>
 
         {/* Nav links */}
