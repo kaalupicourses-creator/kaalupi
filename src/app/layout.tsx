@@ -3,7 +3,7 @@ import { Nunito } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeaderClient } from "@/components/site-header";
-import { MidtransScript } from "@/components/midtrans-script";
+import { MidtransProvider } from "@/components/midtrans-provider";
 import { siteConfig } from "@/lib/data";
 import { getMidtransConfig } from "@/lib/midtrans";
 import "./globals.css";
@@ -54,8 +54,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const midtrans = getMidtransConfig();
-
   return (
     <ClerkProvider>
       <html lang="id" className={`${nunito.variable} h-full antialiased`}>
@@ -68,12 +66,7 @@ export default function RootLayout({
             <main className="flex-1">{children}</main>
             <SiteFooter />
           </div>
-          {midtrans.enabled && midtrans.clientKey && (
-            <MidtransScript
-              snapUrl={`${midtrans.snapBaseUrl}/snap/snap.js`}
-              clientKey={midtrans.clientKey}
-            />
-          )}
+          <MidtransProvider />
         </body>
       </html>
     </ClerkProvider>
