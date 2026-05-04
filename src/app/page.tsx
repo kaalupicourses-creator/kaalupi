@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { CourseCard } from "@/components/course-card";
 import { CourseThumbnail } from "@/components/course-thumbnail";
 import { audienceTracks, blogPosts, stats, testimonials, valueProps } from "@/lib/data";
 import { getCourses } from "@/lib/content";
@@ -154,44 +153,22 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ─── FEATURED COURSES ─── */}
-      <section className="border-t border-[#F0E8D8] bg-[#FEFBF5]">
-        <div className="mx-auto max-w-7xl px-6 py-16">
-          <div className="flex items-end justify-between gap-6">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">
-                Course Tersedia
-              </p>
-              <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016] md:text-4xl">
-                Paket belajar unggulan
-              </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-[#444444]">
-                Jalur karier IT yang paling dicari dengan kurikulum terstruktur.
-              </p>
-            </div>
-            <Link
-              href="/courses"
-              className="hidden items-center gap-2 rounded-full border-2 border-[#2D5016] px-5 py-2.5 text-sm font-semibold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-[#FEFBF5] md:flex"
-            >
-              Lihat semua
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
-          </div>
-
-          <div className="mt-10 grid gap-6 lg:grid-cols-3">
-            {featuredCourses.map((course) => (
-              <CourseCard key={course.slug} course={course} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── COURSE SPOTLIGHT (AI untuk Pemula) ─── */}
+      {/* ─── COURSE AI UNTUK PEMULA ─── */}
       {spotlightCourse && (
         <section className="border-t border-[#F0E8D8] bg-[#FEFBF5]">
           <div className="mx-auto max-w-7xl px-6 py-16">
+            <div className="mx-auto mb-8 max-w-2xl text-center">
+              <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">
+                Course Pertama Kami
+              </p>
+              <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016] md:text-4xl">
+                Segera Hadir
+              </h2>
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-[#444444]">
+                Course pertama Kaalupi sedang dalam tahap persiapan. Daftar waitlist untuk dapat harga early bird eksklusif.
+              </p>
+            </div>
+
             <div className="grid overflow-hidden rounded-3xl border border-[#F0E8D8] bg-white lg:grid-cols-2">
               {/* Thumbnail */}
               <div className="relative">
@@ -205,8 +182,8 @@ export default async function HomePage() {
               {/* Content */}
               <div className="p-8 md:p-12">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="rounded-full bg-[#2D5016] px-3 py-1 text-xs font-bold text-[#F5A62A]">
-                    Best Seller
+                  <span className="rounded-full bg-[#F5A62A] px-3 py-1 text-xs font-bold text-[#2D5016]">
+                    Segera Hadir
                   </span>
                   <span className="rounded-full bg-[#FFF3D6] px-3 py-1 text-xs font-semibold text-[#5C4813]">
                     {spotlightCourse.category}
@@ -238,26 +215,18 @@ export default async function HomePage() {
                 </div>
 
                 <div className="mt-8 flex flex-wrap items-center gap-4">
-                  <Link
-                    href={`/courses/${spotlightCourse.slug}`}
-                    className="rounded-xl bg-[#F5A62A] px-6 py-3 text-sm font-bold text-[#2D5016] transition hover:opacity-90"
-                  >
-                    Lihat Detail Course
-                  </Link>
                   <div className="flex flex-col">
                     <span className="text-xl font-extrabold text-[#2D5016]">
                       Rp {spotlightCourse.price.toLocaleString("id-ID")}
                     </span>
-                    {spotlightCourse.slug === "ai-untuk-pemula" && (
-                      <span className="text-xs text-[#444444] line-through">Rp 299.000</span>
-                    )}
+                    <span className="text-xs text-[#444444] line-through">Rp 299.000</span>
                     <span className="text-xs text-[#7AB648] font-semibold">{spotlightCourse.duration}</span>
                   </div>
                 </div>
 
                 <Link
                   href="/waitlist"
-                  className="mt-4 inline-block rounded-xl border-2 border-[#2D5016] px-6 py-2.5 text-sm font-bold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-[#FEFBF5]"
+                  className="mt-6 inline-block rounded-xl bg-[#F5A62A] px-8 py-3 text-sm font-bold text-[#2D5016] transition hover:opacity-90"
                 >
                   Daftar Waitlist Early Bird →
                 </Link>
