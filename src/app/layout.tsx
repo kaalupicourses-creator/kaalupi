@@ -20,6 +20,9 @@ export const metadata: Metadata = {
     template: "%s | Kaalupi",
   },
   description: siteConfig.description,
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({

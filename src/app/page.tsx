@@ -270,48 +270,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ─── TESTIMONIALS ─── */}
-      <section className="border-t border-[#F0E8D8] bg-[#FEFBF5]">
-        <div className="mx-auto max-w-7xl px-6 py-16">
-          <div className="mx-auto mb-12 max-w-2xl text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">
-              Kata Mereka
-            </p>
-            <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016]">
-              Apa kata mereka
-            </h2>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-3">
-            {testimonials.map((item) => (
-              <article
-                key={item.name}
-                className="rounded-2xl border border-[#F0E8D8] bg-white p-6"
-              >
-                <div className="mb-4 flex gap-1">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <svg key={i} className="h-4 w-4 text-[#F5A62A]" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-sm leading-7 text-[#444444]">&ldquo;{item.quote}&rdquo;</p>
-                <div className="mt-6 flex items-center gap-3 border-t border-[#F0E8D8] pt-4">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#2D5016] text-xs font-bold text-[#F5A62A]">
-                    {item.name.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="font-bold text-[#2D5016]">{item.name}</p>
-                    <p className="text-xs text-[#444444]">{item.role}</p>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── BLOG ─── */}
+      {/* ─── AUDIENCE TRACKS ─── */}
       <section className="border-t border-[#F0E8D8] bg-[#FEFBF5]">
         <div className="mx-auto max-w-7xl px-6 py-16">
           <div className="flex items-end justify-between gap-6">
