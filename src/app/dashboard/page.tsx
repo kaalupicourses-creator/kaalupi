@@ -2,9 +2,10 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { RoleBadge } from "@/components/role-badge";
-import { getEnrollments } from "@/lib/db";
+import { getEnrollments, getProgress, getUserPoints, getUserBadges, getBadges } from "@/lib/db";
 import { getCourses } from "@/lib/content";
 import { CourseThumbnail } from "@/components/course-thumbnail";
+import { ProgressTracker } from "@/components/progress-tracker";
 
 const roleDescriptions = {
   admin:
@@ -31,6 +32,33 @@ export default async function DashboardPage() {
   const allCourses = await getCourses();
   const enrollments = await getEnrollments(userEmail);
   const ownedCourses = allCourses.filter((course) => enrollments.includes(course.slug));
+
+  // Fetch progress for each course
+  const coursesWithProgress = await Promise.all(
+    ownedCourses.map(async (course) => {
+      const progress = await getProgress(userEmail, course.slug);
+      const completedCount = progress.filter((p) => p.completed).length;
+      const totalModules = course.modules.length;
+      const percentage = totalModules > 0 ? Math.round((completedCount / totalModules) * 100) : 0;
+      const lastModule = progress
+        .filter((p) => !p.completed)
+        .sort((a, b) => a.module_index - b.module_index)[0];
+      return {
+        ...course,
+        progress: percentage,
+        lastModuleIndex: lastModule?.module_index ?? -1,
+      };
+    })
+  );
+
+  // Fetch user points
+  const userPointsData = await getUserPoints(userEmail);
+  const userPoints = userPointsData?.points ?? 0;
+
+  // Fetch badges
+  const allBadges = await getBadges();
+  const userBadgesData = await getUserBadges(userEmail);
+  const earnedBadgeIds = new Set(userBadgesData?.map((ub: any) => ub.badge_id) ?? []);
 
   return (
     <div className="bg-[#FEFBF5] min-h-screen">
@@ -112,8 +140,8 @@ export default async function DashboardPage() {
             },
             {
               label: "Poin",
-              value: "0",
-              icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z",
+              value: userPoints,
+              icon: "M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z",
               bg: "bg-[#F0E8D8]",
               color: "text-[#2D5016]",
             },
@@ -127,7 +155,7 @@ export default async function DashboardPage() {
                 </div>
                 <div>
                   <p className="text-xs text-[#444444]">{stat.label}</p>
-                  <p className={`font-extrabold capitalize text-[#2D5016] ${stat.isText ? "text-lg" : "text-2xl"}`}>{stat.value}</p>
+                  <p className={`font-extrabold text-[#2D5016] ${stat.isText ? "text-lg capitalize" : "text-2xl"}`}>{stat.value}</p>
                 </div>
               </div>
             </div>
@@ -139,20 +167,50 @@ export default async function DashboardPage() {
           <h2 className="text-2xl font-extrabold text-[#2D5016]">Badges Saya</h2>
           <p className="mt-2 text-sm text-[#444444]">Kumpulkan poin dan raih badge prestasi</p>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { name: "Pemula", icon: "🎓", desc: "Selesaikan kursus pertama", unlocked: false },
-              { name: "Rajin Belajar", icon: "📚", desc: "100 poin", unlocked: false },
-              { name: "Master", icon: "🏆", desc: "3 kursus selesai", unlocked: false },
-              { name: "Kontributor", icon: "🔗", desc: "Share sertifikat", unlocked: false },
-            ].map((badge) => (
-              <div key={badge.name} className={`rounded-xl border p-4 text-center ${badge.unlocked ? "border-[#F5A62A] bg-[#FEFBF5]" : "border-[#F0E8D8] bg-[#F9F9F9] opacity-60"}`}>
-                <div className="text-3xl">{badge.unlocked ? badge.icon : "🔒"}</div>
-                <p className={`mt-2 text-sm font-bold ${badge.unlocked ? "text-[#2D5016]" : "text-[#999999]"}`}>{badge.name}</p>
-                <p className="text-xs text-[#444444]">{badge.desc}</p>
-              </div>
-            ))}
+            {allBadges.map((badge) => {
+              const unlocked = earnedBadgeIds.has(badge.id);
+              return (
+                <div key={badge.id} className={`rounded-xl border p-4 text-center ${unlocked ? "border-[#F5A62A] bg-[#FEFBF5]" : "border-[#F0E8D8] bg-[#F9F9F9] opacity-60"}`}>
+                  <div className="text-3xl">{unlocked ? badge.icon : "🔒"}</div>
+                  <p className={`mt-2 text-sm font-bold ${unlocked ? "text-[#2D5016]" : "text-[#999999]"}`}>{badge.name}</p>
+                  <p className="text-xs text-[#444444]">{badge.description || `${badge.required_points} poin`}</p>
+                </div>
+              );
+            })}
           </div>
         </section>
+
+        {/* Continue Learning Section (if has progress) */}
+        {coursesWithProgress.filter((c) => c.progress > 0 && c.progress < 100).length > 0 && (
+          <section className="mb-8 rounded-2xl border border-[#F5A62A] bg-[#FFF3D6] p-8 shadow-sm">
+            <h2 className="text-2xl font-extrabold text-[#2D5016]">Lanjutkan Belajar 🚀</h2>
+            <p className="mt-2 text-sm text-[#444444]">Klik untuk lanjutin modul terakhir kamu</p>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {coursesWithProgress
+                .filter((c) => c.progress > 0 && c.progress < 100)
+                .sort((a, b) => b.progress - a.progress)
+                .slice(0, 3)
+                .map((course) => (
+                  <Link
+                    key={course.slug}
+                    href={`/access/${course.slug}${course.lastModuleIndex >= 0 ? `?modul=${course.lastModuleIndex}` : ""}`}
+                    className="flex items-center gap-4 rounded-xl border border-[#F0E8D8] bg-white p-4 transition hover:border-[#F5A62A] hover:shadow-sm"
+                  >
+                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-[#2D5016] text-white font-bold text-sm">
+                      {course.progress}%
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-bold text-[#2D5016]">{course.title}</p>
+                      <p className="text-xs text-[#444444]">{course.progress}% selesai</p>
+                    </div>
+                    <svg className="h-4 w-4 flex-shrink-0 text-[#F5A62A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                ))}
+            </div>
+          </section>
+        )}
 
         {/* My Courses */}
         <section className="rounded-2xl border border-[#F0E8D8] bg-white p-8 shadow-sm">
@@ -166,20 +224,35 @@ export default async function DashboardPage() {
             <span className="rounded-full bg-[#FFF3D6] px-3 py-1 text-sm font-semibold text-[#5C4813]">{ownedCourses.length} aktif</span>
           </div>
 
-          {ownedCourses.length ? (
+          {coursesWithProgress.length ? (
             <div className="mt-8 grid gap-5 lg:grid-cols-3">
-              {ownedCourses.map((course) => (
+              {coursesWithProgress.map((course) => (
                 <article key={course.slug} className="group rounded-2xl border border-[#F0E8D8] bg-[#FEFBF5] overflow-hidden transition hover:border-[#F5A62A] hover:shadow-sm">
                   <CourseThumbnail title={course.title} category={course.category} />
                   <div className="p-5">
                     <span className="rounded-full bg-[#F0E8D8] px-2 py-0.5 text-xs font-semibold text-[#2D5016]">{course.category}</span>
                     <h3 className="mt-3 text-xl font-bold text-[#2D5016] group-hover:text-[#F5A62A] transition">{course.title}</h3>
                     <p className="mt-2 text-sm leading-7 text-[#444444] line-clamp-2">{course.summary}</p>
+
+                    {/* Progress Bar */}
+                    <div className="mt-4">
+                      <div className="flex items-center justify-between text-xs text-[#444444]">
+                        <span>Progress</span>
+                        <span className="font-semibold text-[#2D5016]">{course.progress}%</span>
+                      </div>
+                      <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-[#F0E8D8]">
+                        <div
+                          className="h-full rounded-full bg-[#7AB648] transition-all duration-500"
+                          style={{ width: `${course.progress}%` }}
+                        />
+                      </div>
+                    </div>
+
                     <Link
-                      href={`/access/${course.slug}`}
+                      href={`/access/${course.slug}${course.lastModuleIndex >= 0 ? `?modul=${course.lastModuleIndex}` : ""}`}
                       className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[#F5A62A] hover:text-[#2D5016] transition"
                     >
-                      Mulai belajar
+                      {course.progress === 100 ? "Lihat Sertifikat" : "Lanjut Belajar"}
                       <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                       </svg>

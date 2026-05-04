@@ -15,13 +15,37 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://kaalupi.vercel.app"),
   title: {
-    default: "Kaalupi | Kursus IT Indonesia",
+    default: "Kaalupi | AI-First Career Platform Indonesia — Dari Nol ke AI Specialist",
     template: "%s | Kaalupi",
   },
-  description: siteConfig.description,
+  description: "Platform course IT profesional dengan integrasi AI tools. Pelajari AI, Programming, Network, dan Cyber Security dalam bahasa Indonesia. Gratis untuk pemula, sertifikat resmi, garansi 14 hari.",
+  keywords: ["course IT", "belajar AI", "programming Indonesia", "cyber security", "network engineer", "AI tools", "career platform"],
   icons: {
     icon: "/favicon.png",
+  },
+  openGraph: {
+    title: "Kaalupi | AI-First Career Platform Indonesia",
+    description: "Dari nol jadi AI Specialist dalam 3 bulan. Course IT dengan integrasi AI tools, bahasa Indonesia, langsung praktik.",
+    url: "https://kaalupi.vercel.app",
+    siteName: "Kaalupi",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Kaalupi - AI-First Career Platform Indonesia",
+      },
+    ],
+    locale: "id_ID",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Kaalupi | AI-First Career Platform Indonesia",
+    description: "Dari nol jadi AI Specialist dalam 3 bulan. Course IT dengan integrasi AI tools.",
+    images: ["/og-image.jpg"],
   },
 };
 
