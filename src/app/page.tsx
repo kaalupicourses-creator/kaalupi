@@ -3,6 +3,8 @@ import { CourseThumbnail } from "@/components/course-thumbnail";
 import { audienceTracks, blogPosts, stats, testimonials, valueProps } from "@/lib/data";
 import { getCourses } from "@/lib/content";
 
+// Vercel deploy trigger - updated 2026-05-04
+
 const howItWorks = [
   {
     step: "01",
