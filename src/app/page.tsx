@@ -169,13 +169,14 @@ export default async function HomePage() {
               </p>
             </div>
 
-            <div className="grid overflow-hidden rounded-3xl border border-[#F0E8D8] bg-white lg:grid-cols-2">
+            <div className="overflow-hidden rounded-3xl border border-[#F0E8D8] bg-white">
               {/* Thumbnail */}
-              <div className="relative">
+              <div className="relative w-full">
                 <CourseThumbnail
                   title={spotlightCourse.title}
                   category={spotlightCourse.category}
-                  className="h-full min-h-[300px]"
+                  className="h-full"
+                  large={true}
                 />
               </div>
 

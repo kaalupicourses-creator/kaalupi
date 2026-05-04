@@ -27,14 +27,15 @@ export default function CoursesPage() {
       {aiCourse && (
         <section className="border-t border-[#F0E8D8]">
           <div className="mx-auto max-w-7xl px-6 py-12">
-            <div className="mx-auto max-w-4xl">
-              <div className="grid overflow-hidden rounded-3xl border border-[#F0E8D8] bg-white lg:grid-cols-2">
+            <div className="mx-auto max-w-3xl">
+              <div className="overflow-hidden rounded-3xl border border-[#F0E8D8] bg-white">
                 {/* Thumbnail */}
-                <div className="relative">
+                <div className="relative w-full">
                   <CourseThumbnail
                     title={aiCourse.title}
                     category={aiCourse.category}
-                    className="h-full min-h-[300px]"
+                    className="h-full"
+                    large={true}
                   />
                 </div>
 
