@@ -47,6 +47,16 @@ export function CourseCard({ course }: { course: Course }) {
               Tersedia
             </span>
           )}
+          {!isComingSoon && course.is_free && (
+            <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-800">
+              🆓 Gratis
+            </span>
+          )}
+          {!isComingSoon && course.is_lifetime_access && (
+            <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-800">
+              ♾️ Lifetime
+            </span>
+          )}
         </div>
 
         <h3 className={`mt-5 text-xl font-bold text-[#2D5016] transition ${isComingSoon ? "" : "group-hover:text-[#F5A62A]"}`}>

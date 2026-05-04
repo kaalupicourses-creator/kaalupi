@@ -22,6 +22,8 @@ export type Database = {
           outcomes: string[];
           modules: string[];
           format: "video" | "article" | "blended";
+          is_free: boolean;
+          is_lifetime_access: boolean;
           featured: boolean;
           comingSoon?: boolean;
           author_email: string | null;
@@ -120,6 +122,81 @@ export type Database = {
           "id" | "created_at" | "updated_at"
         >;
         Update: Partial<Database["public"]["Tables"]["blog_posts"]["Insert"]>;
+      };
+      certificates: {
+        Row: {
+          id: string;
+          user_email: string;
+          course_slug: string;
+          certificate_url: string | null;
+          issued_at: string;
+        };
+        Insert: Omit<
+          Database["public"]["Tables"]["certificates"]["Row"],
+          "id" | "issued_at"
+        >;
+        Update: Partial<Database["public"]["Tables"]["certificates"]["Insert"]>;
+      };
+      vouchers: {
+        Row: {
+          id: string;
+          code: string;
+          discount_percent: number | null;
+          discount_amount: number;
+          max_uses: number | null;
+          used_count: number;
+          valid_from: string;
+          valid_until: string | null;
+          is_active: boolean;
+          applicable_courses: string[] | null;
+          created_at: string;
+        };
+        Insert: Omit<
+          Database["public"]["Tables"]["vouchers"]["Row"],
+          "id" | "created_at"
+        >;
+        Update: Partial<Database["public"]["Tables"]["vouchers"]["Insert"]>;
+      };
+      badges: {
+        Row: {
+          id: string;
+          name: string;
+          description: string | null;
+          icon: string | null;
+          required_points: number;
+          created_at: string;
+        };
+        Insert: Omit<
+          Database["public"]["Tables"]["badges"]["Row"],
+          "id" | "created_at"
+        >;
+        Update: Partial<Database["public"]["Tables"]["badges"]["Insert"]>;
+      };
+      user_points: {
+        Row: {
+          id: string;
+          user_email: string;
+          points: number;
+          updated_at: string;
+        };
+        Insert: Omit<
+          Database["public"]["Tables"]["user_points"]["Row"],
+          "id" | "updated_at"
+        >;
+        Update: Partial<Database["public"]["Tables"]["user_points"]["Insert"]>;
+      };
+      user_badges: {
+        Row: {
+          id: string;
+          user_email: string;
+          badge_id: string;
+          earned_at: string;
+        };
+        Insert: Omit<
+          Database["public"]["Tables"]["user_badges"]["Row"],
+          "id" | "earned_at"
+        >;
+        Update: Partial<Database["public"]["Tables"]["user_badges"]["Insert"]>;
       };
     };
   };

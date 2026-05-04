@@ -13,9 +13,9 @@ export async function POST(request: Request) {
   }
 
   // Step 2 — Parse body
-  let body: { slug?: string; amount?: number };
+  let body: { slug?: string; amount?: number; isFree?: boolean; voucherCode?: string };
   try {
-    body = (await request.json()) as { slug?: string; amount?: number };
+    body = (await request.json()) as { slug?: string; amount?: number; isFree?: boolean; voucherCode?: string };
   } catch {
     return NextResponse.json({ error: "Request body tidak valid." }, { status: 400 });
   }
@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Slug course wajib diisi." }, { status: 400 });
   }
 
-  console.log("[API/checkout] Step 2 — slug:", body.slug);
+  console.log("[API/checkout] Step 2 — slug:", body.slug, "isFree:", body.isFree, "voucher:", body.voucherCode);
 
   // Step 3 — Get course from content (MDX seed data, falls back to Supabase)
   const course = await getCourseBySlug(body.slug);
@@ -69,9 +69,74 @@ export async function POST(request: Request) {
     console.warn("[API/checkout] ⚠️ Enrollment check skipped (table may not exist):", err);
   }
 
-  // Step 6 — Create order in Supabase
-  const orderId = `kaalupi-${body.slug}-${Date.now()}`;
+  // Step 6 — Handle free course (skip payment)
   const amount = body.amount ?? course.price;
+  const isFreeCourse = body.isFree || course.is_free || amount === 0;
+  
+  if (isFreeCourse) {
+    console.log("[API/checkout] Free course — creating direct enrollment");
+    try {
+      const { error: enrollError } = await supabase
+        .from("enrollments")
+        .insert({
+          user_email: userEmail,
+          course_slug: body.slug,
+          status: "active",
+        });
+      
+      if (enrollError) {
+        console.error("[API/checkout] Enrollment error:", enrollError);
+      } else {
+        console.log("[API/checkout] ✅ Free enrollment created");
+      }
+    } catch (err) {
+      console.warn("[API/checkout] Enrollment exception:", err);
+    }
+    
+    return NextResponse.json({ success: true, free: true });
+  }
+
+  // Step 7 — Apply voucher if provided
+  let finalAmount = body.amount ?? course.price;
+  
+  if (body.voucherCode) {
+    try {
+      const { data: voucher } = await supabase
+        .from("vouchers")
+        .select("*")
+        .eq("code", body.voucherCode)
+        .eq("is_active", true)
+        .single();
+      
+      if (voucher) {
+        const now = new Date();
+        const validUntil = voucher.valid_until ? new Date(voucher.valid_until) : null;
+        
+        if ((!validUntil || validUntil > now) && 
+            (!voucher.max_uses || voucher.used_count < voucher.max_uses)) {
+          
+          if (voucher.discount_percent) {
+            finalAmount = Math.floor(finalAmount * (1 - voucher.discount_percent / 100));
+          } else if (voucher.discount_amount) {
+            finalAmount = Math.max(0, finalAmount - voucher.discount_amount);
+          }
+          
+          // Update voucher usage
+          await supabase
+            .from("vouchers")
+            .update({ used_count: voucher.used_count + 1 })
+            .eq("code", body.voucherCode);
+            
+          console.log("[API/checkout] Voucher applied — new amount:", finalAmount);
+        }
+      }
+    } catch (err) {
+      console.warn("[API/checkout] Voucher validation skipped:", err);
+    }
+  }
+
+  // Step 8 — Create order in Supabase
+  const orderId = `kaalupi-${body.slug}-${Date.now()}`;
 
   try {
     const { error: orderError } = await supabase
@@ -80,33 +145,32 @@ export async function POST(request: Request) {
         order_id: orderId,
         user_email: userEmail,
         course_slug: body.slug,
-        amount,
+        amount: finalAmount,
         status: "pending",
       });
 
     if (orderError) {
       console.error("[API/checkout] ❌ Order insert error:", orderError.message, orderError.code);
-      // Non-fatal in dev: continue to Midtrans even if order table missing
       if (orderError.code !== "42P01") {
-        // 42P01 = table does not exist → allow in dev
         return NextResponse.json({ error: `Gagal membuat order: ${orderError.message}` }, { status: 500 });
       }
       console.warn("[API/checkout] ⚠️ Orders table missing — skipping DB order (dev mode)");
     } else {
-      console.log("[API/checkout] Step 6 — order created:", orderId);
+      console.log("[API/checkout] Step 8 — order created:", orderId, "amount:", finalAmount);
     }
   } catch (err) {
     console.warn("[API/checkout] ⚠️ Order creation exception (continuing):", err);
   }
 
-  // Step 7 — Create Midtrans Snap token
+  // Step 9 — Create Midtrans Snap token with installments enabled
   try {
-    console.log("[API/checkout] Step 7 — creating Midtrans transaction...");
+    console.log("[API/checkout] Step 9 — creating Midtrans transaction...");
     const snap = await createMidtransTransaction({
       orderId,
-      amount,
+      amount: finalAmount,
       courseTitle: course.title,
       customer: { firstName: userName, email: userEmail },
+      enableInstallments: true,
     });
 
     console.log("[API/checkout] ✅ Snap token received");

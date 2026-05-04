@@ -1,18 +1,16 @@
-import { getCourses as getCoursesFromDb, getCourseBySlug as getCourseBySlugFromDb } from "@/lib/db";
-import { courses as seedCourses } from "@/lib/data";
+import { getCourses as getCoursesFromDb, getCourseBySlug as getCourseBySlugFromDb, getEnrollments as getEnrollmentsFromDb } from "@/lib/db";
+import type { Course } from "@/lib/data";
 
-export async function getCourses() {
+export async function getCourses(): Promise<Course[]> {
   const dbCourses = await getCoursesFromDb();
-  if (dbCourses.length === 0) {
-    return seedCourses;
-  }
-  return dbCourses;
+  return dbCourses as Course[];
 }
 
-export async function getCourseBySlug(slug: string) {
+export async function getCourseBySlug(slug: string): Promise<Course | null> {
   const course = await getCourseBySlugFromDb(slug);
-  if (!course) {
-    return seedCourses.find((c) => c.slug === slug) ?? null;
-  }
-  return course;
+  return course as Course | null;
+}
+
+export async function getEnrollments(userEmail: string) {
+  return await getEnrollmentsFromDb(userEmail);
 }

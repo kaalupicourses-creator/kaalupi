@@ -31,6 +31,14 @@ export function SiteHeaderClient() {
               {link.label}
             </Link>
           ))}
+          {isSignedIn && (
+            <Link
+              href="/dashboard/code-review"
+              className="hover:text-[#F5A62A] transition-colors"
+            >
+              AI Review
+            </Link>
+          )}
           {/* Waitlist CTA */}
           <Link
             href="/waitlist"

@@ -29,10 +29,53 @@ export async function createMidtransTransaction(input: {
   amount: number;
   courseTitle: string;
   customer: { firstName: string; email: string };
+  enableInstallments?: boolean;
 }) {
   const config = getMidtransConfig();
   if (!config.serverKey) {
     throw new Error("Midtrans server key belum dikonfigurasi.");
+  }
+
+  const transactionBody: Record<string, unknown> = {
+    transaction_details: {
+      order_id: input.orderId,
+      gross_amount: input.amount,
+    },
+    item_details: [
+      {
+        id: input.orderId,
+        price: input.amount,
+        quantity: 1,
+        name: input.courseTitle,
+      },
+    ],
+    customer_details: {
+      first_name: input.customer.firstName,
+      email: input.customer.email,
+    },
+    credit_card: {
+      secure: true,
+    },
+  };
+
+  // Enable installments if requested
+  if (input.enableInstallments) {
+    transactionBody.enabled_payments = ["credit_card", "bca_va", "bni_va", "bri_va", "echannel", "permata_va", "other_va", "gopay", "shopeepay"];
+    const creditCardConfig = transactionBody.credit_card as Record<string, unknown> || {};
+    transactionBody.credit_card = {
+      ...creditCardConfig,
+      installments: {
+        required: true,
+        terms: {
+          bni: [3, 6, 12],
+          mandiri: [3, 6, 12],
+          cimb: [3, 6],
+          bca: [3, 6, 12],
+          maybank: [3, 6],
+          mega: [3, 6],
+        },
+      },
+    };
   }
 
   const response = await fetch(`${config.snapBaseUrl}/snap/v1/transactions`, {
@@ -42,27 +85,7 @@ export async function createMidtransTransaction(input: {
       "Content-Type": "application/json",
       Authorization: getAuthHeader(config.serverKey),
     },
-    body: JSON.stringify({
-      transaction_details: {
-        order_id: input.orderId,
-        gross_amount: input.amount,
-      },
-      item_details: [
-        {
-          id: input.orderId,
-          price: input.amount,
-          quantity: 1,
-          name: input.courseTitle,
-        },
-      ],
-      customer_details: {
-        first_name: input.customer.firstName,
-        email: input.customer.email,
-      },
-      credit_card: {
-        secure: true,
-      },
-    }),
+    body: JSON.stringify(transactionBody),
   });
 
   if (!response.ok) {

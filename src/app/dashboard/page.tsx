@@ -71,6 +71,12 @@ export default async function DashboardPage() {
               </>
             ) : null}
             <Link
+              href="/dashboard/code-review"
+              className="rounded-xl bg-[#E3F2FD] px-5 py-3 text-sm font-bold text-[#1565C0] transition hover:bg-[#1565C0] hover:text-white border border-[#1565C0]"
+            >
+              🤖 AI Code Review
+            </Link>
+            <Link
               href="/courses"
               className="rounded-xl border-2 border-[#2D5016] px-5 py-3 text-sm font-semibold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-white"
             >
@@ -105,10 +111,9 @@ export default async function DashboardPage() {
               color: "text-[#5C4813]",
             },
             {
-              label: "Progress",
-              value: "--%",
-              isText: true,
-              icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6",
+              label: "Poin",
+              value: "0",
+              icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z",
               bg: "bg-[#F0E8D8]",
               color: "text-[#2D5016]",
             },
@@ -127,6 +132,26 @@ export default async function DashboardPage() {
               </div>
             </div>
           ))}
+        </section>
+
+        {/* Badges Section */}
+        <section className="mb-8 rounded-2xl border border-[#F0E8D8] bg-white p-8 shadow-sm">
+          <h2 className="text-2xl font-extrabold text-[#2D5016]">Badges Saya</h2>
+          <p className="mt-2 text-sm text-[#444444]">Kumpulkan poin dan raih badge prestasi</p>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { name: "Pemula", icon: "🎓", desc: "Selesaikan kursus pertama", unlocked: false },
+              { name: "Rajin Belajar", icon: "📚", desc: "100 poin", unlocked: false },
+              { name: "Master", icon: "🏆", desc: "3 kursus selesai", unlocked: false },
+              { name: "Kontributor", icon: "🔗", desc: "Share sertifikat", unlocked: false },
+            ].map((badge) => (
+              <div key={badge.name} className={`rounded-xl border p-4 text-center ${badge.unlocked ? "border-[#F5A62A] bg-[#FEFBF5]" : "border-[#F0E8D8] bg-[#F9F9F9] opacity-60"}`}>
+                <div className="text-3xl">{badge.unlocked ? badge.icon : "🔒"}</div>
+                <p className={`mt-2 text-sm font-bold ${badge.unlocked ? "text-[#2D5016]" : "text-[#999999]"}`}>{badge.name}</p>
+                <p className="text-xs text-[#444444]">{badge.desc}</p>
+              </div>
+            ))}
+          </div>
         </section>
 
         {/* My Courses */}

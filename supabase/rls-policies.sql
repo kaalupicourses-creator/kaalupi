@@ -100,6 +100,81 @@ CREATE POLICY "Service role can manage materials"
   WITH CHECK (true);
 
 -- ---------------------------------------------------------------
+-- VOUCHERS — public can view active vouchers, service role manages
+-- ---------------------------------------------------------------
+ALTER TABLE vouchers ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Anyone can view active vouchers"
+  ON vouchers FOR SELECT
+  USING (true);
+
+CREATE POLICY "Service role can manage vouchers"
+  ON vouchers FOR ALL
+  TO service_role
+  USING (true)
+  WITH CHECK (true);
+
+-- ---------------------------------------------------------------
+-- BADGES — public can view badges
+-- ---------------------------------------------------------------
+ALTER TABLE badges ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Anyone can view badges"
+  ON badges FOR SELECT
+  USING (true);
+
+CREATE POLICY "Service role can manage badges"
+  ON badges FOR ALL
+  TO service_role
+  USING (true)
+  WITH CHECK (true);
+
+-- ---------------------------------------------------------------
+-- USER_POINTS — users can view their own points
+-- ---------------------------------------------------------------
+ALTER TABLE user_points ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view their own points"
+  ON user_points FOR SELECT
+  USING (true);
+
+CREATE POLICY "Service role can manage user_points"
+  ON user_points FOR ALL
+  TO service_role
+  USING (true)
+  WITH CHECK (true);
+
+-- ---------------------------------------------------------------
+-- USER_BADGES — users can view their own badges
+-- ---------------------------------------------------------------
+ALTER TABLE user_badges ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view their own badges"
+  ON user_badges FOR SELECT
+  USING (true);
+
+CREATE POLICY "Service role can manage user_badges"
+  ON user_badges FOR ALL
+  TO service_role
+  USING (true)
+  WITH CHECK (true);
+
+-- ---------------------------------------------------------------
+-- CERTIFICATES — users can view their own certificates
+-- ---------------------------------------------------------------
+ALTER TABLE certificates ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view their own certificates"
+  ON certificates FOR SELECT
+  USING (true);
+
+CREATE POLICY "Service role can manage certificates"
+  ON certificates FOR ALL
+  TO service_role
+  USING (true)
+  WITH CHECK (true);
+
+-- ---------------------------------------------------------------
 -- WAITLIST — tabel baru untuk pendaftar waitlist
 -- ---------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS waitlist (

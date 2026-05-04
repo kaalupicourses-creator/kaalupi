@@ -10,7 +10,7 @@ declare global {
   }
 }
 
-export function CheckoutButton({ slug, amount }: { slug: string; amount: number }) {
+export function CheckoutButton({ slug, amount, isFree }: { slug: string; amount: number; isFree?: boolean }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -20,6 +20,27 @@ export function CheckoutButton({ slug, amount }: { slug: string; amount: number 
 
     try {
       console.log("[Checkout] Step 1 — Memulai checkout untuk course:", slug);
+
+      // Handle free course - direct enrollment without payment
+      if (isFree) {
+        console.log("[Checkout] Free course — langsung enroll tanpa payment");
+        const response = await fetch("/api/checkout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ slug, amount: 0, isFree: true }),
+        });
+
+        if (!response.ok) {
+          const errorPayload = (await response.json().catch(() => ({}))) as { error?: string };
+          setError(errorPayload.error ?? "Gagal enroll course gratis.");
+          return;
+        }
+
+        window.location.href = `/access/${slug}`;
+        return;
+      }
 
       // Cek apakah Snap sudah siap sebelum request token
       if (typeof window !== "undefined" && !window.snap) {
@@ -52,8 +73,15 @@ export function CheckoutButton({ slug, amount }: { slug: string; amount: number 
         return;
       }
 
-      const payload = (await response.json()) as { snapToken?: string };
-      console.log("[Checkout] Step 4 — Snap token diterima:", payload.snapToken ? "✓" : "❌ kosong");
+      const payload = (await response.json()) as { snapToken?: string; success?: boolean; free?: boolean };
+      console.log("[Checkout] Step 4 — Response:", payload);
+
+      // Handle free course response
+      if (payload.free && payload.success) {
+        console.log("[Checkout] ✅ Free enrollment successful, redirecting...");
+        window.location.href = `/access/${slug}`;
+        return;
+      }
 
       if (!payload.snapToken) {
         setError("Token pembayaran tidak diterima dari server.");

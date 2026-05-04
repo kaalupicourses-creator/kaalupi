@@ -14,6 +14,8 @@ export type Course = {
   format: "video" | "article" | "blended";
   featured?: boolean;
   comingSoon?: boolean;
+  is_free?: boolean;
+  is_lifetime_access?: boolean;
 };
 
 export type BlogPost = {
@@ -63,8 +65,8 @@ export const demoUsers: DemoUser[] = [
 ];
 
 export const stats = [
-  { label: "Course Aktif", value: "1" },
-  { label: "Segera Hadir", value: "🔜" },
+  { label: "Course Aktif", value: "7" },
+  { label: "Gratis", value: "2" },
   { label: "Bahasa", value: "Indonesia" },
   { label: "Metode", value: "Praktik" },
 ];
@@ -100,13 +102,14 @@ export const audienceTracks = [
 ];
 
 export const courses: Course[] = [
+  // FREE FUNDAMENTAL COURSES
   {
     slug: "ai-untuk-pemula",
     title: "AI untuk Pemula — Dari Nol ke Produktif",
     category: "Artificial Intelligence",
     level: "Beginner",
     duration: "7.5 jam",
-    price: 149000,
+    price: 0,
     summary:
       "Pelajari cara kerja AI, prompt engineering, dan cara pakai AI untuk produktivitas, karier, dan bisnis — dari nol, dalam bahasa Indonesia.",
     hero:
@@ -125,11 +128,40 @@ export const courses: Course[] = [
     ],
     format: "video",
     featured: true,
+    is_free: true,
+    is_lifetime_access: true,
   },
+  {
+    slug: "dasar-pemrograman-web",
+    title: "Dasar Pemrograman Web",
+    category: "Programming",
+    level: "Beginner",
+    duration: "10 jam",
+    price: 0,
+    summary:
+      "Pelajari fondasi HTML, CSS, dan JavaScript untuk memulai karier di web development.",
+    hero:
+      "Bangun fondasi kuat web development dengan materi praktis bahasa Indonesia.",
+    outcomes: [
+      "Menguasai struktur HTML dan semantic markup",
+      "Membuat styling responsif dengan CSS modern",
+      "Memahami dasar JavaScript untuk interaktivitas web",
+    ],
+    modules: [
+      "HTML fundamentals",
+      "CSS layout dan responsive design",
+      "JavaScript dasar dan DOM manipulation",
+      "Mini project landing page",
+    ],
+    format: "blended",
+    featured: true,
+    is_free: true,
+    is_lifetime_access: true,
+  },
+  // PAID COURSES
   {
     slug: "fullstack-web-engineer",
     title: "Fullstack Web Engineer",
-    comingSoon: true,
     category: "Programming",
     level: "Intermediate",
     duration: "16 minggu",
@@ -153,11 +185,12 @@ export const courses: Course[] = [
     ],
     format: "blended",
     featured: true,
+    is_free: false,
+    is_lifetime_access: true,
   },
   {
     slug: "network-engineer-pro",
     title: "Network Engineer Pro",
-    comingSoon: true,
     category: "Network Engineer",
     level: "Beginner to Advanced",
     duration: "14 minggu",
@@ -180,11 +213,12 @@ export const courses: Course[] = [
     ],
     format: "video",
     featured: true,
+    is_free: false,
+    is_lifetime_access: true,
   },
   {
     slug: "cyber-security-analyst",
     title: "Cyber Security Analyst",
-    comingSoon: true,
     category: "Cyber Security",
     level: "Intermediate",
     duration: "12 minggu",
@@ -207,11 +241,12 @@ export const courses: Course[] = [
     ],
     format: "blended",
     featured: true,
+    is_free: false,
+    is_lifetime_access: true,
   },
   {
     slug: "product-ui-designer",
     title: "Product UI Designer",
-    comingSoon: true,
     category: "Designer",
     level: "Beginner",
     duration: "10 minggu",
@@ -233,6 +268,37 @@ export const courses: Course[] = [
       "Design to development handoff",
     ],
     format: "article",
+    featured: false,
+    is_free: false,
+    is_lifetime_access: true,
+  },
+  {
+    slug: "data-science-fundamental",
+    title: "Data Science Fundamental",
+    category: "Data Science",
+    level: "Beginner",
+    duration: "12 minggu",
+    price: 1990000,
+    summary:
+      "Pelajari dasar data science: Python, pandas, visualisasi data, dan machine learning introduction.",
+    hero:
+      "Mulai karier data science dengan kurikulum praktis dan project nyata.",
+    outcomes: [
+      "Memahami workflow data science dari cleaning hingga visualization",
+      "Menggunakan Python untuk analisis data",
+      "Membuat dashboard visualisasi data sederhana",
+    ],
+    modules: [
+      "Python for Data Science",
+      "Data Cleaning dan Preprocessing",
+      "Exploratory Data Analysis",
+      "Introduction to Machine Learning",
+      "Data Visualization dengan Matplotlib",
+    ],
+    format: "video",
+    featured: true,
+    is_free: false,
+    is_lifetime_access: true,
   },
 ];
 

@@ -5,6 +5,11 @@ type EnrollmentRow = Database["public"]["Tables"]["enrollments"]["Row"];
 type OrderRow = Database["public"]["Tables"]["orders"]["Row"];
 type ProgressRow = Database["public"]["Tables"]["progress"]["Row"];
 type MaterialRow = Database["public"]["Tables"]["materials"]["Row"];
+type CertificateRow = Database["public"]["Tables"]["certificates"]["Row"];
+type VoucherRow = Database["public"]["Tables"]["vouchers"]["Row"];
+type BadgeRow = Database["public"]["Tables"]["badges"]["Row"];
+type UserPointsRow = Database["public"]["Tables"]["user_points"]["Row"];
+type UserBadgeRow = Database["public"]["Tables"]["user_badges"]["Row"];
 
 export async function getCourses() {
   try {
@@ -171,4 +176,97 @@ export async function createMaterial(material: Database["public"]["Tables"]["mat
 
   if (error) throw error;
   return data as MaterialRow;
+}
+
+// Certificate functions
+export async function getCertificate(userEmail: string, courseSlug: string) {
+  const { data, error } = await supabase
+    .from("certificates")
+    .select("*")
+    .eq("user_email", userEmail)
+    .eq("course_slug", courseSlug)
+    .single();
+
+  if (error && error.code !== "PGRST116") throw error;
+  return data as CertificateRow | null;
+}
+
+export async function createCertificate(certificate: Database["public"]["Tables"]["certificates"]["Insert"]) {
+  const { data, error } = await supabase
+    .from("certificates")
+    .insert(certificate)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data as CertificateRow;
+}
+
+// Voucher functions
+export async function getVoucherByCode(code: string) {
+  const { data, error } = await supabase
+    .from("vouchers")
+    .select("*")
+    .eq("code", code)
+    .eq("is_active", true)
+    .single();
+
+  if (error && error.code !== "PGRST116") throw error;
+  return data as VoucherRow | null;
+}
+
+export async function updateVoucherUsage(code: string, usedCount: number) {
+  const { data, error } = await supabase
+    .from("vouchers")
+    .update({ used_count: usedCount })
+    .eq("code", code)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data as VoucherRow;
+}
+
+// Badge functions
+export async function getBadges() {
+  const { data, error } = await supabase
+    .from("badges")
+    .select("*")
+    .order("required_points", { ascending: true });
+
+  if (error) throw error;
+  return data as BadgeRow[];
+}
+
+export async function getUserBadges(userEmail: string) {
+  const { data, error } = await supabase
+    .from("user_badges")
+    .select("*, badges(*)")
+    .eq("user_email", userEmail);
+
+  if (error) throw error;
+  return data;
+}
+
+// User points functions
+export async function getUserPoints(userEmail: string) {
+  const { data, error } = await supabase
+    .from("user_points")
+    .select("*")
+    .eq("user_email", userEmail)
+    .single();
+
+  if (error && error.code !== "PGRST116") throw error;
+  return data as UserPointsRow | null;
+}
+
+export async function updateUserPoints(userEmail: string, points: number) {
+  const { data, error } = await supabase
+    .from("user_points")
+    .upsert({ user_email: userEmail, points })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data as UserPointsRow;
 }

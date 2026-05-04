@@ -40,6 +40,16 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
             <div className="flex flex-wrap gap-2">
               <span className="rounded-full bg-[#F0E8D8] px-3 py-1 text-xs font-semibold text-[#2D5016]">{course.category}</span>
               <span className="rounded-full bg-[#FFF3D6] px-3 py-1 text-xs font-semibold text-[#5C4813]">{course.level}</span>
+              {course.is_free && (
+                <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-800">
+                  🆓 Gratis
+                </span>
+              )}
+              {course.is_lifetime_access && (
+                <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-800">
+                  ♾️ Lifetime Access
+                </span>
+              )}
             </div>
             <h1 className="mt-6 text-4xl font-extrabold text-[#2D5016] md:text-5xl">{course.title}</h1>
             <p className="mt-6 text-lg leading-8 text-[#444444]">{course.hero}</p>
@@ -110,6 +120,8 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
                     <Link href={`/access/${course.slug}`} className="block rounded-xl bg-[#F5A62A] px-5 py-3.5 text-center text-sm font-bold text-[#2D5016] hover:opacity-90 transition">
                       Mulai Belajar
                     </Link>
+                  ) : course.is_free ? (
+                    <CheckoutButton slug={course.slug} amount={0} isFree={true} />
                   ) : (
                     <CheckoutButton slug={course.slug} amount={course.price} />
                   )}
