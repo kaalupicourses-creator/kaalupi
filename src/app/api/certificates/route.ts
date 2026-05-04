@@ -45,7 +45,7 @@ export async function POST(request: Request) {
 
   if (!certificateUrl) {
     try {
-      certificateUrl = await generateCertificate(userName, course.title, userId);
+      certificateUrl = await generateCertificate(userName, course.title, userId, userEmail);
       
       // Save certificate record
       await supabase.from("certificates").insert({
