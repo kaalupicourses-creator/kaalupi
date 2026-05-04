@@ -75,7 +75,7 @@ export async function POST(request: Request) {
   return NextResponse.json({ url: certificateUrl });
 }
 
-async function generateCertificate(userName: string, courseTitle: string, userId: string): Promise<string> {
+async function generateCertificate(userName: string, courseTitle: string, userId: string, userEmail: string): Promise<string> {
   const pdfDoc = await PDFDocument.create();
   const page = pdfDoc.addPage([842, 595]); // A4 landscape
   const { width, height } = page.getSize();
@@ -183,8 +183,11 @@ async function generateCertificate(userName: string, courseTitle: string, userId
   // Save PDF
   const pdfBytes = await pdfDoc.save();
   
+  // Sanitize email for filename
+  const safeEmail = userEmail.replace(/[^a-zA-Z0-9]/g, '_');
+  const fileName = `${safeEmail}/${courseTitle}-${Date.now()}.pdf`;
+  
   // Upload to Supabase Storage
-  const fileName = `${userEmail}/${courseTitle}-${Date.now()}.pdf`;
   const { data: uploadData, error: uploadError } = await supabase.storage
     .from('certificates')
     .upload(fileName, pdfBytes, {
