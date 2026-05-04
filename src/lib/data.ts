@@ -13,6 +13,7 @@ export type Course = {
   modules: string[];
   format: "video" | "article" | "blended";
   featured?: boolean;
+  comingSoon?: boolean;
 };
 
 export type BlogPost = {
@@ -34,10 +35,10 @@ export type DemoUser = {
 export const siteConfig = {
   name: "Kaalupi",
   description:
-    "Platform course IT profesional untuk belajar programming, network engineering, cyber security, dan design dengan jalur belajar yang jelas.",
-  phone: "+62 812-8800-1122",
-  email: "hello@kaalupi.id",
-  address: "Jakarta, Indonesia",
+    "Platform course IT profesional untuk belajar AI, programming, network engineering, dan cyber security — dalam bahasa Indonesia, langsung praktik.",
+  phone: "+62 819-3004-5321",
+  email: "kaalupicourse@gmail.com",
+  address: "Bogor, Indonesia",
 };
 
 export const demoUsers: DemoUser[] = [
@@ -62,10 +63,10 @@ export const demoUsers: DemoUser[] = [
 ];
 
 export const stats = [
-  { label: "Active learners", value: "12.4K+" },
-  { label: "Expert instructors", value: "80+" },
-  { label: "Course packages", value: "40+" },
-  { label: "Completion rate", value: "91%" },
+  { label: "Course Aktif", value: "1" },
+  { label: "Segera Hadir", value: "🔜" },
+  { label: "Bahasa", value: "Indonesia" },
+  { label: "Metode", value: "Praktik" },
 ];
 
 export const valueProps = [
@@ -100,8 +101,35 @@ export const audienceTracks = [
 
 export const courses: Course[] = [
   {
+    slug: "ai-untuk-pemula",
+    title: "AI untuk Pemula — Dari Nol ke Produktif",
+    category: "Artificial Intelligence",
+    level: "Beginner",
+    duration: "7.5 jam",
+    price: 149000,
+    summary:
+      "Pelajari cara kerja AI, prompt engineering, dan cara pakai AI untuk produktivitas, karier, dan bisnis — dari nol, dalam bahasa Indonesia.",
+    hero:
+      "Mulai dari nol, pelajari cara kerja AI dan gunakan untuk produktivitas, karier, dan bisnis — tanpa background teknis.",
+    outcomes: [
+      "Memahami cara kerja AI dan model bahasa (LLM) secara konseptual",
+      "Membuat prompt yang efektif untuk berbagai kebutuhan kerja",
+      "Menggunakan AI tools populer untuk produktivitas sehari-hari",
+    ],
+    modules: [
+      "Cara kerja AI & Large Language Models",
+      "Prompt Engineering dasar hingga lanjutan",
+      "AI untuk produktivitas dan pekerjaan",
+      "AI untuk bisnis dan karier",
+      "Tools AI populer & workflow praktis",
+    ],
+    format: "video",
+    featured: true,
+  },
+  {
     slug: "fullstack-web-engineer",
     title: "Fullstack Web Engineer",
+    comingSoon: true,
     category: "Programming",
     level: "Intermediate",
     duration: "16 minggu",
@@ -129,6 +157,7 @@ export const courses: Course[] = [
   {
     slug: "network-engineer-pro",
     title: "Network Engineer Pro",
+    comingSoon: true,
     category: "Network Engineer",
     level: "Beginner to Advanced",
     duration: "14 minggu",
@@ -155,6 +184,7 @@ export const courses: Course[] = [
   {
     slug: "cyber-security-analyst",
     title: "Cyber Security Analyst",
+    comingSoon: true,
     category: "Cyber Security",
     level: "Intermediate",
     duration: "12 minggu",
@@ -181,6 +211,7 @@ export const courses: Course[] = [
   {
     slug: "product-ui-designer",
     title: "Product UI Designer",
+    comingSoon: true,
     category: "Designer",
     level: "Beginner",
     duration: "10 minggu",

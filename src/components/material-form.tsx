@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+const inputClass = "rounded-xl border border-[#F0E8D8] bg-[#FEFBF5] px-4 py-3 text-[#444444] placeholder:text-[#999] outline-none focus:border-[#F5A62A] focus:ring-2 focus:ring-[#F5A62A]/20 transition";
+const labelClass = "text-sm font-semibold text-[#2D5016]";
+
 export function MaterialForm() {
   const router = useRouter();
   const [message, setMessage] = useState("");
@@ -52,60 +55,60 @@ export function MaterialForm() {
         event.preventDefault();
         await handleSubmit(new FormData(event.currentTarget));
       }}
-      className="grid gap-6 rounded-[2rem] border border-white/10 bg-white/5 p-8"
+      className="grid gap-6 rounded-2xl border border-[#F0E8D8] bg-white p-8 shadow-sm"
     >
       <div className="grid gap-6 md:grid-cols-2">
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-slate-300">Course Title</label>
+          <label className={labelClass}>Judul Course</label>
           <input
             name="title"
             required
-            placeholder="e.g. Master React Development"
-            className="rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-white placeholder:text-slate-600 outline-none focus:border-amber-300"
+            placeholder="e.g. AI untuk Pemula"
+            className={inputClass}
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-slate-300">Category</label>
+          <label className={labelClass}>Kategori</label>
           <input
             name="category"
             required
             placeholder="e.g. Programming, Cyber Security"
-            className="rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-white placeholder:text-slate-600 outline-none focus:border-amber-300"
+            className={inputClass}
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-slate-300">Level</label>
+          <label className={labelClass}>Level</label>
           <input
             name="level"
             required
-            placeholder="e.g. Beginner, Intermediate"
-            className="rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-white placeholder:text-slate-600 outline-none focus:border-amber-300"
+            placeholder="e.g. Pemula, Menengah"
+            className={inputClass}
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-slate-300">Duration</label>
+          <label className={labelClass}>Durasi</label>
           <input
             name="duration"
             required
-            placeholder="e.g. 12 weeks, 40 hours"
-            className="rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-white placeholder:text-slate-600 outline-none focus:border-amber-300"
+            placeholder="e.g. 12 minggu, 40 jam"
+            className={inputClass}
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-slate-300">Price (IDR)</label>
+          <label className={labelClass}>Harga (IDR)</label>
           <input
             name="price"
             required
             type="number"
             placeholder="e.g. 250000"
-            className="rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-white placeholder:text-slate-600 outline-none focus:border-amber-300"
+            className={inputClass}
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-slate-300">Format</label>
+          <label className={labelClass}>Format</label>
           <select
             name="format"
-            className="rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-white outline-none focus:border-amber-300"
+            className={inputClass}
           >
             <option value="video">Video</option>
             <option value="article">Article</option>
@@ -114,53 +117,61 @@ export function MaterialForm() {
         </div>
       </div>
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-slate-300">Summary</label>
+        <label className={labelClass}>Summary</label>
         <textarea
           name="summary"
           required
           rows={3}
-          placeholder="Short description for course cards and previews"
-          className="rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-white placeholder:text-slate-600 outline-none focus:border-amber-300"
+          placeholder="Deskripsi singkat untuk card dan preview course"
+          className={inputClass}
         />
       </div>
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-slate-300">Hero Description</label>
+        <label className={labelClass}>Hero Description</label>
         <textarea
           name="hero"
           required
           rows={3}
-          placeholder="Positioning text for the course detail page"
-          className="rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-white placeholder:text-slate-600 outline-none focus:border-amber-300"
+          placeholder="Teks positioning untuk halaman detail course"
+          className={inputClass}
         />
       </div>
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-slate-300">Modules</label>
-        <p className="text-xs text-slate-500">One module per line</p>
+        <label className={labelClass}>Modul</label>
+        <p className="text-xs text-[#444444]">Satu modul per baris</p>
         <textarea
           name="modules"
           required
           rows={4}
-          placeholder="Introduction&#10;Fundamentals&#10;Advanced Topics&#10;Final Project"
-          className="rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-white placeholder:text-slate-600 outline-none focus:border-amber-300"
+          placeholder={"Pengantar AI\nDasar Machine Learning\nTopic Lanjutan\nProject Akhir"}
+          className={inputClass}
         />
       </div>
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-slate-300">Learning Outcomes</label>
-        <p className="text-xs text-slate-500">One outcome per line</p>
+        <label className={labelClass}>Learning Outcomes</label>
+        <p className="text-xs text-[#444444]">Satu outcome per baris</p>
         <textarea
           name="outcomes"
           required
           rows={4}
-          placeholder="Build real-world applications&#10;Understand core concepts&#10;Master best practices"
-          className="rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-white placeholder:text-slate-600 outline-none focus:border-amber-300"
+          placeholder={"Membangun aplikasi nyata\nMemahami konsep inti\nMenguasai best practices"}
+          className={inputClass}
         />
       </div>
-      {error ? <p className="text-sm text-rose-300">{error}</p> : null}
-      {message ? <p className="text-sm text-emerald-300">{message}</p> : null}
+      {error ? (
+        <div className="rounded-xl border border-rose-200 bg-rose-50 p-4">
+          <p className="text-sm font-medium text-rose-700">{error}</p>
+        </div>
+      ) : null}
+      {message ? (
+        <div className="rounded-xl border border-[#7AB648]/30 bg-[#E8F5E9] p-4">
+          <p className="text-sm font-medium text-[#2D5016]">{message}</p>
+        </div>
+      ) : null}
       <button
         type="submit"
         disabled={loading}
-        className="rounded-full bg-[linear-gradient(135deg,#f97316,#facc15)] px-5 py-3 font-semibold text-slate-950 transition hover:opacity-90 disabled:opacity-60"
+        className="rounded-xl bg-[#F5A62A] px-5 py-3 font-bold text-[#2D5016] transition hover:opacity-90 disabled:opacity-60"
       >
         {loading ? "Menyimpan..." : "Publish Course"}
       </button>

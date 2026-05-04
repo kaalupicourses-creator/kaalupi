@@ -3,10 +3,10 @@ import { notFound } from "next/navigation";
 import { blogPosts } from "@/lib/data";
 
 const categoryColors: Record<string, string> = {
-  tutorial: "bg-blue-500/10 text-blue-300",
-  career: "bg-emerald-500/10 text-emerald-300",
-  tips: "bg-amber-500/10 text-amber-300",
-  default: "bg-purple-500/10 text-purple-300",
+  career: "bg-[#FFF3D6] text-[#5C4813]",
+  programming: "bg-[#E8F5E9] text-[#2D5016]",
+  "network engineer": "bg-[#E3F2FD] text-[#1565C0]",
+  default: "bg-[#FFF3D6] text-[#5C4813]",
 };
 
 export default async function BlogDetailPage({
@@ -16,10 +16,7 @@ export default async function BlogDetailPage({
 }) {
   const { slug } = await params;
   const post = blogPosts.find((item) => item.slug === slug);
-
-  if (!post) {
-    notFound();
-  }
+  if (!post) notFound();
 
   const badgeColor = categoryColors[post.category.toLowerCase()] ?? categoryColors.default;
   const formattedDate = new Date(post.date).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
@@ -27,60 +24,37 @@ export default async function BlogDetailPage({
 
   return (
     <article className="mx-auto max-w-3xl px-6 py-16">
-      {/* Back Link */}
-      <Link
-        href="/blog"
-        className="mb-8 inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-white"
-      >
+      <Link href="/blog" className="mb-8 inline-flex items-center gap-2 text-sm font-semibold text-[#2D5016] transition hover:text-[#F5A62A]">
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
         </svg>
-        Back to Blog
+        Kembali ke Blog
       </Link>
 
-      {/* Meta */}
       <div className="flex flex-wrap items-center gap-3 text-xs">
-        <span className={`rounded-full px-3 py-1 ${badgeColor}`}>
-          {post.category}
-        </span>
-        <span className="text-slate-500">{formattedDate}</span>
-        <span className="text-slate-500">•</span>
-        <span className="text-slate-500">{readTime} min read</span>
+        <span className={`rounded-full px-3 py-1 font-semibold ${badgeColor}`}>{post.category}</span>
+        <span className="text-[#444444]">{formattedDate}</span>
+        <span className="text-[#444444]">•</span>
+        <span className="text-[#444444]">{readTime} min baca</span>
       </div>
 
-      {/* Title */}
-      <h1 className="mt-6 text-4xl font-semibold text-white md:text-5xl">
-        {post.title}
-      </h1>
+      <h1 className="mt-6 text-4xl font-extrabold text-[#2D5016] md:text-5xl">{post.title}</h1>
 
-      {/* Content */}
-      <div className="mt-10 space-y-6 text-base leading-8 text-slate-300">
+      <div className="mt-10 space-y-6 text-base leading-8 text-[#444444]">
         {post.content.map((paragraph, index) => (
           <p key={index}>{paragraph}</p>
         ))}
       </div>
 
-      {/* Divider + CTA */}
-      <div className="mt-12 border-t border-white/10 pt-8">
-        <h3 className="text-lg font-semibold text-white">Enjoyed this article?</h3>
-        <p className="mt-2 text-sm text-slate-400">
-          Check out more insights or explore our courses to level up your skills.
-        </p>
+      <div className="mt-12 border-t border-[#F0E8D8] pt-8">
+        <h3 className="text-lg font-bold text-[#2D5016]">Suka artikel ini?</h3>
+        <p className="mt-2 text-sm text-[#444444]">Cek artikel lainnya atau jelajahi course kami.</p>
         <div className="mt-6 flex flex-wrap gap-3">
-          <Link
-            href="/blog"
-            className="inline-flex items-center gap-2 rounded-full border border-white/12 px-5 py-2.5 text-sm text-white transition hover:border-amber-300/50 hover:text-amber-300"
-          >
-            Read more articles
-            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
+          <Link href="/blog" className="inline-flex items-center gap-2 rounded-xl border-2 border-[#2D5016] px-5 py-2.5 text-sm font-semibold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-white">
+            Baca artikel lain
           </Link>
-          <Link
-            href="/courses"
-            className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,#f97316,#facc15)] px-5 py-2.5 text-sm font-semibold text-slate-950 transition hover:opacity-90"
-          >
-            Browse Courses
+          <Link href="/courses" className="inline-flex items-center gap-2 rounded-xl bg-[#F5A62A] px-5 py-2.5 text-sm font-bold text-[#2D5016] transition hover:opacity-90">
+            Lihat Courses
           </Link>
         </div>
       </div>

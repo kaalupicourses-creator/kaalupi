@@ -1,15 +1,22 @@
 import type { Metadata } from "next";
+import { Nunito } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeaderClient } from "@/components/site-header";
+import { MidtransScript } from "@/components/midtrans-script";
 import { siteConfig } from "@/lib/data";
 import { getMidtransConfig } from "@/lib/midtrans";
-import Script from "next/script";
 import "./globals.css";
+
+const nunito = Nunito({
+  variable: "--font-nunito",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+});
 
 export const metadata: Metadata = {
   title: {
-    default: "Kaalupi | IT Course Platform",
+    default: "Kaalupi | Kursus IT Indonesia",
     template: "%s | Kaalupi",
   },
   description: siteConfig.description,
@@ -24,19 +31,20 @@ export default function RootLayout({
 
   return (
     <ClerkProvider>
-      <html lang="id" className="h-full antialiased">
-        <body className="min-h-full bg-[radial-gradient(circle_at_top,_rgba(250,204,21,0.12),_transparent_28%),linear-gradient(180deg,#08111d_0%,#08111d_50%,#07101a_100%)] text-white">
-          <div className="relative min-h-screen overflow-hidden">
-            <div className="absolute inset-x-0 top-0 -z-10 h-[32rem] bg-[radial-gradient(circle_at_top_left,_rgba(249,115,22,0.18),_transparent_38%)]" />
+      <html lang="id" className={`${nunito.variable} h-full antialiased`}>
+        <body
+          className="min-h-full bg-[#FEFBF5] text-[#444444]"
+          style={{ fontFamily: "var(--font-nunito), 'Segoe UI', sans-serif" }}
+        >
+          <div className="relative min-h-screen flex flex-col">
             <SiteHeaderClient />
-            <main>{children}</main>
+            <main className="flex-1">{children}</main>
             <SiteFooter />
           </div>
           {midtrans.enabled && midtrans.clientKey && (
-            <Script
-              src={`${midtrans.snapBaseUrl}/snap.js`}
-              data-client-key={midtrans.clientKey}
-              strategy="afterInteractive"
+            <MidtransScript
+              snapUrl={`${midtrans.snapBaseUrl}/snap/snap.js`}
+              clientKey={midtrans.clientKey}
             />
           )}
         </body>

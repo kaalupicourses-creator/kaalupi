@@ -23,6 +23,7 @@ export type Database = {
           modules: string[];
           format: "video" | "article" | "blended";
           featured: boolean;
+          comingSoon?: boolean;
           author_email: string | null;
           created_at: string;
           updated_at: string;
@@ -100,6 +101,25 @@ export type Database = {
           "id" | "created_at" | "updated_at"
         >;
         Update: Partial<Database["public"]["Tables"]["materials"]["Insert"]>;
+      };
+      blog_posts: {
+        Row: {
+          id: string;
+          slug: string;
+          title: string;
+          category: string;
+          excerpt: string;
+          content: string;
+          author_email: string;
+          published: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Omit<
+          Database["public"]["Tables"]["blog_posts"]["Row"],
+          "id" | "created_at" | "updated_at"
+        >;
+        Update: Partial<Database["public"]["Tables"]["blog_posts"]["Insert"]>;
       };
     };
   };

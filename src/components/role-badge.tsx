@@ -1,9 +1,9 @@
 import type { UserRole } from "@/lib/data";
 
 const styles: Record<UserRole, string> = {
-  admin: "bg-rose-500/15 text-rose-200 ring-1 ring-rose-400/30",
-  instructor: "bg-sky-500/15 text-sky-200 ring-1 ring-sky-400/30",
-  student: "bg-emerald-500/15 text-emerald-200 ring-1 ring-emerald-400/30",
+  admin: "bg-rose-100 text-rose-700 ring-1 ring-rose-300",
+  instructor: "bg-[#E3F2FD] text-[#1565C0] ring-1 ring-blue-200",
+  student: "bg-[#E8F5E9] text-[#2D5016] ring-1 ring-[#7AB648]/30",
 };
 
 export function RoleBadge({ role }: { role: UserRole }) {

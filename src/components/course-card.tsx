@@ -15,75 +15,110 @@ const formatIcons: Record<string, string> = {
 };
 
 export function CourseCard({ course }: { course: Course }) {
+  const isComingSoon = course.comingSoon === true;
+
   return (
-    <article className="group relative flex flex-col rounded-2xl border border-white/10 bg-white/5 overflow-hidden transition hover:border-amber-300/30 hover:shadow-[0_0_32px_rgba(249,115,22,0.08)]">
+    <article className={`group relative flex flex-col rounded-2xl border bg-white overflow-hidden transition ${isComingSoon ? "border-[#F0E8D8] opacity-90" : "border-[#F0E8D8] hover:border-[#F5A62A] hover:shadow-sm"}`}>
       {/* Thumbnail */}
-      <CourseThumbnail title={course.title} category={course.category} />
-      {/* Top accent line */}
-      <div className="h-1 w-full bg-gradient-to-r from-orange-500 to-yellow-400 opacity-0 transition-opacity group-hover:opacity-100" />
+      <div className="relative">
+        <CourseThumbnail title={course.title} category={course.category} />
+        {isComingSoon && (
+          <div className="absolute inset-0 flex items-center justify-center bg-[#2D5016]/70 backdrop-blur-[2px]">
+            <div className="rounded-full bg-[#F5A62A] px-5 py-2 text-sm font-extrabold text-[#2D5016] shadow-lg">
+              🔜 Segera Hadir
+            </div>
+          </div>
+        )}
+      </div>
+      {!isComingSoon && (
+        <div className="h-1 w-full bg-[#F5A62A] opacity-0 transition-opacity group-hover:opacity-100" />
+      )}
 
       <div className="flex flex-1 flex-col p-6">
-        {/* Badges */}
         <div className="flex flex-wrap gap-2">
-          <span className="rounded-full bg-white/8 px-3 py-1 text-xs text-slate-300">
+          <span className="rounded-full bg-[#F0E8D8] px-3 py-1 text-xs font-semibold text-[#2D5016]">
             {course.category}
           </span>
-          <span className="rounded-full bg-amber-300/10 px-3 py-1 text-xs text-amber-300">
+          <span className="rounded-full bg-[#FFF3D6] px-3 py-1 text-xs font-semibold text-[#5C4813]">
             {course.level}
           </span>
-        </div>
-
-        {/* Title */}
-        <h3 className="mt-5 text-xl font-semibold text-white group-hover:text-amber-200 transition">
-          {course.title}
-        </h3>
-
-        {/* Summary */}
-        <p className="mt-3 text-sm leading-7 text-slate-400 line-clamp-2">
-          {course.summary}
-        </p>
-
-        {/* Modules preview */}
-        <div className="mt-4 space-y-2">
-          {course.modules.slice(0, 3).map((module, index) => (
-            <div key={index} className="flex items-center gap-2 text-xs text-slate-400">
-              <svg className="h-3.5 w-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-              {module}
-            </div>
-          ))}
-          {course.modules.length > 3 && (
-            <p className="text-xs text-slate-500">+{course.modules.length - 3} more</p>
+          {!isComingSoon && (
+            <span className="rounded-full bg-[#2D5016] px-3 py-1 text-xs font-bold text-[#F5A62A]">
+              Tersedia
+            </span>
           )}
         </div>
 
-        {/* Footer */}
-        <div className="mt-6 flex items-end justify-between gap-4 border-t border-white/10 pt-5">
-          <div>
-            <div className="flex items-center gap-2 text-xs text-slate-500">
-              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              {course.duration}
-              <svg className="h-3.5 w-3.5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d={formatIcons[course.format] ?? formatIcons.video} />
-              </svg>
-              <span className="capitalize">{course.format}</span>
-            </div>
-            <p className="mt-1 text-lg font-semibold bg-gradient-to-r from-orange-400 to-yellow-300 bg-clip-text text-transparent">
-              {formatter.format(course.price)}
-            </p>
+        <h3 className={`mt-5 text-xl font-bold text-[#2D5016] transition ${isComingSoon ? "" : "group-hover:text-[#F5A62A]"}`}>
+          {course.title}
+        </h3>
+
+        <p className="mt-3 text-sm leading-7 text-[#444444] line-clamp-2">
+          {course.summary}
+        </p>
+
+        {!isComingSoon && (
+          <div className="mt-4 space-y-2">
+            {course.modules.slice(0, 3).map((module, index) => (
+              <div key={index} className="flex items-center gap-2 text-xs text-[#444444]">
+                <svg className="h-3.5 w-3.5 text-[#7AB648]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                {module}
+              </div>
+            ))}
+            {course.modules.length > 3 && (
+              <p className="text-xs text-[#444444]">+{course.modules.length - 3} modul lainnya</p>
+            )}
           </div>
-          <Link
-            href={`/courses/${course.slug}`}
-            className="flex items-center gap-1 rounded-full border border-white/12 px-4 py-2 text-sm text-white transition hover:border-amber-300/50 hover:bg-amber-300/5"
-          >
-            Detail
-            <svg className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </Link>
+        )}
+
+        {isComingSoon && (
+          <div className="mt-4 rounded-xl border border-[#F0E8D8] bg-[#FEFBF5] px-4 py-3 text-xs text-[#444444]">
+            🗓️ Estimasi rilis: Q3 2025 — Daftarkan diri ke <span className="font-semibold text-[#2D5016]">waitlist</span> untuk notifikasi lebih awal.
+          </div>
+        )}
+
+        <div className="mt-6 flex items-end justify-between gap-4 border-t border-[#F0E8D8] pt-5">
+          <div>
+            {!isComingSoon ? (
+              <>
+                <div className="flex items-center gap-2 text-xs text-[#444444]">
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  {course.duration}
+                  <svg className="h-3.5 w-3.5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d={formatIcons[course.format] ?? formatIcons.video} />
+                  </svg>
+                  <span className="capitalize">{course.format}</span>
+                </div>
+                <p className="mt-1 text-lg font-extrabold text-[#2D5016]">
+                  {formatter.format(course.price)}
+                </p>
+              </>
+            ) : (
+              <p className="text-sm font-semibold text-[#444444]">Harga belum ditentukan</p>
+            )}
+          </div>
+          {isComingSoon ? (
+            <Link
+              href="/waitlist"
+              className="flex items-center gap-1 rounded-xl bg-[#FFF3D6] px-4 py-2 text-sm font-semibold text-[#5C4813] transition hover:bg-[#F5A62A] hover:text-[#2D5016]"
+            >
+              Waitlist
+            </Link>
+          ) : (
+            <Link
+              href={`/courses/${course.slug}`}
+              className="flex items-center gap-1 rounded-xl border-2 border-[#2D5016] px-4 py-2 text-sm font-semibold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-white"
+            >
+              Detail
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          )}
         </div>
       </div>
     </article>

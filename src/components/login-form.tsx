@@ -37,12 +37,12 @@ export function LoginForm({ redirect }: { redirect: string }) {
   }
 
   return (
-    <div className="rounded-[2rem] border border-white/10 bg-white/5 p-8 shadow-[0_30px_80px_rgba(0,0,0,0.24)]">
+    <div className="rounded-2xl border border-[#F0E8D8] bg-white p-8 shadow-sm">
       <div className="mb-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-300">
+        <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#7AB648]">
           Demo Accounts
         </p>
-        <p className="mt-3 text-sm leading-7 text-slate-300">
+        <p className="mt-3 text-sm leading-7 text-[#444444]">
           admin@kaalupi.dev / admin123, mentor@kaalupi.dev / mentor123,
           student@kaalupi.dev / student123
         </p>
@@ -56,32 +56,36 @@ export function LoginForm({ redirect }: { redirect: string }) {
         className="space-y-5"
       >
         <div>
-          <label className="mb-2 block text-sm text-slate-300">Email</label>
+          <label className="mb-2 block text-sm font-semibold text-[#2D5016]">Email</label>
           <input
             name="email"
             type="email"
             required
-            className="w-full rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-white outline-none transition focus:border-amber-300"
-            placeholder="you@example.com"
+            className="w-full rounded-xl border border-[#F0E8D8] bg-[#FEFBF5] px-4 py-3 text-[#444444] outline-none transition focus:border-[#F5A62A] focus:ring-2 focus:ring-[#F5A62A]/20"
+            placeholder="kamu@example.com"
           />
         </div>
         <div>
-          <label className="mb-2 block text-sm text-slate-300">Password</label>
+          <label className="mb-2 block text-sm font-semibold text-[#2D5016]">Password</label>
           <input
             name="password"
             type="password"
             required
-            className="w-full rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-white outline-none transition focus:border-amber-300"
+            className="w-full rounded-xl border border-[#F0E8D8] bg-[#FEFBF5] px-4 py-3 text-[#444444] outline-none transition focus:border-[#F5A62A] focus:ring-2 focus:ring-[#F5A62A]/20"
             placeholder="••••••••"
           />
         </div>
-        {error ? <p className="text-sm text-rose-300">{error}</p> : null}
+        {error ? (
+          <div className="rounded-xl border border-rose-200 bg-rose-50 p-3">
+            <p className="text-sm font-medium text-rose-700">{error}</p>
+          </div>
+        ) : null}
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-full bg-[linear-gradient(135deg,#f97316,#facc15)] px-5 py-3 font-semibold text-slate-950 transition hover:opacity-90 disabled:opacity-60"
+          className="w-full rounded-xl bg-[#F5A62A] px-5 py-3 font-bold text-[#2D5016] transition hover:opacity-90 disabled:opacity-60"
         >
-          {loading ? "Processing..." : "Login"}
+          {loading ? "Memproses..." : "Login"}
         </button>
       </form>
     </div>

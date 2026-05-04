@@ -9,16 +9,16 @@ const partners = [
 
 export function PartnerLogos() {
   return (
-    <section className="border-t border-white/5">
+    <section className="border-t border-[#F0E8D8]">
       <div className="mx-auto max-w-7xl px-6 py-12">
-        <p className="mb-8 text-center text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+        <p className="mb-8 text-center text-xs font-bold uppercase tracking-[0.3em] text-[#444444]">
           Dipercaya oleh tim teknologi di
         </p>
         <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-8">
           {partners.map((partner) => (
             <div
               key={partner.name}
-              className="flex items-center gap-2 text-slate-500 transition hover:text-slate-300"
+              className="flex items-center gap-2 text-[#444444] transition hover:text-[#2D5016]"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d={partner.icon} />

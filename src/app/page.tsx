@@ -1,9 +1,6 @@
 import Link from "next/link";
 import { CourseCard } from "@/components/course-card";
 import { CourseThumbnail } from "@/components/course-thumbnail";
-import { PartnerLogos } from "@/components/partner-logos";
-import { HeroLearning } from "@/components/illustrations/hero-learning";
-import { CTACommunity } from "@/components/illustrations/cta-community";
 import { audienceTracks, blogPosts, stats, testimonials, valueProps } from "@/lib/data";
 import { getCourses } from "@/lib/content";
 
@@ -36,83 +33,73 @@ const howItWorks = [
 
 export default async function HomePage() {
   const allCourses = await getCourses();
-  const featuredCourses = allCourses.filter((course) => course.featured).slice(0, 3);
-  const spotlightCourse = featuredCourses[0];
+  // Spotlight: tampilkan hanya AI untuk Pemula
+  const spotlightCourse =
+    allCourses.find((c) => c.slug === "ai-untuk-pemula") ??
+    allCourses.find((c) => c.featured) ??
+    allCourses[0];
+  const featuredCourses = allCourses.filter((c) => c.featured).slice(0, 3);
 
   return (
-    <div>
-      {/* HERO - Split Layout with Illustration */}
+    <div className="bg-[#FEFBF5]">
+      {/* ─── HERO ─── */}
       <section className="mx-auto w-full max-w-7xl px-6 pb-16 pt-16 lg:pb-24 lg:pt-24">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-          {/* Left: Text */}
-          <div>
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-amber-300/20 bg-amber-300/5 px-4 py-2">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-300 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-300" />
-              </span>
-              <p className="text-xs font-semibold tracking-[0.2em] text-amber-300">
-                Future-ready IT learning
-              </p>
-            </div>
-
-            <h1 className="text-5xl font-semibold leading-tight text-white md:text-6xl lg:text-7xl">
-              Course IT yang rapi,{" "}
-              <span className="bg-gradient-to-r from-orange-400 to-yellow-300 bg-clip-text text-transparent">
-                built for industry
-              </span>
-            </h1>
-
-            <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">
-              Kaalupi menggabungkan learning path, instructor dashboard, payment
-              ready checkout, dan akses materi berbasis role.
+        <div className="mx-auto max-w-3xl text-center">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#F0E8D8] bg-[#FFF3D6] px-4 py-2">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#F5A62A] opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#F5A62A]" />
+            </span>
+            <p className="text-xs font-bold tracking-[0.2em] text-[#5C4813]">
+              Platform Kursus IT Indonesia
             </p>
-
-            <div className="mt-10 flex flex-wrap gap-4">
-              <Link
-                href="/courses"
-                className="rounded-full bg-gradient-to-r from-orange-500 to-yellow-400 px-8 py-3.5 text-sm font-semibold text-slate-950 shadow-[0_0_24px_rgba(249,115,22,0.3)] transition hover:shadow-[0_0_32px_rgba(249,115,22,0.4)]"
-              >
-                Explore Courses
-              </Link>
-              <Link
-                href="/login"
-                className="rounded-full border border-white/12 px-8 py-3.5 text-sm text-white transition hover:border-white/25 hover:bg-white/5"
-              >
-                Login Dashboard
-              </Link>
-            </div>
-
-            {/* Mini stats under CTA */}
-            <div className="mt-10 flex items-center gap-8">
-              {stats.slice(0, 3).map((item) => (
-                <div key={item.label}>
-                  <p className="text-2xl font-semibold text-white">{item.value}</p>
-                  <p className="text-xs text-slate-500">{item.label}</p>
-                </div>
-              ))}
-            </div>
           </div>
 
-          {/* Right: Illustration */}
-          <div className="relative hidden lg:block">
-            <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-yellow-400/10 rounded-3xl blur-3xl" />
-            <HeroLearning />
+          <h1 className="text-5xl font-extrabold leading-tight text-[#2D5016] md:text-6xl">
+            Kuasai Skill IT yang{" "}
+            <span className="text-[#F5A62A]">Dicari Industri</span>
+          </h1>
+
+          <p className="mt-6 max-w-2xl mx-auto text-lg leading-8 text-[#444444]">
+            Kursus AI, Cyber Security, dan Networking dalam bahasa Indonesia —
+            langsung praktik, langsung kepake.
+          </p>
+
+          <div className="mt-10 flex flex-wrap justify-center gap-4">
+            <Link
+              href="/courses"
+              className="rounded-xl bg-[#F5A62A] px-8 py-3.5 text-sm font-bold text-[#2D5016] shadow-md transition hover:opacity-90"
+            >
+              Lihat Course
+            </Link>
+            <Link
+              href="/about"
+              className="rounded-xl border-2 border-[#2D5016] px-8 py-3.5 text-sm font-bold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-[#FEFBF5]"
+            >
+              Pelajari Lebih Lanjut
+            </Link>
+          </div>
+
+          {/* Stats */}
+          <div className="mt-14 flex flex-wrap justify-center gap-x-12 gap-y-6">
+            {stats.map((item) => (
+              <div key={item.label} className="text-center">
+                <p className="text-2xl font-extrabold text-[#2D5016]">{item.value}</p>
+                <p className="mt-0.5 text-xs text-[#444444]">{item.label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Partner Logos */}
-      <PartnerLogos />
-
-      {/* How It Works */}
-      <section className="border-t border-white/5">
+      {/* ─── HOW IT WORKS ─── */}
+      <section className="border-t border-[#F0E8D8] bg-[#FEFBF5]">
         <div className="mx-auto max-w-7xl px-6 py-16">
           <div className="mx-auto mb-12 max-w-2xl text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-amber-300">
-              How It Works
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">
+              Cara Belajar
             </p>
-            <h2 className="mt-3 text-3xl font-semibold text-white">
+            <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016]">
               4 langkah mulai belajar
             </h2>
           </div>
@@ -120,19 +107,18 @@ export default async function HomePage() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {howItWorks.map((step, index) => (
               <div key={step.step} className="relative">
-                {/* Connector line */}
                 {index < howItWorks.length - 1 && (
-                  <div className="absolute right-0 top-12 hidden h-px w-6 -translate-y-1/2 bg-gradient-to-r from-transparent to-white/10 lg:block" />
+                  <div className="absolute right-0 top-12 hidden h-px w-6 -translate-y-1/2 bg-[#F0E8D8] lg:block" />
                 )}
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-white/15 hover:bg-white/[0.08]">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500/20 to-yellow-400/20">
-                    <svg className="h-6 w-6 text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <div className="rounded-2xl border border-[#F0E8D8] bg-white p-6 transition hover:border-[#F5A62A] hover:shadow-sm">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[#FFF3D6]">
+                    <svg className="h-6 w-6 text-[#F5A62A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d={step.icon} />
                     </svg>
                   </div>
-                  <div className="mb-2 text-xs font-bold text-amber-300/60">Step {step.step}</div>
-                  <h3 className="text-lg font-semibold text-white">{step.title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-400">{step.description}</p>
+                  <div className="mb-2 text-xs font-bold text-[#7AB648]">Step {step.step}</div>
+                  <h3 className="text-lg font-bold text-[#2D5016]">{step.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-[#444444]">{step.description}</p>
                 </div>
               </div>
             ))}
@@ -140,14 +126,14 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Value Props */}
-      <section className="border-t border-white/5">
+      {/* ─── VALUE PROPS ─── */}
+      <section className="border-t border-[#F0E8D8] bg-[#FEFBF5]">
         <div className="mx-auto max-w-7xl px-6 py-16">
           <div className="mx-auto mb-12 max-w-2xl text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-amber-300">
-              Why Kaalupi
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">
+              Kenapa Kaalupi
             </p>
-            <h2 className="mt-3 text-3xl font-semibold text-white">
+            <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016]">
               Bukan cuma nonton video
             </h2>
           </div>
@@ -156,38 +142,38 @@ export default async function HomePage() {
             {valueProps.map((item, index) => (
               <div
                 key={item}
-                className="group flex items-start gap-4 rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-white/15 hover:bg-white/[0.08]"
+                className="flex items-start gap-4 rounded-2xl border border-[#F0E8D8] bg-white p-6 transition hover:border-[#F5A62A] hover:shadow-sm"
               >
-                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500/20 to-yellow-400/20 text-amber-300">
+                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-[#FFF3D6] font-bold text-[#F5A62A]">
                   {index + 1}
                 </div>
-                <p className="pt-1 text-sm leading-7 text-slate-300">{item}</p>
+                <p className="pt-1 text-sm leading-7 text-[#444444]">{item}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Featured Courses */}
-      <section className="border-t border-white/5">
+      {/* ─── FEATURED COURSES ─── */}
+      <section className="border-t border-[#F0E8D8] bg-[#FEFBF5]">
         <div className="mx-auto max-w-7xl px-6 py-16">
           <div className="flex items-end justify-between gap-6">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-amber-300">
-                Featured Courses
+              <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">
+                Course Tersedia
               </p>
-              <h2 className="mt-3 text-3xl font-semibold text-white md:text-4xl">
+              <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016] md:text-4xl">
                 Paket belajar unggulan
               </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400">
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-[#444444]">
                 Jalur karier IT yang paling dicari dengan kurikulum terstruktur.
               </p>
             </div>
             <Link
               href="/courses"
-              className="hidden items-center gap-2 rounded-full border border-white/12 px-5 py-2.5 text-sm text-white transition hover:border-white/25 hover:bg-white/5 md:flex"
+              className="hidden items-center gap-2 rounded-full border-2 border-[#2D5016] px-5 py-2.5 text-sm font-semibold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-[#FEFBF5] md:flex"
             >
-              View all
+              Lihat semua
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
               </svg>
@@ -202,12 +188,12 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Featured Course Spotlight */}
+      {/* ─── COURSE SPOTLIGHT (AI untuk Pemula) ─── */}
       {spotlightCourse && (
-        <section className="border-t border-white/5">
+        <section className="border-t border-[#F0E8D8] bg-[#FEFBF5]">
           <div className="mx-auto max-w-7xl px-6 py-16">
-            <div className="grid overflow-hidden rounded-3xl border border-white/10 bg-white/5 lg:grid-cols-2">
-              {/* Left: Thumbnail */}
+            <div className="grid overflow-hidden rounded-3xl border border-[#F0E8D8] bg-white lg:grid-cols-2">
+              {/* Thumbnail */}
               <div className="relative">
                 <CourseThumbnail
                   title={spotlightCourse.title}
@@ -216,34 +202,37 @@ export default async function HomePage() {
                 />
               </div>
 
-              {/* Right: Content */}
+              {/* Content */}
               <div className="p-8 md:p-12">
-                <div className="flex items-center gap-2">
-                  <span className="rounded-full bg-gradient-to-r from-orange-500 to-yellow-400 px-3 py-1 text-xs font-bold text-slate-950">
-                    Featured
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="rounded-full bg-[#2D5016] px-3 py-1 text-xs font-bold text-[#F5A62A]">
+                    Best Seller
                   </span>
-                  <span className="rounded-full bg-white/8 px-3 py-1 text-xs text-slate-300">
+                  <span className="rounded-full bg-[#FFF3D6] px-3 py-1 text-xs font-semibold text-[#5C4813]">
                     {spotlightCourse.category}
+                  </span>
+                  <span className="rounded-full bg-[#FFF3D6] px-3 py-1 text-xs font-semibold text-[#5C4813]">
+                    {spotlightCourse.level}
                   </span>
                 </div>
 
-                <h2 className="mt-4 text-3xl font-semibold text-white md:text-4xl">
+                <h2 className="mt-4 text-3xl font-extrabold text-[#2D5016] md:text-4xl">
                   {spotlightCourse.title}
                 </h2>
 
-                <p className="mt-4 text-base leading-7 text-slate-300">
+                <p className="mt-4 text-base leading-7 text-[#444444]">
                   {spotlightCourse.hero}
                 </p>
 
                 <div className="mt-6 space-y-3">
                   {spotlightCourse.outcomes.slice(0, 3).map((outcome, index) => (
                     <div key={index} className="flex items-start gap-3">
-                      <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-emerald-500/20 mt-0.5">
-                        <svg className="h-3 w-3 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#7AB648]/20 mt-0.5">
+                        <svg className="h-3 w-3 text-[#7AB648]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
                       </div>
-                      <p className="text-sm text-slate-300">{outcome}</p>
+                      <p className="text-sm text-[#444444]">{outcome}</p>
                     </div>
                   ))}
                 </div>
@@ -251,32 +240,41 @@ export default async function HomePage() {
                 <div className="mt-8 flex flex-wrap items-center gap-4">
                   <Link
                     href={`/courses/${spotlightCourse.slug}`}
-                    className="rounded-full bg-gradient-to-r from-orange-500 to-yellow-400 px-6 py-3 text-sm font-semibold text-slate-950 shadow-[0_0_24px_rgba(249,115,22,0.3)]"
+                    className="rounded-xl bg-[#F5A62A] px-6 py-3 text-sm font-bold text-[#2D5016] transition hover:opacity-90"
                   >
                     Lihat Detail Course
                   </Link>
-                  <div className="flex items-center gap-4 text-sm text-slate-400">
-                    <span>{spotlightCourse.duration}</span>
-                    <span className="text-slate-600">•</span>
-                    <span className="text-lg font-semibold text-amber-300">
+                  <div className="flex flex-col">
+                    <span className="text-xl font-extrabold text-[#2D5016]">
                       Rp {spotlightCourse.price.toLocaleString("id-ID")}
                     </span>
+                    {spotlightCourse.slug === "ai-untuk-pemula" && (
+                      <span className="text-xs text-[#444444] line-through">Rp 299.000</span>
+                    )}
+                    <span className="text-xs text-[#7AB648] font-semibold">{spotlightCourse.duration}</span>
                   </div>
                 </div>
+
+                <Link
+                  href="/waitlist"
+                  className="mt-4 inline-block rounded-xl border-2 border-[#2D5016] px-6 py-2.5 text-sm font-bold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-[#FEFBF5]"
+                >
+                  Daftar Waitlist Early Bird →
+                </Link>
               </div>
             </div>
           </div>
         </section>
       )}
 
-      {/* Audience Tracks */}
-      <section className="border-t border-white/5">
+      {/* ─── AUDIENCE TRACKS ─── */}
+      <section className="border-t border-[#F0E8D8] bg-[#FEFBF5]">
         <div className="mx-auto max-w-7xl px-6 py-16">
           <div className="mx-auto mb-12 max-w-2xl text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-amber-300">
-              Career Tracks
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">
+              Jalur Karir
             </p>
-            <h2 className="mt-3 text-3xl font-semibold text-white">
+            <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016]">
               Pilih jalur karirmu
             </h2>
           </div>
@@ -285,9 +283,9 @@ export default async function HomePage() {
             {audienceTracks.map((track, index) => (
               <article
                 key={track.title}
-                className="group rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-white/15 hover:bg-white/[0.08]"
+                className="rounded-2xl border border-[#F0E8D8] bg-white p-6 transition hover:border-[#F5A62A] hover:shadow-sm"
               >
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500/20 to-yellow-400/20 text-amber-300">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[#FFF3D6] text-[#F5A62A]">
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     {index === 0 && <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />}
                     {index === 1 && <path strokeLinecap="round" strokeLinejoin="round" d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728m-9.9-2.829a5 5 0 010-7.07m7.072 0a5 5 0 010 7.07M13 12a1 1 0 11-2 0 1 1 0 012 0z" />}
@@ -295,22 +293,22 @@ export default async function HomePage() {
                     {index === 3 && <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />}
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-white">{track.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-slate-400">{track.description}</p>
+                <h3 className="text-lg font-bold text-[#2D5016]">{track.title}</h3>
+                <p className="mt-3 text-sm leading-7 text-[#444444]">{track.description}</p>
               </article>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="border-t border-white/5">
+      {/* ─── TESTIMONIALS ─── */}
+      <section className="border-t border-[#F0E8D8] bg-[#FEFBF5]">
         <div className="mx-auto max-w-7xl px-6 py-16">
           <div className="mx-auto mb-12 max-w-2xl text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-amber-300">
-              Social Proof
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">
+              Kata Mereka
             </p>
-            <h2 className="mt-3 text-3xl font-semibold text-white">
+            <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016]">
               Apa kata mereka
             </h2>
           </div>
@@ -319,23 +317,23 @@ export default async function HomePage() {
             {testimonials.map((item) => (
               <article
                 key={item.name}
-                className="rounded-2xl border border-white/10 bg-white/5 p-6"
+                className="rounded-2xl border border-[#F0E8D8] bg-white p-6"
               >
                 <div className="mb-4 flex gap-1">
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <svg key={i} className="h-4 w-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                    <svg key={i} className="h-4 w-4 text-[#F5A62A]" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                     </svg>
                   ))}
                 </div>
-                <p className="text-sm leading-7 text-slate-300">&ldquo;{item.quote}&rdquo;</p>
-                <div className="mt-6 flex items-center gap-3 border-t border-white/10 pt-4">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-yellow-400 text-xs font-bold text-slate-950">
+                <p className="text-sm leading-7 text-[#444444]">&ldquo;{item.quote}&rdquo;</p>
+                <div className="mt-6 flex items-center gap-3 border-t border-[#F0E8D8] pt-4">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#2D5016] text-xs font-bold text-[#F5A62A]">
                     {item.name.charAt(0)}
                   </div>
                   <div>
-                    <p className="font-semibold text-white">{item.name}</p>
-                    <p className="text-xs text-slate-400">{item.role}</p>
+                    <p className="font-bold text-[#2D5016]">{item.name}</p>
+                    <p className="text-xs text-[#444444]">{item.role}</p>
                   </div>
                 </div>
               </article>
@@ -344,23 +342,23 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Blog */}
-      <section className="border-t border-white/5">
+      {/* ─── BLOG ─── */}
+      <section className="border-t border-[#F0E8D8] bg-[#FEFBF5]">
         <div className="mx-auto max-w-7xl px-6 py-16">
           <div className="flex items-end justify-between gap-6">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-amber-300">
-                Latest Articles
+              <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">
+                Artikel Terbaru
               </p>
-              <h2 className="mt-3 text-3xl font-semibold text-white">
+              <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016]">
                 Insight seputar belajar IT
               </h2>
             </div>
             <Link
               href="/blog"
-              className="hidden items-center gap-2 rounded-full border border-white/12 px-5 py-2.5 text-sm text-white transition hover:border-white/25 hover:bg-white/5 md:flex"
+              className="hidden items-center gap-2 rounded-full border-2 border-[#2D5016] px-5 py-2.5 text-sm font-semibold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-[#FEFBF5] md:flex"
             >
-              Go to blog
+              Ke Blog
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
               </svg>
@@ -371,23 +369,23 @@ export default async function HomePage() {
             {blogPosts.slice(0, 3).map((post) => (
               <article
                 key={post.slug}
-                className="group rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-white/15 hover:bg-white/[0.08]"
+                className="group rounded-2xl border border-[#F0E8D8] bg-white p-6 transition hover:border-[#F5A62A] hover:shadow-sm"
               >
-                <div className="flex items-center gap-3 text-xs text-slate-500">
-                  <span className="rounded-full bg-white/5 px-2.5 py-1 text-amber-300">
+                <div className="flex items-center gap-3 text-xs text-[#444444]">
+                  <span className="rounded-full bg-[#FFF3D6] px-2.5 py-1 font-semibold text-[#5C4813]">
                     {post.category}
                   </span>
                   <span>{new Date(post.date).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</span>
                 </div>
-                <h3 className="mt-4 text-xl font-semibold text-white group-hover:text-amber-200 transition">
+                <h3 className="mt-4 text-xl font-bold text-[#2D5016] group-hover:text-[#F5A62A] transition">
                   {post.title}
                 </h3>
-                <p className="mt-3 text-sm leading-7 text-slate-400">{post.excerpt}</p>
+                <p className="mt-3 text-sm leading-7 text-[#444444]">{post.excerpt}</p>
                 <Link
                   href={`/blog/${post.slug}`}
-                  className="mt-6 inline-flex items-center gap-2 text-sm text-white transition hover:text-amber-300"
+                  className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#2D5016] transition hover:text-[#F5A62A]"
                 >
-                  Read article
+                  Baca artikel
                   <svg className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                   </svg>
@@ -398,42 +396,30 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section with Illustration */}
-      <section className="border-t border-white/5">
+      {/* ─── CTA ─── */}
+      <section className="border-t border-[#F0E8D8] bg-[#FEFBF5]">
         <div className="mx-auto max-w-7xl px-6 py-16">
-          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-orange-500/10 via-yellow-400/5 to-transparent">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(249,115,22,0.15),_transparent_50%)]" />
-
-            <div className="grid items-center gap-8 lg:grid-cols-[1fr_auto]">
-              {/* Text */}
-              <div className="p-8 md:p-12">
-                <h2 className="text-3xl font-semibold text-white md:text-4xl">
-                  Siap naik level?
-                </h2>
-                <p className="mt-4 max-w-xl text-base leading-8 text-slate-300">
-                  Mulai dari course yang paling relevan dengan karirmu sekarang. Akses materi terstruktur,
-                  instructor berpengalaman, dan komunitas yang supportif.
-                </p>
-                <div className="mt-8 flex flex-wrap gap-4">
-                  <Link
-                    href="/courses"
-                    className="rounded-full bg-gradient-to-r from-orange-500 to-yellow-400 px-8 py-3.5 text-sm font-semibold text-slate-950 shadow-[0_0_24px_rgba(249,115,22,0.3)] transition hover:shadow-[0_0_32px_rgba(249,115,22,0.4)]"
-                  >
-                    Mulai Sekarang
-                  </Link>
-                  <Link
-                    href="/about"
-                    className="rounded-full border border-white/12 px-8 py-3.5 text-sm text-white transition hover:border-white/25 hover:bg-white/5"
-                  >
-                    Pelajari Lebih Lanjut
-                  </Link>
-                </div>
-              </div>
-
-              {/* Illustration */}
-              <div className="hidden w-80 lg:block">
-                <CTACommunity />
-              </div>
+          <div className="relative overflow-hidden rounded-3xl border border-[#F0E8D8] bg-[#2D5016] p-8 md:p-12 text-center">
+            <h2 className="text-3xl font-extrabold text-white md:text-4xl">
+              Siap naik level?
+            </h2>
+            <p className="mt-4 max-w-xl mx-auto text-base leading-8 text-white/80">
+              Mulai dari course yang paling relevan dengan karirmu sekarang. Akses materi
+              terstruktur, instructor berpengalaman, dan komunitas yang supportif.
+            </p>
+            <div className="mt-8 flex flex-wrap justify-center gap-4">
+              <Link
+                href="/courses"
+                className="rounded-xl bg-[#F5A62A] px-8 py-3.5 text-sm font-bold text-[#2D5016] transition hover:opacity-90"
+              >
+                Mulai Sekarang
+              </Link>
+              <Link
+                href="/about"
+                className="rounded-xl border-2 border-white/40 px-8 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10"
+              >
+                Pelajari Lebih Lanjut
+              </Link>
             </div>
           </div>
         </div>

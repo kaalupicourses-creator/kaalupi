@@ -11,18 +11,17 @@ function slugify(value: string) {
 }
 
 export async function POST(request: Request) {
-  const { userId, sessionClaims } = await auth();
+  const { userId } = await auth();
   if (!userId) {
     return NextResponse.json({ error: "Akses ditolak." }, { status: 401 });
   }
 
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const clerk = await clerkClient();
+  const user = await clerk.users.getUser(userId);
+  const role = (user.publicMetadata as { role?: string })?.role;
   if (role !== "admin" && role !== "instructor") {
     return NextResponse.json({ error: "Hanya admin dan instructor yang bisa publish course." }, { status: 403 });
   }
-
-  const clerk = await clerkClient();
-  const user = await clerk.users.getUser(userId);
   const userEmail = user.primaryEmailAddress?.emailAddress ?? "";
 
   const body = (await request.json()) as Record<string, string>;
