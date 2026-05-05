@@ -3,7 +3,8 @@ import type { Course } from "@/lib/data";
 
 export async function getCourses(): Promise<Course[]> {
   const dbCourses = await getCoursesFromDb();
-  return dbCourses as Course[];
+  const allCourses = dbCourses as Course[];
+  return allCourses.filter((c) => c.is_published !== false);
 }
 
 export async function getCourseBySlug(slug: string): Promise<Course | null> {
