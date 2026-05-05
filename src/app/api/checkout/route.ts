@@ -8,7 +8,6 @@ export async function POST(request: Request) {
   // Step 1 — Auth check
   const { userId } = await auth();
   if (!userId) {
-    console.log("[API/checkout] ❌ Unauthenticated request");
     return NextResponse.json({ error: "Silakan login terlebih dahulu." }, { status: 401 });
   }
 
@@ -24,16 +23,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Slug course wajib diisi." }, { status: 400 });
   }
 
-  console.log("[API/checkout] Step 2 — slug:", body.slug, "isFree:", body.isFree, "voucher:", body.voucherCode);
-
   // Step 3 — Get course from content (MDX seed data, falls back to Supabase)
   const course = await getCourseBySlug(body.slug);
   if (!course) {
-    console.log("[API/checkout] ❌ Course not found:", body.slug);
     return NextResponse.json({ error: "Course tidak ditemukan." }, { status: 404 });
   }
-
-  console.log("[API/checkout] Step 3 — course found:", course.title);
 
   // Step 4 — Get user info from Clerk
   let userEmail: string;
@@ -48,8 +42,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Gagal mengambil data pengguna." }, { status: 500 });
   }
 
-  console.log("[API/checkout] Step 4 — userEmail:", userEmail);
-
   // Step 5 — Check existing enrollment (non-blocking if Supabase unavailable)
   try {
     const { data: existing } = await supabase
@@ -61,12 +53,10 @@ export async function POST(request: Request) {
       .single();
 
     if (existing) {
-      console.log("[API/checkout] User already enrolled:", userEmail, body.slug);
       return NextResponse.json({ error: "Anda sudah memiliki akses ke course ini." }, { status: 400 });
     }
   } catch (err) {
     // Non-fatal: if enrollments table missing, proceed
-    console.warn("[API/checkout] ⚠️ Enrollment check skipped (table may not exist):", err);
   }
 
   // Step 6 — Handle free course (skip payment)
@@ -74,7 +64,6 @@ export async function POST(request: Request) {
   const isFreeCourse = body.isFree || course.is_free || amount === 0;
   
   if (isFreeCourse) {
-    console.log("[API/checkout] Free course — creating direct enrollment");
     try {
       const { error: enrollError } = await supabase
         .from("enrollments")
@@ -83,16 +72,14 @@ export async function POST(request: Request) {
           course_slug: body.slug,
           status: "active",
         });
-      
+       
       if (enrollError) {
         console.error("[API/checkout] Enrollment error:", enrollError);
-      } else {
-        console.log("[API/checkout] ✅ Free enrollment created");
       }
     } catch (err) {
-      console.warn("[API/checkout] Enrollment exception:", err);
+      // Enrollment exception
     }
-    
+     
     return NextResponse.json({ success: true, free: true });
   }
 
@@ -126,14 +113,12 @@ export async function POST(request: Request) {
             .from("vouchers")
             .update({ used_count: voucher.used_count + 1 })
             .eq("code", body.voucherCode);
-            
-          console.log("[API/checkout] Voucher applied — new amount:", finalAmount);
-        }
-      }
-    } catch (err) {
-      console.warn("[API/checkout] Voucher validation skipped:", err);
-    }
-  }
+         }
+       }
+     } catch (err) {
+       // Voucher validation skipped
+     }
+   }
 
   // Step 8 — Create order in Supabase
   const orderId = `kaalupi-${body.slug}-${Date.now()}`;
@@ -154,17 +139,13 @@ export async function POST(request: Request) {
       if (orderError.code !== "42P01") {
         return NextResponse.json({ error: `Gagal membuat order: ${orderError.message}` }, { status: 500 });
       }
-      console.warn("[API/checkout] ⚠️ Orders table missing — skipping DB order (dev mode)");
-    } else {
-      console.log("[API/checkout] Step 8 — order created:", orderId, "amount:", finalAmount);
     }
   } catch (err) {
-    console.warn("[API/checkout] ⚠️ Order creation exception (continuing):", err);
+    // Order creation exception
   }
 
   // Step 9 — Create Midtrans Snap token with installments enabled
   try {
-    console.log("[API/checkout] Step 9 — creating Midtrans transaction...");
     const snap = await createMidtransTransaction({
       orderId,
       amount: finalAmount,
@@ -173,7 +154,6 @@ export async function POST(request: Request) {
       enableInstallments: true,
     });
 
-    console.log("[API/checkout] ✅ Snap token received");
     return NextResponse.json({ snapToken: snap.token });
   } catch (snapError) {
     const msg = snapError instanceof Error ? snapError.message : String(snapError);

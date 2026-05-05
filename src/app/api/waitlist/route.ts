@@ -15,11 +15,8 @@ async function sendNotificationEmail(data: Required<WaitlistBody>) {
 
   // Skip email if not configured (doesn't break registration)
   if (!user || !pass) {
-    console.warn("[Waitlist] Email env vars missing — notifikasi dilewati.");
     return;
   }
-
-  console.log(`[Waitlist Email] Mencoba kirim ke ${user} dari ${user}`);
 
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -27,10 +24,6 @@ async function sendNotificationEmail(data: Required<WaitlistBody>) {
     secure: true,
     auth: { user, pass },
   });
-
-  // Verifikasi koneksi SMTP
-  await transporter.verify();
-  console.log("[Waitlist Email] SMTP terverifikasi ✅");
 
   await transporter.sendMail({
     from: `"Kaalupi Waitlist" <${user}>`,
@@ -91,8 +84,6 @@ export async function POST(request: Request) {
   sendNotificationEmail({ nama, email, whatsapp, tipe_user }).catch((err) => {
     console.error("[Waitlist] Email notification error:", err);
   });
-
-  console.log(`[Waitlist] ✅ Registered: ${nama} (${email}) — ${tipe_user}`);
 
   return NextResponse.json({ success: true });
 }

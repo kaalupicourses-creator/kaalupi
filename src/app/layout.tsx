@@ -24,6 +24,8 @@ export const metadata: Metadata = {
   keywords: ["course IT", "belajar AI", "programming Indonesia", "cyber security", "network engineer", "AI tools", "career platform"],
   icons: {
     icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
   },
   openGraph: {
     title: "Kaalupi | AI-First Career Platform Indonesia",

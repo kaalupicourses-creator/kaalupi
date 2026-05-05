@@ -43,26 +43,7 @@ export const siteConfig = {
   address: "Bogor, Indonesia",
 };
 
-export const demoUsers: DemoUser[] = [
-  {
-    name: "Raka Putra",
-    email: "admin@kaalupi.dev",
-    password: "admin123",
-    role: "admin",
-  },
-  {
-    name: "Nadia Prameswari",
-    email: "mentor@kaalupi.dev",
-    password: "mentor123",
-    role: "instructor",
-  },
-  {
-    name: "Dimas Akbar",
-    email: "student@kaalupi.dev",
-    password: "student123",
-    role: "student",
-  },
-];
+export const demoUsers: DemoUser[] = [];
 
 export const stats = [
   { label: "Course Aktif", value: "7" },
