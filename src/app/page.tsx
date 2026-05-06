@@ -323,26 +323,15 @@ export default async function HomePage() {
               </div>
 
             <div className="overflow-hidden rounded-3xl border-2 border-[#F5A62A]/20 bg-white shadow-xl lg:grid lg:grid-cols-2 hover-lift">
-              {/* Thumbnail - with gradient overlay */}
-              <div className="relative min-h-[300px] md:min-h-[400px]">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#2D5016]/80 to-[#F5A62A]/60 z-10 flex items-center justify-center p-8">
-                  <div className="text-center text-white">
-                    <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm">
-                      <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714a2.25 2.25 0 00.659 1.591L19 14.5" />
-                      </svg>
-                    </div>
-                    <h3 className="text-2xl font-extrabold">{spotlightCourse.title}</h3>
-                    <p className="mt-2 text-sm text-white/80">Course Perdana Kaalupi</p>
-                  </div>
-                </div>
-                <CourseThumbnail
-                  title={spotlightCourse.title}
-                  category={spotlightCourse.category}
-                  className="h-full w-full object-cover"
-                  large={true}
-                />
-              </div>
+              {/* Thumbnail */}
+               <div className="relative min-h-[300px] md:min-h-[400px]">
+                 <CourseThumbnail
+                   title={spotlightCourse.title}
+                   category={spotlightCourse.category}
+                   className="h-full w-full object-cover"
+                   large={true}
+                 />
+               </div>
 
               {/* Content */}
               <div className="flex flex-col justify-center p-8 md:p-12">
