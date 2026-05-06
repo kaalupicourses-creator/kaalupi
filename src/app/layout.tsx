@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Analytics } from "@vercel/analytics/next";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeaderClient } from "@/components/site-header";
 import { MidtransProvider } from "@/components/midtrans-provider";
@@ -69,6 +70,7 @@ export default function RootLayout({
             <SiteFooter />
           </div>
           <MidtransProvider />
+          <Analytics />
         </body>
       </html>
     </ClerkProvider>
