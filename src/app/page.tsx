@@ -571,10 +571,10 @@ export default async function HomePage() {
             <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-[#F5A62A]/10" />
             <div className="absolute -left-16 -bottom-16 h-48 w-48 rounded-full bg-[#7AB648]/10" />
 
-            <h2 className="relative text-3xl font-extrabold text-white md:text-4xl">
+            <h2 className="relative text-3xl font-extrabold text-white md:text-4xl" style={{color: 'white'}}>
               Masih Ragu? Coba Gratis Dulu
             </h2>
-            <p className="relative mt-4 max-w-xl mx-auto text-base leading-8 text-white">
+            <p className="relative mt-4 max-w-xl mx-auto text-base leading-8" style={{color: 'white'}}>
               Ngapain beli kalau belum yakin? Coba course <strong>AI untuk Pemula</strong> gratis.
               Pas udah ngerasa cocok, lanjut ke track lainnya. Garansi uang kembali 14 hari.
             </p>
