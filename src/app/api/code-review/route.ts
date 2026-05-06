@@ -61,38 +61,38 @@ async function handleOpenAIReview(
   const apiKey = process.env.OPENAI_API_KEY!;
 
   // Build conversation history
-  const systemPrompt = `You are an expert code reviewer. Analyze the submitted code and have a conversation with the user to understand context better.
+  const systemPrompt = `Anda adalah ahli code reviewer. Analisis kode yang dikirim dan lakukan percakapan dengan user untuk memahami konteks dengan lebih baik.
 
-Your goals:
-1. Ask RELEVANT questions based on what you see in the code (not generic questions)
-2. Identify potential bugs, issues, or improvements
-3. Provide clear explanations
+Tujuan Anda:
+1. Ajukan pertanyaan yang RELEVAN berdasarkan apa yang Anda lihat di kode (bukan pertanyaan generik)
+2. Identifikasi potensi bug, masalah, atau perbaikan
+3. Berikan penjelasan yang jelas
 
-When asking questions, ALWAYS format your response as JSON:
+Saat mengajukan pertanyaan, SELALU format respons Anda sebagai JSON:
 {
   "type": "question",
-  "question": "Your question here?",
+  "question": "Pertanyaan Anda di sini?",
   "options": [
-    {"label": "Option text", "value": "option_value"},
+    {"label": "Teks opsi", "value": "nilai_opsi"},
     ...
   ],
   "multiSelect": false
 }
 
-When you have enough context and can provide a full review, respond with JSON:
+Saat Anda sudah punya cukup konteks dan bisa memberikan review lengkap, respons dengan JSON:
 {
   "type": "result",
   "result": {
-    "summary": "Brief summary",
-    "explanation": "Detailed explanation of how the code works",
-    "bugs": ["list of potential bugs"],
-    "suggestions": ["list of suggestions"],
-    "improvements": ["list of improvements"],
+    "summary": "Ringkasan singkat",
+    "explanation": "Penjelasan detail cara kerja kode",
+    "bugs": ["daftar potensi bug"],
+    "suggestions": ["daftar saran"],
+    "improvements": ["daftar pengembangan"],
     "codeQuality": 85
   }
 }
 
-Keep questions SHORT and SPECIFIC to the code. Don't ask about language (detect it from code). Ask about purpose, edge cases, or specific patterns you notice.`;
+Buat pertanyaan yang SINGKAT dan SPESIFIK untuk kode tersebut. Jangan tanya bahasa (deteksi dari kode). Tanya tentang tujuan, edge cases, atau pola spesifik yang Anda perhatikan.`;
 
   const openaiMessages: Message[] = [{ role: "system", content: systemPrompt }];
 
@@ -100,7 +100,7 @@ Keep questions SHORT and SPECIFIC to the code. Don't ask about language (detect 
   if (messages.length === 0) {
     openaiMessages.push({
       role: "user",
-      content: `Please review this code:\n\n\`\`\`\n${code}\n\`\`\`\n\nAdditional context: ${description || "None"}`,
+      content: `Tolong review kode ini:\n\n\`\`\`\n${code}\n\`\`\`\n\nKonteks tambahan: ${description || "Tidak ada"}`,
     });
   } else {
     // Add conversation history
@@ -150,12 +150,12 @@ Keep questions SHORT and SPECIFIC to the code. Don't ask about language (detect 
     return NextResponse.json({
       nextQuestion: {
         id: `q_fallback_${Date.now()}`,
-        question: "I notice some things in your code. What specific aspect would you like me to focus on?",
+        question: "Saya melihat beberapa hal dalam kode Anda. Aspek apa yang ingin Anda fokuskan?",
         options: [
-          { label: "Explain how the code works", value: "explain" },
-          { label: "Check for bugs", value: "bugs" },
-          { label: "Suggest improvements", value: "improve" },
-          { label: "All of the above", value: "all" },
+          { label: "Jelaskan cara kerja kode", value: "explain" },
+          { label: "Cek bug", value: "bugs" },
+          { label: "Saran perbaikan", value: "improve" },
+          { label: "Semua di atas", value: "all" },
         ],
         multiSelect: true,
       },
@@ -230,17 +230,17 @@ type AnalysisResult = ReturnType<typeof analyzeCode>;
 function generateFirstQuestion(code: string, analysis: AnalysisResult): Question {
   const questions: Question[] = [];
 
-  // Question based on code patterns
+  // Pertanyaan berdasarkan pola kode
   if (analysis.hasAsync) {
     questions.push({
       id: "async_context",
-      question: "I see async/await in your code. What's this asynchronous operation trying to accomplish?",
+      question: "Saya melihat async/await di kode Anda. Apa yang coba dicapai dari operasi asynchronous ini?",
       options: [
-        { label: "Fetching data from API", value: "fetch_api" },
-        { label: "Reading/writing files", value: "file_io" },
-        { label: "Database operation", value: "database" },
-        { label: "User interaction/event", value: "user_event" },
-        { label: "Other", value: "other" },
+        { label: "Mengambil data dari API", value: "fetch_api" },
+        { label: "Membaca/menulis file", value: "file_io" },
+        { label: "Operasi database", value: "database" },
+        { label: "Interaksi user/event", value: "user_event" },
+        { label: "Lainnya", value: "other" },
       ],
     });
   }
@@ -248,12 +248,12 @@ function generateFirstQuestion(code: string, analysis: AnalysisResult): Question
   if (analysis.hasLoops) {
     questions.push({
       id: "loop_purpose",
-      question: "I notice loops in your code. How large can the data set be?",
+      question: "Saya melihat loop di kode Anda. Seberapa besar dataset yang diolah?",
       options: [
-        { label: "Small (under 100 items)", value: "small" },
-        { label: "Medium (100-10,000 items)", value: "medium" },
-        { label: "Large (10,000+ items)", value: "large" },
-        { label: "Unbounded/user input", value: "unbounded" },
+        { label: "Kecil (di bawah 100 item)", value: "small" },
+        { label: "Sedang (100-10.000 item)", value: "medium" },
+        { label: "Besar (10.000+ item)", value: "large" },
+        { label: "Tidak terbatas/input user", value: "unbounded" },
       ],
     });
   }
@@ -261,12 +261,12 @@ function generateFirstQuestion(code: string, analysis: AnalysisResult): Question
   if (analysis.hasDOM) {
     questions.push({
       id: "dom_purpose",
-      question: "This looks like browser code. What framework are you using (if any)?",
+      question: "Ini terlihat seperti kode browser. Framework apa yang Anda gunakan (jika ada)?",
       options: [
-        { label: "Vanilla JS (no framework)", value: "vanilla" },
+        { label: "Vanila JS (tanpa framework)", value: "vanila" },
         { label: "React / Next.js", value: "react" },
         { label: "Vue", value: "vue" },
-        { label: "Other framework", value: "other" },
+        { label: "Framework lainnya", value: "other" },
       ],
     });
   }
@@ -274,11 +274,11 @@ function generateFirstQuestion(code: string, analysis: AnalysisResult): Question
   if (analysis.hasDatabase) {
     questions.push({
       id: "db_context",
-      question: "I see database operations. Is this using an ORM or raw queries?",
+      question: "Saya melihat operasi database. Apakah menggunakan ORM atau raw queries?",
       options: [
-        { label: "ORM (Prisma, Mongoose, etc)", value: "orm" },
+        { label: "ORM (Prisma, Mongoose, dll)", value: "orm" },
         { label: "Raw SQL queries", value: "raw_sql" },
-        { label: "Both", value: "both" },
+        { label: "Keduanya", value: "both" },
       ],
     });
   }
@@ -286,75 +286,75 @@ function generateFirstQuestion(code: string, analysis: AnalysisResult): Question
   if (analysis.hasFetch) {
     questions.push({
       id: "api_error_handling",
-      question: "For the API calls in your code, how do you want to handle errors?",
+      question: "Untuk pemanggilan API di kode ini, bagaimana Anda ingin menangani error?",
       options: [
-        { label: "Show user-friendly message", value: "user_message" },
-        { label: "Retry automatically", value: "retry" },
-        { label: "Log and ignore", value: "log_ignore" },
+        { label: "Tampilkan pesan user-friendly", value: "user_message" },
+        { label: "Coba lagi otomatis", value: "retry" },
+        { label: "Log dan abaikan", value: "log_ignore" },
         { label: "Throw/Crash", value: "throw" },
       ],
     });
   }
 
-  // Default question if no specific pattern detected
+  // Pertanyaan default kalau nggak ada pola yang terdeteksi
   if (questions.length === 0) {
     questions.push({
       id: "general_purpose",
-      question: "What's the main purpose of this code?",
+      question: "Apa tujuan utama dari kode ini?",
       options: [
-        { label: "Data processing/manipulation", value: "data" },
-        { label: "User interface/interaction", value: "ui" },
-        { label: "API/backend logic", value: "backend" },
-        { label: "Utility/helper function", value: "utility" },
-        { label: "Learning/practice code", value: "learning" },
+        { label: "Pemrosesan/manipulasi data", value: "data" },
+        { label: "User interface/interaksi", value: "ui" },
+        { label: "Logika API/backend", value: "backend" },
+        { label: "Fungsi utility/helper", value: "utility" },
+        { label: "Kode belajar/latihan", value: "learning" },
       ],
     });
   }
 
-  // Return the most relevant question based on analysis
+  // Return pertanyaan yang paling relevan
   return questions[0];
 }
 
 function generateFollowUpQuestion(code: string, analysis: AnalysisResult, messages: Message[]): Question | null {
   const lastAnswer = messages[messages.length - 1]?.content || "";
 
-  // If they mentioned large data sets and no error handling
+  // Kalau mereka menyebutkan dataset besar dan tidak ada error handling
   if (lastAnswer.includes("large") && !analysis.hasTryCatch) {
     return {
       id: "error_handling",
-      question: "With large datasets, what happens if an error occurs mid-processing?",
+      question: "Dengan dataset yang besar, apa yang terjadi jika ada error saat memproses?",
       options: [
-        { label: "Code has proper try-catch", value: "has_try_catch" },
-        { label: "Error would crash the process", value: "would_crash" },
-        { label: "Need to add error handling", value: "need_add" },
+        { label: "Kode sudah punya try-catch", value: "has_try_catch" },
+        { label: "Error akan menyebabkan crash", value: "would_crash" },
+        { label: "Perlu ditambah error handling", value: "need_add" },
       ],
     };
   }
 
-  // If they're using React and have complex logic
+  // Kalau mereka pakai React dan punya logika kompleks
   if (lastAnswer.includes("react") && analysis.complexity > 20) {
     return {
       id: "react_patterns",
-      question: "For this React logic, are you using any state management?",
+      question: "Untuk logika React ini, apakah Anda menggunakan state management?",
       options: [
-        { label: "Just useState/useReducer", value: "local_state" },
+        { label: "Hanya useState/useReducer", value: "local_state" },
         { label: "Context API", value: "context" },
-        { label: "Redux/Zustand/other", value: "external" },
-        { label: "No state management needed", value: "none" },
+        { label: "Redux/Zustand/lainnya", value: "external" },
+        { label: "Tidak butuh state management", value: "none" },
       ],
     };
   }
 
-  // Generic follow-up
+  // Follow-up generik
   return {
     id: "specific_focus",
-    question: "What specific part of the code concerns you most?",
+    question: "Bagian mana dari kode yang paling mengkhawatirkan Anda?",
     options: [
-      { label: "Logic correctness", value: "logic" },
-      { label: "Performance", value: "performance" },
-      { label: "Readability", value: "readability" },
-      { label: "Error handling", value: "errors" },
-      { label: "All of the above", value: "all" },
+      { label: "Kebenaran logika", value: "logic" },
+      { label: "Performa", value: "performance" },
+      { label: "Keterbacaan", value: "readability" },
+      { label: "Penanganan error", value: "errors" },
+      { label: "Semua di atas", value: "all" },
     ],
   };
 }
@@ -364,57 +364,57 @@ function generateAdaptiveResult(code: string, analysis: AnalysisResult, messages
   const isJS = language === "javascript";
   const isPython = language === "python";
 
-  // Build explanation based on code analysis
-  let explanation = `This ${language} code `;
-  if (analysis.hasFunctions) explanation += "defines functions to handle specific logic. ";
-  if (analysis.hasAsync) explanation += "Uses asynchronous operations (async/await). ";
-  if (analysis.hasLoops) explanation += "Contains loops for iterative processing. ";
-  if (analysis.hasConditions) explanation += "Has conditional logic to handle different scenarios. ";
-  if (analysis.hasDOM) explanation += "Interacts with the DOM (browser). ";
-  if (analysis.hasFetch) explanation += "Makes HTTP requests to external APIs. ";
+  // Buat penjelasan berdasarkan analisis kode
+  let explanation = `Kode ${language} ini `;
+  if (analysis.hasFunctions) explanation += "mendefinisikan fungsi-fungsi untuk menangani logika tertentu. ";
+  if (analysis.hasAsync) explanation += "Menggunakan operasi asynchronous (async/await). ";
+  if (analysis.hasLoops) explanation += "Berisi loop untuk pemrosesan iteratif. ";
+  if (analysis.hasConditions) explanation += "Memiliki logika kondisional untuk menangani skenario berbeda. ";
+  if (analysis.hasDOM) explanation += "Berinteraksi dengan DOM (browser). ";
+  if (analysis.hasFetch) explanation += "Melakukan HTTP request ke API eksternal. ";
 
-  // Detect bugs based on patterns
+  // Deteksi bug berdasarkan pola
   const bugs: string[] = [];
   if (isJS) {
     if (code.includes("== ") && !code.includes("=== ")) {
-      bugs.push("Using '==' can cause type coercion. Use '===' for strict equality.");
+      bugs.push("Penggunaan '==' bisa menyebabkan type coercion. Gunakan '===' untuk perbandingan yang ketat.");
     }
     if (code.includes("var ")) {
-      bugs.push("'var' has function scope issues. Use 'let' or 'const' instead.");
+      bugs.push("'var' memiliki masalah scoping. Gunakan 'let' atau 'const' sebagai gantinya.");
     }
     if (analysis.hasAsync && code.includes("forEach")) {
-      bugs.push("forEach doesn't work with async/await. Use for...of or map with Promise.all().");
+      bugs.push("forEach tidak bekerja dengan async/await. Gunakan for...of atau map dengan Promise.all().");
     }
   }
   if (isPython) {
     if (code.includes("== None") && !code.includes("is None")) {
-      bugs.push("Use 'is None' instead of '== None' for None comparisons in Python.");
+      bugs.push("Gunakan 'is None' daripada '== None' untuk perbandingan dengan None di Python.");
     }
   }
 
-  // Suggestions
+  // Saran
   const suggestions: string[] = [];
   if (!analysis.hasComments) {
-    suggestions.push("Add comments to explain complex logic.");
+    suggestions.push("Tambahkan komentar untuk menjelaskan logika kompleks.");
   }
   if (!analysis.hasTryCatch && analysis.complexity > 10) {
-    suggestions.push("Add try-catch blocks for error handling.");
+    suggestions.push("Tambahkan blok try-catch untuk penanganan error.");
   }
   if (isJS && !code.includes("const ") && !code.includes("let ")) {
-    suggestions.push("Use 'const' for unchanging variables and 'let' for mutable ones.");
+    suggestions.push("Gunakan 'const' untuk variable yang tidak berubah dan 'let' untuk yang mutable.");
   }
 
-  // Improvements
+  // Pengembangan
   const improvements: string[] = [];
   if (analysis.hasLoops && analysis.complexity > 20) {
-    improvements.push("Consider breaking down complex logic into smaller functions.");
+    improvements.push("Pertimbangkan untuk memecah logika kompleks menjadi fungsi-fungsi yang lebih kecil.");
   }
-  improvements.push("Add unit tests to ensure code reliability.");
+  improvements.push("Tambahkan unit test untuk memastikan keandalan kode.");
   if (isJS) {
-    improvements.push("Consider using TypeScript for better type safety.");
+    improvements.push("Pertimbangkan penggunaan TypeScript untuk type safety yang lebih baik.");
   }
 
-  // Calculate code quality
+  // Hitung code quality
   let codeQuality = 70;
   if (analysis.hasTryCatch) codeQuality += 10;
   if (analysis.hasComments) codeQuality += 5;
@@ -423,8 +423,8 @@ function generateAdaptiveResult(code: string, analysis: AnalysisResult, messages
   codeQuality = Math.max(0, Math.min(100, codeQuality));
 
   return {
-    summary: `${language.charAt(0).toUpperCase() + language.slice(1)} code review - Complexity: ${
-      analysis.complexity > 30 ? "High" : analysis.complexity > 15 ? "Medium" : "Low"
+    summary: `Review kode ${language.charAt(0).toUpperCase() + language.slice(1)} - Kompleksitas: ${
+      analysis.complexity > 30 ? "Tinggi" : analysis.complexity > 15 ? "Sedang" : "Rendah"
     }`,
     explanation,
     bugs,

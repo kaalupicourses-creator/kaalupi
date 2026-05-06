@@ -56,12 +56,11 @@ export default function CodeReviewForm() {
           code,
           description,
           messages: [],
-          stage: "init",
         }),
       });
 
       const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Failed to analyze code");
+      if (!res.ok) throw new Error(json.error || "Gagal menganalisis kode");
 
       if (json.nextQuestion) {
         setCurrentQuestion(json.nextQuestion);
@@ -72,7 +71,7 @@ export default function CodeReviewForm() {
         setStep("result");
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(err instanceof Error ? err.message : "Terjadi kesalahan");
     } finally {
       setLoading(false);
     }
@@ -87,7 +86,7 @@ export default function CodeReviewForm() {
     // Add user's answer to conversation
     const userMessage: Message = {
       role: "user",
-      content: `[Answer to "${question.question}"]: ${currentSelections.join(", ")}`,
+      content: `[Jawaban untuk "${question.question}"]: ${currentSelections.join(", ")}`,
     };
 
     const newMessages = [...messages, userMessage];
@@ -104,12 +103,11 @@ export default function CodeReviewForm() {
           code,
           description,
           messages: newMessages,
-          stage: "chat",
         }),
       });
 
       const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Failed to get next question");
+      if (!res.ok) throw new Error(json.error || "Gagal mendapatkan pertanyaan berikutnya");
 
       if (json.nextQuestion) {
         // Add AI's question to conversation
@@ -125,7 +123,7 @@ export default function CodeReviewForm() {
         setStep("result");
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(err instanceof Error ? err.message : "Terjadi kesalahan");
     } finally {
       setLoading(false);
     }
@@ -205,7 +203,7 @@ export default function CodeReviewForm() {
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-xl font-extrabold text-[#2D5016]">🤖 AI Sedang Bertanya</h2>
             <span className="rounded-full bg-[#FFF3D6] px-3 py-1 text-xs font-semibold text-[#5C4813]">
-              {messages.length / 2 + 1} pertanyaan
+              {Math.floor(messages.length / 2) + 1} pertanyaan
             </span>
           </div>
 
@@ -334,7 +332,7 @@ export default function CodeReviewForm() {
           {/* Bugs */}
           {result.bugs.length > 0 && (
             <div className="rounded-xl bg-red-50 p-6 border border-red-200">
-              <h3 className="mb-3 text-sm font-bold text-red-600">🐛 Potential Bugs</h3>
+              <h3 className="mb-3 text-sm font-bold text-red-600">🐛 Potensi Bug</h3>
               <ul className="space-y-2">
                 {result.bugs.map((bug, i) => (
                   <li key={i} className="flex items-start gap-2 text-sm text-red-700">
