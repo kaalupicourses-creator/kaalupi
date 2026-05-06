@@ -1,7 +1,7 @@
 ﻿import Link from "next/link";
 import Script from "next/script";
 import { CourseThumbnail } from "@/components/course-thumbnail";
-import { audienceTracks, blogPosts, stats, testimonials, valueProps, siteConfig } from "@/lib/data";
+import { audienceTracks, blogPosts, stats, siteConfig } from "@/lib/data";
 import { getCourses } from "@/lib/content";
 
 // Vercel deploy trigger - updated 2026-05-04
@@ -276,64 +276,26 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ─── SOCIAL PROOF / TESTIMONIALS ─── */}
+      {/* ─── BE THE FIRST TESTER ─── */}
       <section className="border-t border-[#F0E8D8] bg-[#FEFBF5]">
         <div className="mx-auto max-w-7xl px-6 py-16">
-          <div className="mx-auto mb-12 max-w-2xl text-center animate-fade-in-up">
+          <div className="mx-auto max-w-2xl text-center animate-fade-in-up">
             <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">
-              Testimoni
+              First Launch
             </p>
-            <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016]">
-              Produk mereka berubah setelah belajar di sini
+            <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016] md:text-4xl">
+              Jadilah Tester Pertama Kaalupi
             </h2>
-          </div>
-
-          {/* Featured testimonial + 2 smaller ones */}
-          <div className="grid gap-6 lg:grid-cols-3 stagger-children">
-            {/* Featured testimonial */}
-            <div className="lg:col-span-1 relative rounded-2xl bg-[#1A2E0A] p-8 text-white hover-lift">
-              <div className="relative">
-                <p className="text-base leading-relaxed font-medium">"{testimonials[0].quote}"</p>
-
-                <div className="mt-6 flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#F5A62A] font-bold text-lg text-[#2D5016]">
-                    {testimonials[0].name.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="font-bold text-white">{testimonials[0].name}</p>
-                    <p className="text-sm text-white/60">{testimonials[0].role}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Remaining testimonials */}
-            <div className="lg:col-span-2 grid gap-6 md:grid-cols-2 stagger-children">
-              {testimonials.slice(1).map((item) => (
-                <div
-                  key={item.name}
-                  className="rounded-2xl border border-[#F0E8D8] bg-white p-6 transition hover:border-[#F5A62A] hover:shadow-sm hover-lift"
-                >
-                  <p className="text-sm leading-7 text-[#444444]">"{item.quote}"</p>
-                  <div className="mt-4 flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FFF3D6] font-bold text-sm text-[#F5A62A]">
-                      {item.name.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-[#2D5016]">{item.name}</p>
-                      <p className="text-xs text-[#444444]">{item.role}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Trust Badge */}
-          <div className="mt-10 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#F0E8D8] bg-white px-6 py-3">
-              <span className="text-sm font-semibold text-[#2D5016]">Rated 5.0 by early students</span>
-              <span className="rounded-full bg-[#E8F5D6] px-3 py-1 text-xs font-bold text-[#2D5016]">VERIFIED</span>
+            <p className="mt-4 text-base leading-7 text-[#444444]">
+              Kami baru meluncurkan course pertama kami. Daftar waitlist sekarang dan jadilah salah satu tester awal yang memberikan feedback untuk perkembangan platform kami.
+            </p>
+            <div className="mt-8">
+              <Link
+                href={withUTM("/waitlist", "be_first_tester")}
+                className="rounded-xl bg-[#F5A62A] px-8 py-3.5 text-sm font-bold text-[#2D5016] shadow-md transition hover:opacity-90 hover:shadow-lg pulse-amber"
+              >
+                Daftar Waitlist & Jadi Tester Pertama →
+              </Link>
             </div>
           </div>
         </div>
@@ -443,37 +405,63 @@ export default async function HomePage() {
 
       {/* ─── AUDIENCE TRACKS ─── */}
       <section className="border-t border-[#F0E8D8] bg-[#FEFBF5] relative overflow-hidden">
-        {/* Background decorations */}
-        <div className="absolute right-0 top-0 h-96 w-96 rounded-full bg-[#F5A62A]/5 translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute left-0 bottom-0 h-80 w-80 rounded-full bg-[#7AB648]/5 -translate-x-1/2 translate-y-1/2" />
+        {/* Animated background decorations */}
+        <div className="absolute right-0 top-0 h-96 w-96 rounded-full bg-[#F5A62A]/5 translate-x-1/2 -translate-y-1/2 animate-pulse" />
+        <div className="absolute left-0 bottom-0 h-80 w-80 rounded-full bg-[#7AB648]/5 -translate-x-1/2 translate-y-1/2 animate-pulse" />
+        <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#F5A62A]/3 blur-3xl" />
 
         <div className="mx-auto max-w-7xl px-6 py-16 relative">
           <div className="mx-auto mb-12 max-w-2xl text-center animate-fade-in-up">
-              <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">
-                Jalur Karir
-              </p>
-              <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016]">
-                Pilih jalur yang sesuai sama target kamu
-              </h2>
-            </div>
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">
+              Jalur Karir
+            </p>
+            <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016] md:text-4xl">
+              Pilih jalur yang sesuai sama target kamu
+            </h2>
+            <p className="mt-4 text-base text-[#444444]">
+              Setiap jalur dirancang khusus untuk kebutuhan karier yang berbeda
+            </p>
+          </div>
 
-            {/* Grid layout: aligned cards - consistent styling */}
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 stagger-children">
-              {audienceTracks.map((track) => (
+          {/* Interactive horizontal scroll container */}
+          <div className="relative">
+            {/* Gradient fade edges */}
+            <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-12 bg-gradient-to-r from-[#FEFBF5] to-transparent md:hidden" />
+            <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-12 bg-gradient-to-l from-[#FEFBF5] to-transparent md:hidden" />
+
+            {/* Scrollable track on mobile, grid on desktop */}
+            <div className="flex gap-6 overflow-x-auto pb-6 md:grid md:grid-cols-2 md:gap-6 md:overflow-visible lg:grid-cols-4 stagger-children scrollbar-hide">
+              {audienceTracks.map((track, index) => (
                 <article
                   key={track.title}
-                  className="group relative overflow-hidden rounded-2xl border-2 border-[#F0E8D8] bg-white transition hover:border-[#F5A62A] hover:shadow-lg cursor-pointer hover-lift"
+                  className="group relative min-w-[280px] overflow-hidden rounded-2xl border-2 border-[#F0E8D8] bg-white transition-all duration-300 hover:border-[#F5A62A] hover:shadow-xl cursor-pointer hover-lift md:min-w-0"
+                  style={{ animationDelay: `${index * 100}ms` }}
                 >
+                  {/* Colored top accent bar */}
+                  <div className={`h-2 ${index % 4 === 0 ? 'bg-[#F5A62A]' : index % 4 === 1 ? 'bg-[#7AB648]' : index % 4 === 2 ? 'bg-[#2D5016]' : 'bg-[#5C4813]'}`} />
+
                   <div className="p-6">
-                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-[#FFF3D6] group-hover:bg-[#F5A62A] transition-colors">
-                      <svg className="h-7 w-7 text-[#5C4813] group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714a2.25 2.25 0 00.659 1.591L19 14.5" />
-                      </svg>
+                    {/* Icon with animated background */}
+                    <div className="relative mb-4">
+                      <div className={`absolute -left-2 -top-2 h-20 w-20 rounded-full blur-xl ${index % 4 === 0 ? 'bg-[#F5A62A]/20' : index % 4 === 1 ? 'bg-[#7AB648]/20' : index % 4 === 2 ? 'bg-[#2D5016]/20' : 'bg-[#5C4813]/20'} group-hover:scale-150 transition-transform duration-500`} />
+                      <div className={`relative flex h-14 w-14 items-center justify-center rounded-xl ${index % 4 === 0 ? 'bg-[#F5A62A]/10' : index % 4 === 1 ? 'bg-[#7AB648]/10' : index % 4 === 2 ? 'bg-[#2D5016]/10' : 'bg-[#5C4813]/10'} group-hover:scale-110 transition-transform`}>
+                        <svg className={`h-7 w-7 ${index % 4 === 0 ? 'text-[#F5A62A]' : index % 4 === 1 ? 'text-[#7AB648]' : index % 4 === 2 ? 'text-[#2D5016]' : 'text-[#5C4813]'} group-hover:text-[#F5A62A] transition-colors`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714a2.25 2.25 0 00.659 1.591L19 14.5" />
+                        </svg>
+                      </div>
                     </div>
 
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center gap-2 mb-3">
                       <h3 className="text-lg font-extrabold text-[#2D5016] group-hover:text-[#F5A62A] transition-colors">{track.title}</h3>
-                      <span className="rounded-full bg-[#F0E8D8] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#444444]">
+                    </div>
+
+                    {/* Animated Coming Soon badge */}
+                    <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-[#F0E8D8] px-3 py-1">
+                      <span className="relative flex h-2 w-2">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#F5A62A] opacity-75" />
+                        <span className="relative inline-flex h-2 w-2 rounded-full bg-[#F5A62A]" />
+                      </span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#444444]">
                         Coming Soon
                       </span>
                     </div>
@@ -482,10 +470,10 @@ export default async function HomePage() {
 
                     <Link
                       href={withUTM("/waitlist", `track_${track.title.toLowerCase().replace(/\s+/g, '_')}`)}
-                      className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[#2D5016] transition hover:text-[#F5A62A]"
+                      className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[#2D5016] transition hover:text-[#F5A62A] group-hover:gap-2"
                     >
                       Daftar Waitlist
-                      <svg className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <svg className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                       </svg>
                     </Link>
@@ -494,7 +482,22 @@ export default async function HomePage() {
               ))}
             </div>
           </div>
-        </section>
+
+          {/* Bottom CTA */}
+          <div className="mt-10 text-center">
+            <p className="text-sm text-[#444444] mb-4">Gak yakin jalur mana yang cocok?</p>
+            <Link
+              href={withUTM("/waitlist", "track_consultation")}
+              className="inline-flex items-center gap-2 rounded-xl border-2 border-[#2D5016] px-6 py-3 text-sm font-bold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-[#FEFBF5]"
+            >
+              Konsultasi Gratis
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* ─── BLOG / INSIGHTS ─── */}
       <section className="border-t border-[#F0E8D8] bg-[#FEFBF5] relative overflow-hidden">
@@ -563,7 +566,7 @@ export default async function HomePage() {
       {/* ─── FINAL CTA ─── */}
       <section className="border-t border-[#F0E8D8] bg-[#FEFBF5]">
         <div className="mx-auto max-w-7xl px-6 py-16">
-          <div className="relative overflow-hidden rounded-3xl border border-[#F0E8D8] bg-[#1A2E0A] p-8 md:p-12 text-center">
+          <div className="relative overflow-hidden rounded-3xl border border-[#1A2E0A] bg-[#1A2E0A] p-8 md:p-12 text-center">
             {/* Decorative circles */}
             <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-[#F5A62A]/10" />
             <div className="absolute -left-16 -bottom-16 h-48 w-48 rounded-full bg-[#7AB648]/10" />
@@ -571,7 +574,7 @@ export default async function HomePage() {
             <h2 className="relative text-3xl font-extrabold text-white md:text-4xl">
               Masih Ragu? Coba Gratis Dulu
             </h2>
-            <p className="relative mt-4 max-w-xl mx-auto text-base leading-8 text-white/80">
+            <p className="relative mt-4 max-w-xl mx-auto text-base leading-8 text-white">
               Ngapain beli kalau belum yakin? Coba course <strong>AI untuk Pemula</strong> gratis.
               Pas udah ngerasa cocok, lanjut ke track lainnya. Garansi uang kembali 14 hari.
             </p>
@@ -589,7 +592,7 @@ export default async function HomePage() {
                 Daftar Waitlist Paid
               </Link>
             </div>
-            <p className="relative mt-6 text-xs text-white/50">
+            <p className="relative mt-6 text-xs text-white/70">
               Tanpa kartu kredit • Langsung akses • Garansi 14 hari
             </p>
           </div>
