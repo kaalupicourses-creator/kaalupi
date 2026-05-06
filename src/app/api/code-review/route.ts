@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 
+interface Message {
+  role: "user" | "assistant";
+  content: string;
+}
+
 interface Question {
   id: string;
   question: string;
@@ -17,8 +22,7 @@ export async function POST(request: Request) {
   let body: {
     code?: string;
     description?: string;
-    answers?: Record<string, string[]>;
-    stage?: "initial" | "followup";
+    messages?: Message[];
   };
 
   try {
@@ -34,413 +38,398 @@ export async function POST(request: Request) {
   try {
     const code = body.code;
     const description = body.description || "";
-    const answers = body.answers || {};
-    const stage = body.stage || "initial";
+    const messages = body.messages || [];
 
-    // Generate questions based on code analysis
-    if (stage === "initial" || (stage === "followup" && Object.keys(answers).length < 3)) {
-      const nextQuestion = generateFollowUpQuestion(code, description, answers, stage);
-      if (nextQuestion) {
-        return NextResponse.json({ nextQuestion });
-      }
+    // If OpenAI API key exists, use real AI
+    if (process.env.OPENAI_API_KEY) {
+      return await handleOpenAIReview(code, description, messages);
     }
 
-    // Generate final analysis when we have enough context
-    const result = generateFinalAnalysis(code, description, answers);
-    return NextResponse.json({ result });
+    // Fallback: Smarter rule-based system
+    return handleSmartReview(code, description, messages);
   } catch (error) {
     console.error("Code review error:", error);
     return NextResponse.json({ error: "Failed to analyze code" }, { status: 500 });
   }
 }
 
-function generateFollowUpQuestion(
+async function handleOpenAIReview(
   code: string,
   description: string,
-  answers: Record<string, string[]>,
-  stage: string
-): Question | null {
-  const answeredCount = Object.keys(answers).length;
+  messages: Message[]
+) {
+  const apiKey = process.env.OPENAI_API_KEY!;
 
-  // Question 1: Programming language
-  if (!answers["language"]) {
-    return {
-      id: "language",
-      question: "Bahasa pemrograman apa yang digunakan dalam kode ini?",
-      options: [
-        { label: "JavaScript / TypeScript", value: "javascript" },
-        { label: "Python", value: "python" },
-        { label: "Java", value: "java" },
-        { label: "C/C++", value: "cpp" },
-        { label: "PHP", value: "php" },
-        { label: "Lainnya", value: "other" },
-      ],
-    };
-  }
+  // Build conversation history
+  const systemPrompt = `You are an expert code reviewer. Analyze the submitted code and have a conversation with the user to understand context better.
 
-  // Question 2: Purpose
-  if (!answers["purpose"]) {
-    return {
-      id: "purpose",
-      question: "Apa tujuan utama dari kode ini?",
-      options: [
-        { label: "Web frontend (UI/interaksi)", value: "frontend" },
-        { label: "Web backend (API/server)", value: "backend" },
-        { label: "Data processing / analysis", value: "data" },
-        { label: "Algorithm / logic exercise", value: "algorithm" },
-        { label: "Automation / script", value: "automation" },
-        { label: "Lainnya", value: "other" },
-      ],
-    };
-  }
+Your goals:
+1. Ask RELEVANT questions based on what you see in the code (not generic questions)
+2. Identify potential bugs, issues, or improvements
+3. Provide clear explanations
 
-  // Question 3: Context
-  if (!answers["context"]) {
-    return {
-      id: "context",
-      question: "Dalam konteks apa kode ini dijalankan? (bisa pilih lebih dari satu)",
-      options: [
-        { label: "React / Next.js app", value: "react" },
-        { label: "Node.js server", value: "nodejs" },
-        { label: "Browser standalone", value: "browser" },
-        { label: "CLI / terminal", value: "cli" },
-        { label: "Jupyter notebook", value: "jupyter" },
-        { label: "Tidak tahu / tidak yakin", value: "unknown" },
-      ],
-      multiSelect: true,
-    };
-  }
-
-  // Question 4: Issues
-  if (!answers["issues"]) {
-    return {
-      id: "issues",
-      question: "Apakah ada masalah yang sudah Anda ketahui pada kode ini?",
-      options: [
-        { label: "Ada error / tidak jalan", value: "error" },
-        { label: "Takut ada bug / logic salah", value: "bug" },
-        { label: "Kode berjalan tapi kurang efisien", value: "performance" },
-        { label: "Kurang bersih / susah dibaca", value: "readability" },
-        { label: "Tidak ada masalah yang diketahui", value: "none" },
-      ],
-      multiSelect: true,
-    };
-  }
-
-  // Question 5: Experience
-  if (!answers["experience"]) {
-    return {
-      id: "experience",
-      question: "Apa level pengalaman Anda dengan bahasa/kode ini?",
-      options: [
-        { label: "Pemula (baru belajar)", value: "beginner" },
-        { label: "Menengah (sudah pernah buat project)", value: "intermediate" },
-        { label: "Mahir (sudah sering pakai)", value: "advanced" },
-      ],
-    };
-  }
-
-  // Question 6: Specific request
-  if (!answers["request"]) {
-    return {
-      id: "request",
-      question: "Apa yang paling ingin Anda ketahui dari review ini? (bisa pilih lebih dari satu)",
-      options: [
-        { label: "Penjelasan cara kerja kodenya", value: "explain" },
-        { label: "Cek apakah ada bug", value: "debug" },
-        { label: "Saran perbaikan kode", value: "improve" },
-        { label: "Cara menulis kode yang lebih bersih", value: "clean" },
-        { label: "Cara mengoptimasi performa", value: "optimize" },
-      ],
-      multiSelect: true,
-    };
-  }
-
-  return null; // Enough questions asked
+When asking questions, ALWAYS format your response as JSON:
+{
+  "type": "question",
+  "question": "Your question here?",
+  "options": [
+    {"label": "Option text", "value": "option_value"},
+    ...
+  ],
+  "multiSelect": false
 }
 
-function generateFinalAnalysis(
+When you have enough context and can provide a full review, respond with JSON:
+{
+  "type": "result",
+  "result": {
+    "summary": "Brief summary",
+    "explanation": "Detailed explanation of how the code works",
+    "bugs": ["list of potential bugs"],
+    "suggestions": ["list of suggestions"],
+    "improvements": ["list of improvements"],
+    "codeQuality": 85
+  }
+}
+
+Keep questions SHORT and SPECIFIC to the code. Don't ask about language (detect it from code). Ask about purpose, edge cases, or specific patterns you notice.`;
+
+  const openaiMessages: Message[] = [{ role: "system", content: systemPrompt }];
+
+  // Add context about the code
+  if (messages.length === 0) {
+    openaiMessages.push({
+      role: "user",
+      content: `Please review this code:\n\n\`\`\`\n${code}\n\`\`\`\n\nAdditional context: ${description || "None"}`,
+    });
+  } else {
+    // Add conversation history
+    messages.forEach((msg) => openaiMessages.push(msg));
+  }
+
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: "gpt-3.5-turbo",
+      messages: openaiMessages,
+      temperature: 0.7,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    console.error("OpenAI API error:", error);
+    return NextResponse.json({ error: "AI service unavailable" }, { status: 500 });
+  }
+
+  const data = await response.json();
+  const aiResponse = data.choices[0].message.content;
+
+  try {
+    const parsed = JSON.parse(aiResponse);
+
+    if (parsed.type === "question") {
+      return NextResponse.json({
+        nextQuestion: {
+          id: `q_${Date.now()}`,
+          question: parsed.question,
+          options: parsed.options,
+          multiSelect: parsed.multiSelect || false,
+        },
+      });
+    } else if (parsed.type === "result") {
+      return NextResponse.json({ result: parsed.result });
+    }
+  } catch {
+    // If AI didn't return valid JSON, try to extract question or provide fallback
+    console.error("Failed to parse AI response:", aiResponse);
+    return NextResponse.json({
+      nextQuestion: {
+        id: `q_fallback_${Date.now()}`,
+        question: "I notice some things in your code. What specific aspect would you like me to focus on?",
+        options: [
+          { label: "Explain how the code works", value: "explain" },
+          { label: "Check for bugs", value: "bugs" },
+          { label: "Suggest improvements", value: "improve" },
+          { label: "All of the above", value: "all" },
+        ],
+        multiSelect: true,
+      },
+    });
+  }
+}
+
+function handleSmartReview(
   code: string,
   description: string,
-  answers: Record<string, string[]>
-): {
-  summary: string;
-  explanation: string;
-  bugs: string[];
-  suggestions: string[];
-  improvements: string[];
-  codeQuality: number;
-} {
-  const language = answers["language"]?.[0] || "unknown";
-  const purpose = answers["purpose"]?.[0] || "unknown";
-  const contexts = answers["context"] || [];
-  const issues = answers["issues"] || [];
-  const experience = answers["experience"]?.[0] || "intermediate";
-  const requests = answers["request"] || [];
+  messages: Message[]
+) {
+  // Adaptive rule-based system that generates relevant questions based on code analysis
+  const codeAnalysis = analyzeCode(code);
 
+  if (messages.length === 0) {
+    // First interaction - ask question based on code analysis
+    const question = generateFirstQuestion(code, codeAnalysis);
+    return NextResponse.json({ nextQuestion: question });
+  }
+
+  if (messages.length < 3) {
+    // Follow-up questions based on previous answers and code
+    const question = generateFollowUpQuestion(code, codeAnalysis, messages);
+    if (question) {
+      return NextResponse.json({ nextQuestion: question });
+    }
+  }
+
+  // Generate final result
+  const result = generateAdaptiveResult(code, codeAnalysis, messages);
+  return NextResponse.json({ result });
+}
+
+function analyzeCode(code: string) {
+  const analysis = {
+    language: detectLanguage(code),
+    hasAsync: code.includes("async ") || code.includes("await "),
+    hasLoops: /\b(for|while|forEach|map|filter)\b/.test(code),
+    hasConditions: /\b(if|else|switch|case)\b/.test(code),
+    hasTryCatch: code.includes("try") && code.includes("catch"),
+    hasFunctions: /\b(function|def |=>)\b/.test(code),
+    hasComments: /\/\/|\/\*|\#/.test(code),
+    hasDOM: /\b(document|window|querySelector|getElementById)\b/.test(code),
+    hasFetch: /\b(fetch|axios|request)\b/.test(code),
+    hasDatabase: /\b(SELECT|INSERT|UPDATE|DELETE|query|prisma|mongoose)\b/i.test(code),
+    complexity: calculateComplexity(code),
+  };
+  return analysis;
+}
+
+function detectLanguage(code: string): string {
+  if (/\b(import|export|const|let|var|function|=>)\b/.test(code) && !/\bdef \b/.test(code))
+    return "javascript";
+  if (/\bdef \b|\bimport \b/.test(code) && !/\b(function|=>)\b/.test(code)) return "python";
+  if (/\bpublic\s+class|System\.out\b/.test(code)) return "java";
+  if (/\b#include|printf\b/.test(code)) return "c/c++";
+  return "unknown";
+}
+
+function calculateComplexity(code: string): number {
+  let score = 0;
+  score += (code.match(/\b(if|else)\b/g) || []).length * 2;
+  score += (code.match(/\b(for|while)\b/g) || []).length * 3;
+  score += (code.match(/\b(function|def )\b/g) || []).length * 5;
+  score += (code.match(/\b(try|catch)\b/g) || []).length * 2;
+  return Math.min(100, score);
+}
+
+type AnalysisResult = ReturnType<typeof analyzeCode>;
+
+function generateFirstQuestion(code: string, analysis: AnalysisResult): Question {
+  const questions: Question[] = [];
+
+  // Question based on code patterns
+  if (analysis.hasAsync) {
+    questions.push({
+      id: "async_context",
+      question: "I see async/await in your code. What's this asynchronous operation trying to accomplish?",
+      options: [
+        { label: "Fetching data from API", value: "fetch_api" },
+        { label: "Reading/writing files", value: "file_io" },
+        { label: "Database operation", value: "database" },
+        { label: "User interaction/event", value: "user_event" },
+        { label: "Other", value: "other" },
+      ],
+    });
+  }
+
+  if (analysis.hasLoops) {
+    questions.push({
+      id: "loop_purpose",
+      question: "I notice loops in your code. How large can the data set be?",
+      options: [
+        { label: "Small (under 100 items)", value: "small" },
+        { label: "Medium (100-10,000 items)", value: "medium" },
+        { label: "Large (10,000+ items)", value: "large" },
+        { label: "Unbounded/user input", value: "unbounded" },
+      ],
+    });
+  }
+
+  if (analysis.hasDOM) {
+    questions.push({
+      id: "dom_purpose",
+      question: "This looks like browser code. What framework are you using (if any)?",
+      options: [
+        { label: "Vanilla JS (no framework)", value: "vanilla" },
+        { label: "React / Next.js", value: "react" },
+        { label: "Vue", value: "vue" },
+        { label: "Other framework", value: "other" },
+      ],
+    });
+  }
+
+  if (analysis.hasDatabase) {
+    questions.push({
+      id: "db_context",
+      question: "I see database operations. Is this using an ORM or raw queries?",
+      options: [
+        { label: "ORM (Prisma, Mongoose, etc)", value: "orm" },
+        { label: "Raw SQL queries", value: "raw_sql" },
+        { label: "Both", value: "both" },
+      ],
+    });
+  }
+
+  if (analysis.hasFetch) {
+    questions.push({
+      id: "api_error_handling",
+      question: "For the API calls in your code, how do you want to handle errors?",
+      options: [
+        { label: "Show user-friendly message", value: "user_message" },
+        { label: "Retry automatically", value: "retry" },
+        { label: "Log and ignore", value: "log_ignore" },
+        { label: "Throw/Crash", value: "throw" },
+      ],
+    });
+  }
+
+  // Default question if no specific pattern detected
+  if (questions.length === 0) {
+    questions.push({
+      id: "general_purpose",
+      question: "What's the main purpose of this code?",
+      options: [
+        { label: "Data processing/manipulation", value: "data" },
+        { label: "User interface/interaction", value: "ui" },
+        { label: "API/backend logic", value: "backend" },
+        { label: "Utility/helper function", value: "utility" },
+        { label: "Learning/practice code", value: "learning" },
+      ],
+    });
+  }
+
+  // Return the most relevant question based on analysis
+  return questions[0];
+}
+
+function generateFollowUpQuestion(code: string, analysis: AnalysisResult, messages: Message[]): Question | null {
+  const lastAnswer = messages[messages.length - 1]?.content || "";
+
+  // If they mentioned large data sets and no error handling
+  if (lastAnswer.includes("large") && !analysis.hasTryCatch) {
+    return {
+      id: "error_handling",
+      question: "With large datasets, what happens if an error occurs mid-processing?",
+      options: [
+        { label: "Code has proper try-catch", value: "has_try_catch" },
+        { label: "Error would crash the process", value: "would_crash" },
+        { label: "Need to add error handling", value: "need_add" },
+      ],
+    };
+  }
+
+  // If they're using React and have complex logic
+  if (lastAnswer.includes("react") && analysis.complexity > 20) {
+    return {
+      id: "react_patterns",
+      question: "For this React logic, are you using any state management?",
+      options: [
+        { label: "Just useState/useReducer", value: "local_state" },
+        { label: "Context API", value: "context" },
+        { label: "Redux/Zustand/other", value: "external" },
+        { label: "No state management needed", value: "none" },
+      ],
+    };
+  }
+
+  // Generic follow-up
+  return {
+    id: "specific_focus",
+    question: "What specific part of the code concerns you most?",
+    options: [
+      { label: "Logic correctness", value: "logic" },
+      { label: "Performance", value: "performance" },
+      { label: "Readability", value: "readability" },
+      { label: "Error handling", value: "errors" },
+      { label: "All of the above", value: "all" },
+    ],
+  };
+}
+
+function generateAdaptiveResult(code: string, analysis: AnalysisResult, messages: Message[]) {
+  const language = analysis.language;
   const isJS = language === "javascript";
   const isPython = language === "python";
 
-  // Generate explanation
-  let explanation = "";
-  if (isJS) {
-    explanation = generateJSExplanation(code);
-  } else if (isPython) {
-    explanation = generatePythonExplanation(code);
-  } else {
-    explanation = `Kode ini ditulis dalam bahasa ${language}. `;
-    if (code.includes("function") || code.includes("def ")) {
-      explanation += "Kode ini berisi definisi fungsi yang menangani suatu logika tertentu. ";
-    }
-    if (code.includes("if ") || code.includes("if(")) {
-      explanation += "Terdapat pengkondisian (if-else) untuk menangani berbagai skenario. ";
-    }
-    if (code.includes("for ") || code.includes("while ")) {
-      explanation += "Ada loop/perulangan untuk memproses data berulang kali. ";
-    }
-  }
+  // Build explanation based on code analysis
+  let explanation = `This ${language} code `;
+  if (analysis.hasFunctions) explanation += "defines functions to handle specific logic. ";
+  if (analysis.hasAsync) explanation += "Uses asynchronous operations (async/await). ";
+  if (analysis.hasLoops) explanation += "Contains loops for iterative processing. ";
+  if (analysis.hasConditions) explanation += "Has conditional logic to handle different scenarios. ";
+  if (analysis.hasDOM) explanation += "Interacts with the DOM (browser). ";
+  if (analysis.hasFetch) explanation += "Makes HTTP requests to external APIs. ";
 
-  explanation += `\n\nKode ini dibuat untuk keperluan ${getPurposeText(purpose)}. `;
-  if (contexts.length > 0) {
-    explanation += `Dijalankan dalam konteks: ${contexts.map(getContextText).join(", ")}. `;
-  }
-  if (description) {
-    explanation += `\n\nKonteks tambahan dari Anda: ${description}`;
-  }
-
-  // Detect bugs
+  // Detect bugs based on patterns
   const bugs: string[] = [];
-  if (issues.includes("error")) {
-    if (isJS) {
-      if (code.includes("== ") && !code.includes("=== ")) {
-        bugs.push("Penggunaan '==' bisa menyebabkan type coercion yang tidak diinginkan. Gunakan '===' untuk perbandingan yang lebih aman.");
-      }
-      if (code.includes("var ")) {
-        bugs.push("Penggunaan 'var' dapat menyebabkan masalah scoping. Gunakan 'let' atau 'const'.");
-      }
+  if (isJS) {
+    if (code.includes("== ") && !code.includes("=== ")) {
+      bugs.push("Using '==' can cause type coercion. Use '===' for strict equality.");
     }
-    if (isPython && code.includes("== None") && !code.includes("is None")) {
-      bugs.push("Untuk membandingkan dengan None di Python, gunakan 'is None' bukan '== None'.");
+    if (code.includes("var ")) {
+      bugs.push("'var' has function scope issues. Use 'let' or 'const' instead.");
+    }
+    if (analysis.hasAsync && code.includes("forEach")) {
+      bugs.push("forEach doesn't work with async/await. Use for...of or map with Promise.all().");
     }
   }
-
-  if (issues.includes("bug")) {
-    // Check for common logic issues
-    if (code.includes("parseInt") && !code.includes("radix")) {
-      bugs.push("parseInt() sebaiknya diberi parameter radix (basis bilangan), contoh: parseInt(str, 10).");
-    }
-    if (isJS && code.includes("forEach") && code.includes("await")) {
-      bugs.push("forEach tidak bisa digunakan dengan async/await. Gunakan for...of atau map dengan Promise.all().");
+  if (isPython) {
+    if (code.includes("== None") && !code.includes("is None")) {
+      bugs.push("Use 'is None' instead of '== None' for None comparisons in Python.");
     }
   }
 
   // Suggestions
   const suggestions: string[] = [];
-  if (requests.includes("explain")) {
-    if (code.includes("async ") && code.includes("await ")) {
-      suggestions.push("✅ Penggunaan async/await sudah baik untuk menangani operasi asynchronous.");
-    }
-    if (code.includes("try ") && code.includes("catch")) {
-      suggestions.push("✅ Error handling dengan try-catch sudah diterapkan.");
-    } else {
-      suggestions.push("Tambahkan try-catch untuk menangani kemungkinan error, terutama pada operasi yang bisa gagal.");
-    }
+  if (!analysis.hasComments) {
+    suggestions.push("Add comments to explain complex logic.");
   }
-
-  if (requests.includes("clean")) {
-    const commentCount = (code.match(/\/\/|\/\*|\#/g) || []).length;
-    if (commentCount === 0) {
-      suggestions.push("Tambahkan komentar untuk menjelaskan logika kode, terutama untuk bagian yang kompleks.");
-    }
-    if (isJS && (code.includes("var ") || !code.includes("const "))) {
-      suggestions.push("Gunakan 'const' untuk variable yang tidak berubah dan 'let' untuk yang berubah (ES6 best practice).");
-    }
+  if (!analysis.hasTryCatch && analysis.complexity > 10) {
+    suggestions.push("Add try-catch blocks for error handling.");
   }
-
-  if (requests.includes("improve")) {
-    const lines = code.split("\n").length;
-    const functions = (code.match(/function|def /g) || []).length;
-    if (functions > 0 && lines / functions > 50) {
-      suggestions.push("Fungsi terlalu panjang. Pertimbangkan untuk memecah menjadi fungsi yang lebih kecil (Single Responsibility Principle).");
-    }
-    suggestions.push("Gunakan nama variable dan fungsi yang deskriptif (camelCase untuk JavaScript, snake_case untuk Python).");
-    suggestions.push("Format kode dengan konsisten (gunakan Prettier atau ESLint untuk JS, Black untuk Python).");
+  if (isJS && !code.includes("const ") && !code.includes("let ")) {
+    suggestions.push("Use 'const' for unchanging variables and 'let' for mutable ones.");
   }
 
   // Improvements
   const improvements: string[] = [];
-  if (requests.includes("optimize")) {
-    if (isJS) {
-      improvements.push("Pertimbangkan untuk menggunakan memoization atau caching untuk fungsi yang sering dipanggil dengan input yang sama.");
-    }
-    if (isPython) {
-      improvements.push("Gunakan list comprehension atau generator untuk iterasi yang lebih efisien di Python.");
-    }
-    improvements.push("Hindari nested loop yang dalam (O(n²) atau lebih) jika memungkinkan. Gunakan struktur data yang tepat.");
+  if (analysis.hasLoops && analysis.complexity > 20) {
+    improvements.push("Consider breaking down complex logic into smaller functions.");
   }
-
-  if (purpose === "frontend" && isJS) {
-    improvements.push("Gunakan React hooks atau state management yang tepat untuk aplikasi yang lebih scalable.");
-    improvements.push("Pertimbangkan untuk memisahkan logic dari component (separation of concerns).");
+  improvements.push("Add unit tests to ensure code reliability.");
+  if (isJS) {
+    improvements.push("Consider using TypeScript for better type safety.");
   }
-
-  if (purpose === "backend" && isJS) {
-    improvements.push("Tambahkan validasi input yang ketat untuk mencegah injection attacks.");
-    improvements.push("Gunakan middleware untuk logging, error handling, dan authentication.");
-  }
-
-  improvements.push("Tulis unit test untuk kode Anda (Jest untuk JS, pytest untuk Python).");
-  improvements.push("Gunakan TypeScript untuk JavaScript agar lebih type-safe (jika belum).");
 
   // Calculate code quality
   let codeQuality = 70;
-  if (isJS) {
-    if (code.includes("const ") || code.includes("let ")) codeQuality += 10;
-    if (code.includes("//") || code.includes("/*")) codeQuality += 5;
-    if (code.includes("try ") && code.includes("catch")) codeQuality += 10;
-    if (code.includes("== ") && !code.includes("=== ")) codeQuality -= 10;
-    if (code.includes("var ")) codeQuality -= 15;
-  }
-  if (isPython) {
-    if (code.includes("#")) codeQuality += 5;
-    if (code.includes("try:") && code.includes("except")) codeQuality += 10;
-  }
+  if (analysis.hasTryCatch) codeQuality += 10;
+  if (analysis.hasComments) codeQuality += 5;
+  if (isJS && (code.includes("const ") || code.includes("let "))) codeQuality += 10;
+  if (bugs.length > 0) codeQuality -= bugs.length * 10;
   codeQuality = Math.max(0, Math.min(100, codeQuality));
 
-  // Summary
-  const summary = `Review untuk kode ${getLanguageText(language)} - Level: ${getExperienceText(experience)}. ${
-    bugs.length > 0
-      ? `Ditemukan ${bugs.length} potensi masalah.`
-      : "Tidak ditemukan bug mayor."
-  } Kualitas kode: ${codeQuality >= 80 ? "Baik" : codeQuality >= 60 ? "Cukup" : "Perlu perbaikan"}.`;
-
   return {
-    summary,
+    summary: `${language.charAt(0).toUpperCase() + language.slice(1)} code review - Complexity: ${
+      analysis.complexity > 30 ? "High" : analysis.complexity > 15 ? "Medium" : "Low"
+    }`,
     explanation,
     bugs,
     suggestions,
     improvements,
     codeQuality,
   };
-}
-
-function generateJSExplanation(code: string): string {
-  let explanation = "Kode ini ditulis dalam JavaScript. ";
-
-  if (code.includes("function")) {
-    const funcMatches = code.match(/function\s+(\w+)/g) || [];
-    if (funcMatches.length > 0) {
-      explanation += `Kode ini mendefinisikan ${funcMatches.length} fungsi: ${funcMatches
-        .map((f) => f.replace("function ", ""))
-        .join(", ")}. `;
-    }
-  }
-
-  if (code.includes("=>")) {
-    explanation += "Ada penggunaan arrow functions (=>) yang merupakan fitur ES6 untuk fungsi yang lebih ringkas. ";
-  }
-
-  if (code.includes("const ") || code.includes("let ")) {
-    explanation += "Menggunakan deklarasi variable modern (const/let) dari ES6. ";
-  } else if (code.includes("var ")) {
-    explanation += "Menggunakan 'var' untuk deklarasi variable (disarankan ganti ke let/const). ";
-  }
-
-  if (code.includes("if ") || code.includes("if(")) {
-    explanation += "Ada pengkondisian (if-else) untuk menangani berbagai skenario. ";
-  }
-
-  if (code.includes("for ") || code.includes("while ") || code.includes(".map(") || code.includes(".forEach(")) {
-    explanation += "Menggunakan iterasi/loop untuk memproses data berulang kali. ";
-  }
-
-  if (code.includes("async ") && code.includes("await ")) {
-    explanation += "Kode ini menangani operasi asynchronous dengan async/await. ";
-  }
-
-  if (code.includes("fetch(") || code.includes("axios")) {
-    explanation += "Melakukan HTTP request ke API eksternal. ";
-  }
-
-  return explanation;
-}
-
-function generatePythonExplanation(code: string): string {
-  let explanation = "Kode ini ditulis dalam Python. ";
-
-  if (code.includes("def ")) {
-    const funcMatches = code.match(/def\s+(\w+)/g) || [];
-    if (funcMatches.length > 0) {
-      explanation += `Kode ini mendefinisikan ${funcMatches.length} fungsi: ${funcMatches
-        .map((f) => f.replace("def ", ""))
-        .join(", ")}. `;
-    }
-  }
-
-  if (code.includes("import ") || code.includes("from ")) {
-    explanation += "Mengimpor module/library eksternal. ";
-  }
-
-  if (code.includes("if ") || code.includes("if(")) {
-    explanation += "Ada pengkondisian (if-else) untuk menangani berbagai skenario. ";
-  }
-
-  if (code.includes("for ") || code.includes("while ")) {
-    explanation += "Menggunakan loop untuk memproses data berulang kali. ";
-  }
-
-  if (code.includes("try:") && code.includes("except")) {
-    explanation += "Menggunakan try-except untuk error handling. ";
-  }
-
-  if (code.includes("class ")) {
-    explanation += "Mendefinisikan class (Object-Oriented Programming). ";
-  }
-
-  return explanation;
-}
-
-function getLanguageText(lang: string): string {
-  const map: Record<string, string> = {
-    javascript: "JavaScript/TypeScript",
-    python: "Python",
-    java: "Java",
-    cpp: "C/C++",
-    php: "PHP",
-    other: "Lainnya",
-  };
-  return map[lang] || lang;
-}
-
-function getPurposeText(purpose: string): string {
-  const map: Record<string, string> = {
-    frontend: "web frontend (UI/interaksi pengguna)",
-    backend: "web backend (API/server)",
-    data: "pemrosesan atau analisis data",
-    algorithm: "latihan algoritma/logika",
-    automation: "otomatisasi atau scripting",
-    other: "keperluan lainnya",
-  };
-  return map[purpose] || purpose;
-}
-
-function getContextText(context: string): string {
-  const map: Record<string, string> = {
-    react: "React/Next.js app",
-    nodejs: "Node.js server",
-    browser: "Browser standalone",
-    cli: "CLI/Terminal",
-    jupyter: "Jupyter notebook",
-    unknown: "Tidak yakin",
-  };
-  return map[context] || context;
-}
-
-function getExperienceText(exp: string): string {
-  const map: Record<string, string> = {
-    beginner: "Pemula",
-    intermediate: "Menengah",
-    advanced: "Mahir",
-  };
-  return map[exp] || exp;
 }

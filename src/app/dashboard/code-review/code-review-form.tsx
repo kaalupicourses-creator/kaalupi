@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 
-type Step = "input" | "questioning" | "analyzing" | "result";
+type Step = "input" | "questioning" | "result";
+
+interface Message {
+  role: "user" | "assistant";
+  content: string;
+}
 
 interface Question {
   id: string;
@@ -28,9 +33,8 @@ export default function CodeReviewForm() {
   const [error, setError] = useState("");
 
   // Conversation state
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string[]>>({});
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [currentSelections, setCurrentSelections] = useState<string[]>([]);
 
   // Result
@@ -42,6 +46,7 @@ export default function CodeReviewForm() {
 
     setLoading(true);
     setError("");
+    setMessages([]);
 
     try {
       const res = await fetch("/api/code-review", {
@@ -50,8 +55,8 @@ export default function CodeReviewForm() {
         body: JSON.stringify({
           code,
           description,
-          answers: {},
-          stage: "initial",
+          messages: [],
+          stage: "init",
         }),
       });
 
@@ -59,9 +64,7 @@ export default function CodeReviewForm() {
       if (!res.ok) throw new Error(json.error || "Failed to analyze code");
 
       if (json.nextQuestion) {
-        setQuestions([json.nextQuestion]);
-        setCurrentQuestionIndex(0);
-        setAnswers({});
+        setCurrentQuestion(json.nextQuestion);
         setCurrentSelections([]);
         setStep("questioning");
       } else if (json.result) {
@@ -78,9 +81,17 @@ export default function CodeReviewForm() {
   const handleAnswerSubmit = async () => {
     if (currentSelections.length === 0) return;
 
-    const currentQ = questions[currentQuestionIndex];
-    const newAnswers = { ...answers, [currentQ.id]: currentSelections };
-    setAnswers(newAnswers);
+    const question = currentQuestion;
+    if (!question) return;
+
+    // Add user's answer to conversation
+    const userMessage: Message = {
+      role: "user",
+      content: `[Answer to "${question.question}"]: ${currentSelections.join(", ")}`,
+    };
+
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
 
     setLoading(true);
     setError("");
@@ -92,8 +103,8 @@ export default function CodeReviewForm() {
         body: JSON.stringify({
           code,
           description,
-          answers: newAnswers,
-          stage: "followup",
+          messages: newMessages,
+          stage: "chat",
         }),
       });
 
@@ -101,8 +112,13 @@ export default function CodeReviewForm() {
       if (!res.ok) throw new Error(json.error || "Failed to get next question");
 
       if (json.nextQuestion) {
-        setQuestions([...questions.slice(0, currentQuestionIndex + 1), json.nextQuestion]);
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        // Add AI's question to conversation
+        const aiMessage: Message = {
+          role: "assistant",
+          content: json.nextQuestion.question,
+        };
+        setMessages([...newMessages, aiMessage]);
+        setCurrentQuestion(json.nextQuestion);
         setCurrentSelections([]);
       } else if (json.result) {
         setResult(json.result);
@@ -116,7 +132,7 @@ export default function CodeReviewForm() {
   };
 
   const toggleSelection = (value: string) => {
-    if (questions[currentQuestionIndex]?.multiSelect) {
+    if (currentQuestion?.multiSelect) {
       setCurrentSelections((prev) =>
         prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
       );
@@ -129,9 +145,8 @@ export default function CodeReviewForm() {
     setStep("input");
     setCode("");
     setDescription("");
-    setQuestions([]);
-    setCurrentQuestionIndex(0);
-    setAnswers({});
+    setMessages([]);
+    setCurrentQuestion(null);
     setCurrentSelections([]);
     setResult(null);
     setError("");
@@ -185,78 +200,80 @@ export default function CodeReviewForm() {
       )}
 
       {/* Questioning Step */}
-      {step === "questioning" && (
+      {step === "questioning" && currentQuestion && (
         <>
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-xl font-extrabold text-[#2D5016]">🤖 AI Sedang Bertanya</h2>
             <span className="rounded-full bg-[#FFF3D6] px-3 py-1 text-xs font-semibold text-[#5C4813]">
-              Pertanyaan {currentQuestionIndex + 1}
+              {messages.length / 2 + 1} pertanyaan
             </span>
           </div>
 
-          {/* Progress bar */}
-          <div className="mb-6 h-1.5 w-full overflow-hidden rounded-full bg-[#F0E8D8]">
-            <div
-              className="h-full rounded-full bg-[#F5A62A] transition-all"
-              style={{ width: `${((currentQuestionIndex + 1) / (questions.length + 1)) * 100}%` }}
-            />
-          </div>
-
-          {questions[currentQuestionIndex] && (
-            <div className="space-y-6">
-              <div className="rounded-xl bg-[#FFF3D6] p-4">
-                <p className="text-sm font-semibold text-[#5C4813]">
-                  {questions[currentQuestionIndex].question}
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                {questions[currentQuestionIndex].options.map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() => toggleSelection(option.value)}
-                    className={`w-full rounded-xl border-2 p-4 text-left transition ${
-                      currentSelections.includes(option.value)
-                        ? "border-[#F5A62A] bg-[#FFF3D6]"
-                        : "border-[#F0E8D8] bg-[#FEFBF5] hover:border-[#F5A62A]"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`flex h-5 w-5 items-center justify-center rounded ${
-                          currentSelections.includes(option.value)
-                            ? "bg-[#F5A62A] text-white"
-                            : "border-2 border-[#999999]"
-                        }`}
-                      >
-                        {currentSelections.includes(option.value) && "✓"}
-                      </div>
-                      <span className="text-sm text-[#2D5016]">{option.label}</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-
-              <button
-                type="button"
-                onClick={handleAnswerSubmit}
-                disabled={loading || currentSelections.length === 0}
-                className="rounded-xl bg-[#F5A62A] px-6 py-3 text-sm font-bold text-[#2D5016] transition hover:opacity-90 disabled:opacity-50"
-              >
-                {loading ? "⏳ Menganalisis..." : "Lanjut →"}
-              </button>
+          {/* Conversation History */}
+          {messages.length > 0 && (
+            <div className="mb-6 max-h-48 space-y-3 overflow-y-auto rounded-xl bg-[#FEFBF5] p-4">
+              {messages.map((msg, idx) => (
+                <div
+                  key={idx}
+                  className={`rounded-lg p-3 text-sm ${
+                    msg.role === "user"
+                      ? "ml-8 bg-[#E3F2FD] text-[#1565C0]"
+                      : "mr-8 bg-[#FFF3D6] text-[#5C4813]"
+                  }`}
+                >
+                  <span className="font-semibold">{msg.role === "user" ? "Anda: " : "AI: "}</span>
+                  {msg.content}
+                </div>
+              ))}
             </div>
           )}
-        </>
-      )}
 
-      {/* Analyzing Step */}
-      {step === "analyzing" && (
-        <div className="py-12 text-center">
-          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-[#F5A62A] border-t-transparent" />
-          <p className="text-sm font-semibold text-[#2D5016]">AI sedang menganalisis kode Anda...</p>
-        </div>
+          {/* Current Question */}
+          <div className="space-y-6">
+            <div className="rounded-xl bg-[#FFF3D6] p-4">
+              <p className="text-sm font-semibold text-[#5C4813]">
+                {currentQuestion.question}
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              {currentQuestion.options.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => toggleSelection(option.value)}
+                  className={`w-full rounded-xl border-2 p-4 text-left transition ${
+                    currentSelections.includes(option.value)
+                      ? "border-[#F5A62A] bg-[#FFF3D6]"
+                      : "border-[#F0E8D8] bg-[#FEFBF5] hover:border-[#F5A62A]"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`flex h-5 w-5 items-center justify-center rounded ${
+                        currentSelections.includes(option.value)
+                          ? "bg-[#F5A62A] text-white"
+                          : "border-2 border-[#999999]"
+                      }`}
+                    >
+                      {currentSelections.includes(option.value) && "✓"}
+                    </div>
+                    <span className="text-sm text-[#2D5016]">{option.label}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={handleAnswerSubmit}
+              disabled={loading || currentSelections.length === 0}
+              className="rounded-xl bg-[#F5A62A] px-6 py-3 text-sm font-bold text-[#2D5016] transition hover:opacity-90 disabled:opacity-50"
+            >
+              {loading ? "⏳ Menganalisis..." : "Lanjut →"}
+            </button>
+          </div>
+        </>
       )}
 
       {/* Result Step */}
