@@ -1,5 +1,6 @@
 import { getCourses as getCoursesFromDb, getCourseBySlug as getCourseBySlugFromDb, getEnrollments as getEnrollmentsFromDb } from "@/lib/db";
 import type { Course } from "@/lib/data";
+import { courses } from "@/lib/data";
 
 export async function getCourses(): Promise<Course[]> {
   const dbCourses = await getCoursesFromDb();
@@ -10,7 +11,6 @@ export async function getCourses(): Promise<Course[]> {
 
 export async function getCourseBySlug(slug: string): Promise<Course | null> {
   // First check published courses from data.ts
-  const { courses } from "@/lib/data";
   const localCourse = courses.find((c) => c.slug === slug && c.is_published);
   if (localCourse) return localCourse as Course;
   
