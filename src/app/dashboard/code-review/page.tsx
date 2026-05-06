@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getEnrollments, getCourses } from "@/lib/content";
+import CodeReviewForm from "./code-review-form";
 
 export default async function CodeReviewPage() {
   const { userId } = await auth();
@@ -9,7 +10,6 @@ export default async function CodeReviewPage() {
     redirect("/login?redirect=/dashboard/code-review");
   }
 
-  const clerkUser = await auth().then((a) => a.userId ? { userId: a.userId } : null);
   const enrollments = await getEnrollments(userId);
   const courses = await getCourses();
   const enrolledCourses = courses.filter((c) => enrollments.includes(c.slug));
@@ -43,7 +43,7 @@ export default async function CodeReviewPage() {
             <div>
               <p className="text-sm font-bold text-[#5C4813]">Cara Kerja AI Code Review</p>
               <p className="mt-1 text-xs text-[#5C4813]">
-                Kode Anda akan dianalisis oleh AI untuk memberikan saran perbaikan terkait best practices, 
+                Kode Anda akan dianalisis oleh AI untuk memberikan saran perbaikan terkait best practices,
                 efisiensi, dan kemungkinan bug. Fitur ini menggunakan teknologi AI untuk membantu pembelajaran Anda.
               </p>
             </div>
@@ -51,86 +51,7 @@ export default async function CodeReviewPage() {
         </div>
 
         {/* Submission Form */}
-        <div className="rounded-2xl border border-[#F0E8D8] bg-white p-8 shadow-sm">
-          <h2 className="text-xl font-extrabold text-[#2D5016]">Submit Kode untuk Review</h2>
-          
-          <form className="mt-6 space-y-6" action="/api/code-review" method="POST">
-            {/* Course Selection */}
-            <div>
-              <label htmlFor="course" className="block text-sm font-semibold text-[#2D5016] mb-2">
-                Pilih Course
-              </label>
-              <select
-                id="course"
-                name="courseSlug"
-                required
-                className="w-full rounded-xl border border-[#F0E8D8] bg-[#FEFBF5] px-4 py-3 text-sm text-[#2D5016] focus:border-[#F5A62A] focus:outline-none"
-              >
-                <option value="">-- Pilih Course --</option>
-                {enrolledCourses.map((course) => (
-                  <option key={course.slug} value={course.slug}>
-                    {course.title}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Module Selection */}
-            <div>
-              <label htmlFor="module" className="block text-sm font-semibold text-[#2D5016] mb-2">
-                Modul
-              </label>
-              <input
-                type="text"
-                id="module"
-                name="module"
-                placeholder="Contoh: Modul 3 - API Design"
-                required
-                className="w-full rounded-xl border border-[#F0E8D8] bg-[#FEFBF5] px-4 py-3 text-sm text-[#2D5016] placeholder:text-[#999999] focus:border-[#F5A62A] focus:outline-none"
-              />
-            </div>
-
-            {/* Code Input */}
-            <div>
-              <label htmlFor="code" className="block text-sm font-semibold text-[#2D5016] mb-2">
-                Kode Anda
-              </label>
-              <textarea
-                id="code"
-                name="code"
-                rows={12}
-                placeholder="// Paste kode Anda di sini...&#10;// Pastikan kode relatif dengan materi course"
-                required
-                className="w-full rounded-xl border border-[#F0E8D8] bg-[#FEFBF5] px-4 py-3 text-sm font-mono text-[#2D5016] placeholder:text-[#999999] focus:border-[#F5A62A] focus:outline-none resize-y"
-              />
-              <p className="mt-2 text-xs text-[#444444]">
-                Tip: Sertakan komentar yang menjelaskan apa yang kode ini lakukan untuk hasil review yang lebih baik.
-              </p>
-            </div>
-
-            {/* Description */}
-            <div>
-              <label htmlFor="description" className="block text-sm font-semibold text-[#2D5016] mb-2">
-                Deskripsi / Pertanyaan (Opsional)
-              </label>
-              <textarea
-                id="description"
-                name="description"
-                rows={3}
-                placeholder="Jelaskan apa yang ingin Anda review atau pertanyaan spesifik..."
-                className="w-full rounded-xl border border-[#F0E8D8] bg-[#FEFBF5] px-4 py-3 text-sm text-[#2D5016] placeholder:text-[#999999] focus:border-[#F5A62A] focus:outline-none resize-y"
-              />
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              className="rounded-xl bg-[#F5A62A] px-6 py-3 text-sm font-bold text-[#2D5016] transition hover:opacity-90"
-            >
-              🤖 Submit untuk AI Review
-            </button>
-          </form>
-        </div>
+        <CodeReviewForm enrolledCourses={enrolledCourses} />
 
         {/* Previous Reviews */}
         <div className="mt-10 rounded-2xl border border-[#F0E8D8] bg-white p-8 shadow-sm">
