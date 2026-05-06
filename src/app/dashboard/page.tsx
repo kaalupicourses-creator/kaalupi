@@ -30,13 +30,25 @@ export default async function DashboardPage() {
   const userEmail = user?.primaryEmailAddress?.emailAddress ?? "";
 
   const allCourses = await getCourses();
-  const enrollments = await getEnrollments(userEmail);
+  
+  let enrollments: string[] = [];
+  try {
+    enrollments = await getEnrollments(userEmail);
+  } catch (error) {
+    console.error("Failed to fetch enrollments:", error);
+  }
+  
   const ownedCourses = allCourses.filter((course) => enrollments.includes(course.slug));
 
   // Fetch progress for each course
   const coursesWithProgress = await Promise.all(
     ownedCourses.map(async (course) => {
-      const progress = await getProgress(userEmail, course.slug);
+      let progress: any[] = [];
+      try {
+        progress = await getProgress(userEmail, course.slug);
+      } catch (error) {
+        console.error(`Failed to fetch progress for ${course.slug}:`, error);
+      }
       const completedCount = progress.filter((p) => p.completed).length;
       const totalModules = course.modules.length;
       const percentage = totalModules > 0 ? Math.round((completedCount / totalModules) * 100) : 0;
@@ -52,13 +64,24 @@ export default async function DashboardPage() {
   );
 
   // Fetch user points
-  const userPointsData = await getUserPoints(userEmail);
-  const userPoints = userPointsData?.points ?? 0;
+  let userPoints = 0;
+  try {
+    const userPointsData = await getUserPoints(userEmail);
+    userPoints = userPointsData?.points ?? 0;
+  } catch (error) {
+    console.error("Failed to fetch user points:", error);
+  }
 
   // Fetch badges
-  const allBadges = await getBadges();
-  const userBadgesData = await getUserBadges(userEmail);
-  const earnedBadgeIds = new Set(userBadgesData?.map((ub: any) => ub.badge_id) ?? []);
+  let allBadges: any[] = [];
+  let earnedBadgeIds = new Set<string>();
+  try {
+    allBadges = await getBadges();
+    const userBadgesData = await getUserBadges(userEmail);
+    earnedBadgeIds = new Set(userBadgesData?.map((ub: any) => ub.badge_id) ?? []);
+  } catch (error) {
+    console.error("Failed to fetch badges:", error);
+  }
 
   return (
     <div className="bg-[#FEFBF5] min-h-screen">
