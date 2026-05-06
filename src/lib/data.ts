@@ -40,7 +40,7 @@ export const siteConfig = {
   description:
     "Platform course IT profesional untuk belajar AI, programming, network engineering, dan cyber security — dalam bahasa Indonesia, langsung praktik.",
   phone: "+62 819-3004-5321",
-  email: "kaalupicourse@gmail.com",
+  email: "kaalupicourses@gmail.com",
   address: "Bogor, Indonesia",
 };
 

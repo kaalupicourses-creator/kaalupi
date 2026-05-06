@@ -40,7 +40,7 @@ export async function POST(request: Request) {
 
     await transporter.sendMail({
       from: `"Kaalupi Contact Form" <${user}>`,
-      to: user,
+      to: "kaalupicourses@gmail.com", // Fixed: add "s"
       replyTo: from,
       subject: `📬 Pesan Baru: ${subject}`,
       html: `
