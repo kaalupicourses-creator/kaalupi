@@ -1,6 +1,51 @@
+"use client";
+
+import { useState } from "react";
 import { siteConfig } from "@/lib/data";
 
 export default function ContactPage() {
+  const [form, setForm] = useState({ nama: "", subjek: "", pesan: "" });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          from: form.nama,
+          subject: form.subjek,
+          body: form.pesan,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = (await res.json()) as { error?: string };
+        setError(data.error ?? "Gagal mengirim pesan.");
+        return;
+      }
+
+      setSuccess(true);
+      setForm({ nama: "", subjek: "", pesan: "" });
+    } catch {
+      setError("Koneksi gagal. Cek internet kamu.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${siteConfig.email}&su=Hello%20Kaalupi`;
+
   return (
     <div className="bg-[#FEFBF5] mx-auto max-w-7xl px-6 py-16">
       <div className="mx-auto max-w-3xl text-center">
@@ -28,7 +73,7 @@ export default function ContactPage() {
                   icon: "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
                   label: "Email",
                   value: siteConfig.email,
-                  href: `mailto:${siteConfig.email}`,
+                  href: `https://mail.google.com/mail/?view=cm&fs=1&to=${siteConfig.email}`,
                 },
                 {
                   icon: "M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z",
@@ -52,7 +97,7 @@ export default function ContactPage() {
                   <div>
                     <p className="text-sm font-bold text-[#2D5016]">{item.label}</p>
                     {item.href ? (
-                      <a href={item.href} className="text-sm text-[#444444] hover:text-[#F5A62A] transition" target={item.href.startsWith("http") ? "_blank" : undefined} rel={item.href.startsWith("http") ? "noreferrer" : undefined}>
+                      <a href={item.href} className="text-sm text-[#444444] hover:text-[#F5A62A] transition" target="_blank" rel="noreferrer">
                         {item.value}
                       </a>
                     ) : (
@@ -78,11 +123,13 @@ export default function ContactPage() {
                 Chat via WhatsApp
               </a>
               <a
-                href={`mailto:${siteConfig.email}`}
+                href={gmailLink}
+                target="_blank"
+                rel="noreferrer"
                 className="flex items-center gap-3 rounded-xl border border-[#F0E8D8] bg-white px-4 py-3 text-sm font-semibold text-[#2D5016] transition hover:border-[#F5A62A] hover:shadow-sm"
               >
                 <span className="text-lg">📧</span>
-                Kirim Email
+                Kirim Email (Gmail)
               </a>
             </div>
           </div>
@@ -90,48 +137,86 @@ export default function ContactPage() {
 
         {/* Form */}
         <div className="rounded-2xl border border-[#F0E8D8] bg-white p-8">
-          <h2 className="text-xl font-bold text-[#2D5016]">Kirim Pesan</h2>
-          <p className="mt-1 text-sm text-[#444444]">Kami akan balas via email dalam 1×24 jam.</p>
-          <form
-            action={`mailto:${siteConfig.email}`}
-            method="GET"
-            className="mt-6 grid gap-5"
-          >
-            {[
-              { label: "Nama Lengkap", name: "from", placeholder: "Budi Santoso", type: "text" },
-              { label: "Subjek", name: "subject", placeholder: "Partnership inquiry", type: "text" },
-            ].map((field) => (
-              <div key={field.label}>
-                <label className="mb-1.5 block text-sm font-bold text-[#2D5016]">{field.label}</label>
-                <input
-                  name={field.name}
-                  placeholder={field.placeholder}
-                  type={field.type}
-                  required
-                  className="w-full rounded-xl border border-[#F0E8D8] bg-[#FEFBF5] px-4 py-3 text-sm text-[#444444] outline-none transition focus:border-[#2D5016] focus:ring-2 focus:ring-[#2D5016]/10"
-                />
+          {success ? (
+            <div className="text-center py-8">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#E8F5E9] text-3xl">
+                ✅
               </div>
-            ))}
-            <div>
-              <label className="mb-1.5 block text-sm font-bold text-[#2D5016]">Pesan</label>
-              <textarea
-                name="body"
-                rows={5}
-                required
-                placeholder="Tulis kebutuhanmu di sini..."
-                className="w-full rounded-xl border border-[#F0E8D8] bg-[#FEFBF5] px-4 py-3 text-sm text-[#444444] outline-none transition focus:border-[#2D5016] focus:ring-2 focus:ring-[#2D5016]/10"
-              />
+              <h2 className="text-xl font-bold text-[#2D5016]">Pesan Terkirim!</h2>
+              <p className="mt-2 text-sm text-[#444444]">
+                Kami akan balas via email dalam 1×24 jam.
+              </p>
+              <button
+                onClick={() => setSuccess(false)}
+                className="mt-6 rounded-xl border-2 border-[#2D5016] px-6 py-2.5 text-sm font-semibold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-white"
+              >
+                Kirim Pesan Lain
+              </button>
             </div>
-            <button
-              type="submit"
-              className="w-full rounded-xl bg-[#F5A62A] px-5 py-3.5 text-sm font-bold text-[#2D5016] transition hover:opacity-90"
-            >
-              Kirim via Email App →
-            </button>
-            <p className="text-center text-xs text-[#444444]">
-              Atau langsung WA ke <a href={`https://wa.me/${siteConfig.phone.replace(/\D/g, "")}`} target="_blank" rel="noreferrer" className="font-semibold text-[#2D5016] hover:text-[#F5A62A]">{siteConfig.phone}</a>
-            </p>
-          </form>
+          ) : (
+            <>
+              <h2 className="text-xl font-bold text-[#2D5016]">Kirim Pesan</h2>
+              <p className="mt-1 text-sm text-[#444444]">Kami akan balas via email dalam 1×24 jam.</p>
+              <form
+                onSubmit={handleSubmit}
+                className="mt-6 grid gap-5"
+              >
+                <div>
+                  <label className="mb-1.5 block text-sm font-bold text-[#2D5016]">Nama Lengkap</label>
+                  <input
+                    name="nama"
+                    value={form.nama}
+                    onChange={handleChange}
+                    placeholder="Budi Santoso"
+                    type="text"
+                    required
+                    className="w-full rounded-xl border border-[#F0E8D8] bg-[#FEFBF5] px-4 py-3 text-sm text-[#444444] outline-none transition focus:border-[#2D5016] focus:ring-2 focus:ring-[#2D5016]/10"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-bold text-[#2D5016]">Subjek</label>
+                  <input
+                    name="subjek"
+                    value={form.subjek}
+                    onChange={handleChange}
+                    placeholder="Partnership inquiry"
+                    type="text"
+                    required
+                    className="w-full rounded-xl border border-[#F0E8D8] bg-[#FEFBF5] px-4 py-3 text-sm text-[#444444] outline-none transition focus:border-[#2D5016] focus:ring-2 focus:ring-[#2D5016]/10"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-bold text-[#2D5016]">Pesan</label>
+                  <textarea
+                    name="pesan"
+                    value={form.pesan}
+                    onChange={handleChange}
+                    rows={5}
+                    required
+                    placeholder="Tulis kebutuhanmu di sini..."
+                    className="w-full rounded-xl border border-[#F0E8D8] bg-[#FEFBF5] px-4 py-3 text-sm text-[#444444] outline-none transition focus:border-[#2D5016] focus:ring-2 focus:ring-[#2D5016]/10"
+                  />
+                </div>
+
+                {error && (
+                  <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3">
+                    <p className="text-sm text-red-600 font-medium">{error}</p>
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full rounded-xl bg-[#F5A62A] px-5 py-3.5 text-sm font-bold text-[#2D5016] transition hover:opacity-90 disabled:opacity-60"
+                >
+                  {loading ? "Mengirim..." : "Kirim Pesan →"}
+                </button>
+              </form>
+            </>
+          )}
+          <p className="mt-4 text-center text-xs text-[#444444]">
+            Atau langsung WA ke <a href={`https://wa.me/${siteConfig.phone.replace(/\D/g, "")}`} target="_blank" rel="noreferrer" className="font-semibold text-[#2D5016] hover:text-[#F5A62A]">{siteConfig.phone}</a>
+          </p>
         </div>
       </div>
     </div>
