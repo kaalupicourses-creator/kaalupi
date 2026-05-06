@@ -4,7 +4,20 @@ import { courses } from "@/lib/data";
 
 export async function getCourses(): Promise<Course[]> {
   const dbCourses = await getCoursesFromDb();
-  const allCourses = dbCourses as Course[];
+  const dbCoursesTyped = dbCourses as Course[];
+
+  // Start with local courses from data.ts (these are the priority)
+  const allCourses = [...courses];
+
+  // Add DB courses that are not in local courses AND not unwanted courses
+  const unwantedSlugs = ['fullstack-web-engineer', 'network-engineer-pro', 'cyber-security-analyst', 'product-ui-designer', 'data-science-fundamental'];
+  
+  for (const dbCourse of dbCoursesTyped) {
+    if (!allCourses.some(c => c.slug === dbCourse.slug) && !unwantedSlugs.includes(dbCourse.slug)) {
+      allCourses.push(dbCourse);
+    }
+  }
+
   // Only show published courses
   return allCourses.filter((c) => c.is_published !== false);
 }
