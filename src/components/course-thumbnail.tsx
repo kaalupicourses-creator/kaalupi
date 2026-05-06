@@ -42,6 +42,7 @@ export function CourseThumbnail({ title, category, className = "", large = false
   const gradientKey = Object.keys(gradients).find((key) => lowerCategory.includes(key)) ?? "default";
   const gradient = gradients[gradientKey];
   const Icon = icons[gradientKey] ?? icons.default;
+  const isAI = gradientKey === "artificial intelligence";
 
   const initials = title
     .split(" ")
@@ -51,16 +52,30 @@ export function CourseThumbnail({ title, category, className = "", large = false
     .toUpperCase();
 
   return (
-    <div className={`relative overflow-hidden ${gradient.includes("from-") ? `bg-gradient-to-br ${gradient}` : gradient} ${large ? "aspect-[16/9]" : "aspect-[4/3]"} ${className}`}>
+    <div className={`relative overflow-hidden ${isAI ? '' : (gradient.includes("from-") ? `bg-gradient-to-br ${gradient}` : gradient)} ${large ? "aspect-[16/9]" : "aspect-[4/3]"} ${className}`}>
+      {/* Image for AI course */}
+      {isAI && (
+        <img
+          src="/gambar-1.jpg"
+          alt={title}
+          className="absolute inset-0 w-full h-full object-cover"
+          loading="lazy"
+        />
+      )}
+
       {/* Pattern overlay */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0" style={{ backgroundImage: "radial-gradient(circle at 25% 25%, white 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
-      </div>
+      {!isAI && (
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{ backgroundImage: "radial-gradient(circle at 25% 25%, white 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
+        </div>
+      )}
 
       {/* Icon */}
-      <div className="absolute inset-0 flex items-center justify-center text-white/30">
-        {Icon}
-      </div>
+      {!isAI && (
+        <div className="absolute inset-0 flex items-center justify-center text-white/30">
+          {Icon}
+        </div>
+      )}
 
       {/* Title overlay */}
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
