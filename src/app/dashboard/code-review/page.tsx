@@ -1,7 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { getEnrollments, getCourses } from "@/lib/content";
 import CodeReviewForm from "./code-review-form";
 
 export default async function CodeReviewPage() {
@@ -9,10 +8,6 @@ export default async function CodeReviewPage() {
   if (!userId) {
     redirect("/login?redirect=/dashboard/code-review");
   }
-
-  const enrollments = await getEnrollments(userId);
-  const courses = await getCourses();
-  const enrolledCourses = courses.filter((c) => enrollments.includes(c.slug));
 
   return (
     <div className="bg-[#FEFBF5] min-h-screen">
@@ -51,7 +46,7 @@ export default async function CodeReviewPage() {
         </div>
 
         {/* Submission Form */}
-        <CodeReviewForm enrolledCourses={enrolledCourses} />
+        <CodeReviewForm />
 
         {/* Previous Reviews */}
         <div className="mt-10 rounded-2xl border border-[#F0E8D8] bg-white p-8 shadow-sm">
