@@ -308,13 +308,13 @@ export default async function HomePage() {
           <div className="mx-auto max-w-7xl px-6 py-16">
             <div className="mx-auto mb-8 max-w-2xl text-center">
               <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">
-                Free Anchor Course
+                Our First Launch
               </p>
               <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016] md:text-4xl">
                 Mulai Gratis, Upgrade Kapan Aja
               </h2>
               <p className="mt-3 max-w-2xl text-sm leading-7 text-[#444444]">
-                Coba dulu gratis. Pas udah yakin, lanjut ke course premium dengan AI tutor penuh + sertifikat resmi.
+                Course perdana Kaalupi. Coba dulu gratis. Pas udah yakin, lanjut ke track lainnya.
               </p>
             </div>
 

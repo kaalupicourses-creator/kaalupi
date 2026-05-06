@@ -47,8 +47,8 @@ export const siteConfig = {
 export const demoUsers: DemoUser[] = [];
 
 export const stats = [
-  { label: "Course Aktif", value: "2" },
-  { label: "Gratis", value: "2" },
+  { label: "Course Aktif", value: "1" },
+  { label: "Status", value: "First Launch" },
   { label: "Bahasa", value: "Indonesia" },
   { label: "Metode", value: "Praktik" },
 ];
@@ -84,7 +84,7 @@ export const audienceTracks = [
 ];
 
 export const courses: Course[] = [
-  // FREE FUNDAMENTAL COURSES
+  // FIRST LAUNCH - FREE COURSE
   {
     slug: "ai-untuk-pemula",
     title: "AI untuk Pemula — Dari Nol ke Produktif",
@@ -101,195 +101,43 @@ export const courses: Course[] = [
       "Membuat prompt yang efektif untuk berbagai kebutuhan kerja",
       "Menggunakan AI tools populer untuk produktivitas sehari-hari",
     ],
-     modules: [
-       "Cara kerja AI & Large Language Models",
-       "Prompt Engineering dasar hingga lanjutan",
-       "AI untuk produktivitas dan pekerjaan",
-       "AI untuk bisnis dan karier",
-       "Tools AI populer & workflow praktis",
-     ],
-     format: "video",
-     featured: true,
-     is_free: true,
-     is_lifetime_access: true,
-     is_published: true,
-   },
-   {
-     slug: "dasar-pemrograman-web",
-    title: "Dasar Pemrograman Web",
-    category: "Programming",
-    level: "Beginner",
-    duration: "10 jam",
-    price: 0,
-    summary:
-      "Pelajari fondasi HTML, CSS, dan JavaScript untuk memulai karier di web development.",
-    hero:
-      "Bangun fondasi kuat web development dengan materi praktis bahasa Indonesia.",
-    outcomes: [
-      "Menguasai struktur HTML dan semantic markup",
-      "Membuat styling responsif dengan CSS modern",
-      "Memahami dasar JavaScript untuk interaktivitas web",
+    modules: [
+      "Cara kerja AI & Large Language Models",
+      "Prompt Engineering dasar hingga lanjutan",
+      "AI untuk produktivitas dan pekerjaan",
+      "AI untuk bisnis dan karier",
+      "Tools AI populer & workflow praktis",
     ],
-     modules: [
-       "HTML fundamentals",
-       "CSS layout dan responsive design",
-       "JavaScript dasar dan DOM manipulation",
-       "Mini project landing page",
-     ],
-     format: "blended",
-     featured: true,
-     is_free: true,
-     is_lifetime_access: true,
-     is_published: true,
-   },
-   // PAID COURSES
+    format: "video",
+    featured: true,
+    is_free: true,
+    is_lifetime_access: true,
+    is_published: true,
+  },
+];
+
+export const comingSoonTracks = [
   {
-    slug: "fullstack-web-engineer",
     title: "Fullstack Web Engineer",
-    category: "Programming",
-    level: "Intermediate",
-    duration: "16 minggu",
-    price: 2490000,
-    summary:
-      "Belajar React, Next.js, API, database, auth, testing, dan deployment lewat project end-to-end.",
-    hero:
-      "Bangun aplikasi production-ready dengan kurikulum yang menutup gap dari frontend ke backend.",
-    outcomes: [
-      "Membangun aplikasi Next.js modern untuk Vercel",
-      "Mendesain REST API dan auth flow role-based",
-      "Menghubungkan database, payment, dan deployment pipeline",
-    ],
-     modules: [
-       "React UI foundations",
-       "Next.js App Router",
-       "API design and validation",
-       "Database modeling",
-       "Auth and authorization",
-       "Payments, testing, and deployment",
-     ],
-     format: "blended",
-     featured: true,
-     is_free: false,
-     is_lifetime_access: true,
-     is_published: false,
-   },
-   {
-     slug: "network-engineer-pro",
+    description: "React, Next.js, API, database, auth, testing, dan deployment lewat project end-to-end.",
+  },
+  {
     title: "Network Engineer Pro",
-    category: "Network Engineer",
-    level: "Beginner to Advanced",
-    duration: "14 minggu",
-    price: 2190000,
-    summary:
-      "Dasar sampai praktik jaringan enterprise: IP planning, VLAN, routing, switching, dan observability.",
-    hero:
-      "Rancang, bangun, dan troubleshoot infrastruktur jaringan yang stabil dan scalable.",
-    outcomes: [
-      "Memahami dasar perangkat dan protokol jaringan",
-      "Membuat simulasi lab untuk routing dan switching",
-      "Menyiapkan monitoring dasar dan dokumentasi operasi",
-    ],
-     modules: [
-       "OSI, TCP/IP, and subnetting",
-       "VLAN and switching",
-       "Static and dynamic routing",
-       "Firewall basics",
-       "Monitoring and troubleshooting",
-     ],
-     format: "video",
-     featured: true,
-     is_free: false,
-     is_lifetime_access: true,
-     is_published: false,
-   },
-   {
-     slug: "cyber-security-analyst",
+    description: "Dasar sampai praktik jaringan enterprise: IP planning, VLAN, routing, switching, dan observability.",
+  },
+  {
     title: "Cyber Security Analyst",
-    category: "Cyber Security",
-    level: "Intermediate",
-    duration: "12 minggu",
-    price: 2790000,
-    summary:
-      "Belajar incident workflow, log analysis, web security, hardening, dan lab investigasi.",
-    hero:
-      "Masuk ke jalur blue team dengan pembahasan taktis yang dekat dengan kebutuhan industri.",
-    outcomes: [
-      "Memahami attack surface aplikasi dan jaringan",
-      "Melakukan triage log dan investigasi dasar",
-      "Membuat checklist hardening untuk sistem umum",
-    ],
-     modules: [
-       "Security fundamentals",
-       "Threat modeling",
-       "Web and API security",
-       "SOC workflow",
-       "Reporting and remediation",
-     ],
-     format: "blended",
-     featured: true,
-     is_free: false,
-     is_lifetime_access: true,
-     is_published: false,
-   },
-   {
-     slug: "product-ui-designer",
+    description: "Belajar incident workflow, log analysis, web security, hardening, dan lab investigasi.",
+  },
+  {
     title: "Product UI Designer",
-    category: "Designer",
-    level: "Beginner",
-    duration: "10 minggu",
-    price: 1890000,
-    summary:
-      "Pelajari UI systems, wireframing, prototype, visual hierarchy, dan kolaborasi dengan developer.",
-    hero:
-      "Bangun portofolio UI yang rapi, usable, dan siap masuk proses pengembangan produk.",
-    outcomes: [
-      "Menyusun design brief dan user flows",
-      "Membuat design system sederhana",
-      "Melakukan handoff ke tim frontend",
-    ],
-     modules: [
-       "Design principles",
-       "Wireframing and flows",
-       "Visual systems",
-       "Interactive prototype",
-       "Design to development handoff",
-     ],
-     format: "article",
-     featured: false,
-     is_free: false,
-     is_lifetime_access: true,
-     is_published: false,
-   },
-   {
-     slug: "data-science-fundamental",
+    description: "Pelajari UI systems, wireframing, prototype, visual hierarchy, dan kolaborasi dengan developer.",
+  },
+  {
     title: "Data Science Fundamental",
-    category: "Data Science",
-    level: "Beginner",
-    duration: "12 minggu",
-    price: 1990000,
-    summary:
-      "Pelajari dasar data science: Python, pandas, visualisasi data, dan machine learning introduction.",
-    hero:
-      "Mulai karier data science dengan kurikulum praktis dan project nyata.",
-    outcomes: [
-      "Memahami workflow data science dari cleaning hingga visualization",
-      "Menggunakan Python untuk analisis data",
-      "Membuat dashboard visualisasi data sederhana",
-    ],
-     modules: [
-       "Python for Data Science",
-       "Data Cleaning dan Preprocessing",
-       "Exploratory Data Analysis",
-       "Introduction to Machine Learning",
-       "Data Visualization dengan Matplotlib",
-     ],
-     format: "video",
-     featured: true,
-     is_free: false,
-     is_lifetime_access: true,
-     is_published: false,
-   },
- ];
+    description: "Pelajari dasar data science: Python, pandas, visualisasi data, dan machine learning introduction.",
+  },
+];
 
 export const blogPosts: BlogPost[] = [
   {
