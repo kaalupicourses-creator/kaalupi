@@ -118,10 +118,6 @@ export const courses: Course[] = [
 
 export const comingSoonTracks = [
   {
-    title: "Fullstack Web Engineer",
-    description: "React, Next.js, API, database, auth, testing, dan deployment lewat project end-to-end.",
-  },
-  {
     title: "Network Engineer Pro",
     description: "Dasar sampai praktik jaringan enterprise: IP planning, VLAN, routing, switching, dan observability.",
   },
@@ -136,6 +132,10 @@ export const comingSoonTracks = [
   {
     title: "Data Science Fundamental",
     description: "Pelajari dasar data science: Python, pandas, visualisasi data, dan machine learning introduction.",
+  },
+  {
+    title: "AI Specialist Track",
+    description: "Lanjutkan belajar AI: computer vision, NLP, dan deployment model AI untuk production.",
   },
 ];
 
