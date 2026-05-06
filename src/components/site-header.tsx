@@ -4,6 +4,7 @@ import Link from "next/link";
 import { UserButton, useAuth } from "@clerk/nextjs";
 
 const links = [
+  { href: "/", label: "Beranda" },
   { href: "/courses", label: "Courses" },
   { href: "/about", label: "Tentang" },
   { href: "/blog", label: "Blog" },
