@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { supabase } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 function slugify(value: string) {
   return value
@@ -11,6 +12,7 @@ function slugify(value: string) {
 }
 
 export async function POST(request: Request) {
+  const supabaseAdmin = getSupabaseAdmin();
   const { userId } = await auth();
   if (!userId) {
     return NextResponse.json({ error: "Akses ditolak." }, { status: 401 });
@@ -43,7 +45,7 @@ export async function POST(request: Request) {
 
   const slug = slugify(title) + "-" + Date.now().toString(36);
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("blog_posts")
     .insert({
       slug,

@@ -132,7 +132,7 @@ export function CheckoutButton({ slug, amount, isFree }: { slug: string; amount:
         disabled={loading}
         className="w-full rounded-xl bg-[#F5A62A] px-5 py-3 text-sm font-bold text-[#2D5016] transition hover:opacity-90 disabled:opacity-60"
       >
-        {loading ? "Memproses..." : "Bayar Course"}
+        {loading ? "Memproses..." : isFree ? "Daftar Gratis" : "Bayar Course"}
       </button>
       {error ? (
         <p className="text-sm text-red-600 font-medium">{error}</p>

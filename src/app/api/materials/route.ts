@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth, clerkClient } from "@clerk/nextjs/server";
-import { supabase } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 function slugify(value: string) {
   return value
@@ -11,6 +11,7 @@ function slugify(value: string) {
 }
 
 export async function POST(request: Request) {
+  const supabase = getSupabaseAdmin();
   const { userId } = await auth();
   if (!userId) {
     return NextResponse.json({ error: "Akses ditolak." }, { status: 401 });

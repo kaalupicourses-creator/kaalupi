@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import { auth, clerkClient } from "@clerk/nextjs/server";
-import { supabase } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import { getEnrollments } from "@/lib/content";
 
 export async function POST(request: Request) {
+  const supabase = getSupabaseAdmin();
   const { userId } = await auth();
   if (!userId) {
     return NextResponse.json({ error: "Akses ditolak." }, { status: 401 });
@@ -56,11 +58,29 @@ export async function POST(request: Request) {
 }
 
 export async function GET(request: Request) {
+  const supabase = getSupabaseAdmin();
   const { searchParams } = new URL(request.url);
   const courseSlug = searchParams.get("course_slug");
 
   if (!courseSlug) {
     return NextResponse.json({ error: "course_slug diperlukan." }, { status: 400 });
+  }
+
+  // Only check enrollment for non-admin requests
+  const { userId } = await auth();
+  if (userId) {
+    const clerk = await clerkClient();
+    const user = await clerk.users.getUser(userId);
+    const userEmail = user.primaryEmailAddress?.emailAddress ?? "";
+    const role = (user.publicMetadata as { role?: string })?.role;
+    const isStaff = role === "admin" || role === "instructor";
+
+    if (!isStaff) {
+      const enrollments = await getEnrollments(userEmail);
+      if (!enrollments.includes(courseSlug)) {
+        return NextResponse.json({ error: "Anda belum memiliki akses ke course ini." }, { status: 403 });
+      }
+    }
   }
 
   const { data, error } = await supabase

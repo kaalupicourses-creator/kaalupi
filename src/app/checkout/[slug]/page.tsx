@@ -110,9 +110,13 @@ export default async function CheckoutPage({
 
             <div className="mt-6 rounded-xl bg-[#FFF3D6] p-6 text-center">
               <p className="text-sm font-semibold text-[#5C4813]">Investasi belajar</p>
-              <p className="mt-1 text-4xl font-extrabold text-[#2D5016]">
-                {formatter.format(course.price)}
-              </p>
+              {course.is_free || course.price === 0 ? (
+                <p className="mt-1 text-4xl font-extrabold text-[#7AB648]">Gratis</p>
+              ) : (
+                <p className="mt-1 text-4xl font-extrabold text-[#2D5016]">
+                  {formatter.format(course.price)}
+                </p>
+              )}
             </div>
 
             <div className="mt-6 space-y-4">
@@ -140,7 +144,7 @@ export default async function CheckoutPage({
                 </p>
               </div>
 
-              <CheckoutButton slug={course.slug} amount={course.price} />
+              <CheckoutButton slug={course.slug} amount={course.price} isFree={course.is_free || course.price === 0} />
             </div>
 
             <div className="mt-6 space-y-3 text-sm text-[#444444]">
