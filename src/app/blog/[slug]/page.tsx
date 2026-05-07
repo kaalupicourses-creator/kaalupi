@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { blogPosts } from "@/lib/data";
+import { supabase } from "@/lib/supabase";
 
 const categoryColors: Record<string, string> = {
   career: "bg-[#FFF3D6] text-[#5C4813]",
@@ -9,18 +10,35 @@ const categoryColors: Record<string, string> = {
   default: "bg-[#FFF3D6] text-[#5C4813]",
 };
 
+async function getDbPost(slug: string) {
+  try {
+    const { data } = await supabase
+      .from("blog_posts")
+      .select("*")
+      .eq("slug", slug)
+      .eq("published", true)
+      .single();
+    return data;
+  } catch {
+    return null;
+  }
+}
+
 export default async function BlogDetailPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = blogPosts.find((item) => item.slug === slug);
+  const isSeedPost = blogPosts.find((item) => item.slug === slug);
+  const post = isSeedPost ?? (await getDbPost(slug));
   if (!post) notFound();
 
   const badgeColor = categoryColors[post.category.toLowerCase()] ?? categoryColors.default;
-  const formattedDate = new Date(post.date).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
-  const readTime = Math.max(1, Math.ceil(post.content.join(" ").split(" ").length / 200));
+  const rawDate = "date" in post ? post.date : (post as Record<string, string>).created_at;
+  const formattedDate = new Date(rawDate).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+  const contentParts: string[] = Array.isArray(post.content) ? post.content : [(post as Record<string, string>).content];
+  const readTime = Math.max(1, Math.ceil(contentParts.join(" ").split(" ").length / 200));
 
   return (
     <article className="mx-auto max-w-3xl px-6 py-16">
@@ -41,7 +59,7 @@ export default async function BlogDetailPage({
       <h1 className="mt-6 text-4xl font-extrabold text-[#2D5016] md:text-5xl">{post.title}</h1>
 
       <div className="mt-10 space-y-6 text-base leading-8 text-[#444444]">
-        {post.content.map((paragraph, index) => (
+        {contentParts.map((paragraph, index) => (
           <p key={index}>{paragraph}</p>
         ))}
       </div>

@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getEnrollments } from "@/lib/content";
@@ -9,10 +9,9 @@ export default async function AccessIndexPage() {
     redirect("/login?redirect=/access");
   }
 
-  const clerk = await auth().then((a) => a.userId ? { users: { getUser: () => fetch(`/api/user`) } } : null);
-  // Get user email
-  const userEmail = "user@email.com"; // This should come from Clerk
-  
+  const clerkUser = await currentUser();
+  const userEmail = clerkUser?.primaryEmailAddress?.emailAddress ?? "";
+
   const enrollments = await getEnrollments(userEmail);
   
   return (

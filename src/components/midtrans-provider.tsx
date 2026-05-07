@@ -1,17 +1,21 @@
 "use client";
 
 import { useEffect } from "react";
-import { getMidtransConfig } from "@/lib/midtrans";
+
+const SANDBOX_SNAP = "https://app.sandbox.midtrans.com";
+const PRODUCTION_SNAP = "https://app.midtrans.com";
 
 export function MidtransProvider() {
-  const midtrans = getMidtransConfig();
+  const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
+  const isProduction = process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === "true";
+  const snapBaseUrl = isProduction ? PRODUCTION_SNAP : SANDBOX_SNAP;
 
   useEffect(() => {
-    if (!midtrans.enabled || !midtrans.clientKey) return;
+    if (!clientKey) return;
 
     const script = document.createElement("script");
-    script.src = `${midtrans.snapBaseUrl}/snap/snap.js`;
-    script.setAttribute("data-client-key", midtrans.clientKey);
+    script.src = `${snapBaseUrl}/snap/snap.js`;
+    script.setAttribute("data-client-key", clientKey);
     script.async = true;
 
     document.body.appendChild(script);
@@ -19,7 +23,7 @@ export function MidtransProvider() {
     return () => {
       document.body.removeChild(script);
     };
-  }, [midtrans]);
+  }, [clientKey, snapBaseUrl]);
 
   return null;
 }

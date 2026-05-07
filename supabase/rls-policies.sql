@@ -20,17 +20,17 @@ CREATE POLICY "Service role can manage courses"
   WITH CHECK (true);
 
 -- ---------------------------------------------------------------
--- ENROLLMENTS — user bisa melihat enrollment berdasarkan email
+-- ENROLLMENTS — user hanya bisa melihat/membuat enrollment sendiri
 -- ---------------------------------------------------------------
 ALTER TABLE enrollments ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can view their own enrollments"
   ON enrollments FOR SELECT
-  USING (true);
+  USING (user_email = auth.email());
 
-CREATE POLICY "Anyone can create enrollments"
+CREATE POLICY "Users can create their own enrollments"
   ON enrollments FOR INSERT
-  WITH CHECK (true);
+  WITH CHECK (user_email = auth.email());
 
 CREATE POLICY "Service role can manage enrollments"
   ON enrollments FOR ALL
@@ -39,21 +39,21 @@ CREATE POLICY "Service role can manage enrollments"
   WITH CHECK (true);
 
 -- ---------------------------------------------------------------
--- ORDERS — user bisa melihat dan membuat order mereka sendiri
+-- ORDERS — user hanya bisa melihat/membuat/update order sendiri
 -- ---------------------------------------------------------------
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can view their own orders"
   ON orders FOR SELECT
-  USING (true);
+  USING (user_email = auth.email());
 
-CREATE POLICY "Anyone can create orders"
+CREATE POLICY "Users can create their own orders"
   ON orders FOR INSERT
-  WITH CHECK (true);
+  WITH CHECK (user_email = auth.email());
 
 CREATE POLICY "Users can update their own orders"
   ON orders FOR UPDATE
-  USING (true);
+  USING (user_email = auth.email());
 
 CREATE POLICY "Service role can manage orders"
   ON orders FOR ALL
@@ -62,21 +62,21 @@ CREATE POLICY "Service role can manage orders"
   WITH CHECK (true);
 
 -- ---------------------------------------------------------------
--- PROGRESS — user bisa melihat dan update progress mereka
+-- PROGRESS — user hanya bisa melihat/update progress sendiri
 -- ---------------------------------------------------------------
 ALTER TABLE progress ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can view their own progress"
   ON progress FOR SELECT
-  USING (true);
+  USING (user_email = auth.email());
 
-CREATE POLICY "Anyone can create progress"
+CREATE POLICY "Users can create their own progress"
   ON progress FOR INSERT
-  WITH CHECK (true);
+  WITH CHECK (user_email = auth.email());
 
 CREATE POLICY "Users can update their own progress"
   ON progress FOR UPDATE
-  USING (true);
+  USING (user_email = auth.email());
 
 CREATE POLICY "Service role can manage progress"
   ON progress FOR ALL
@@ -136,7 +136,7 @@ ALTER TABLE user_points ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can view their own points"
   ON user_points FOR SELECT
-  USING (true);
+  USING (user_email = auth.email());
 
 CREATE POLICY "Service role can manage user_points"
   ON user_points FOR ALL
@@ -151,7 +151,7 @@ ALTER TABLE user_badges ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can view their own badges"
   ON user_badges FOR SELECT
-  USING (true);
+  USING (user_email = auth.email());
 
 CREATE POLICY "Service role can manage user_badges"
   ON user_badges FOR ALL
@@ -166,7 +166,7 @@ ALTER TABLE certificates ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can view their own certificates"
   ON certificates FOR SELECT
-  USING (true);
+  USING (user_email = auth.email());
 
 CREATE POLICY "Service role can manage certificates"
   ON certificates FOR ALL

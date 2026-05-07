@@ -1,4 +1,9 @@
-import { supabase, type Database } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import type { Database } from "@/lib/supabase";
+
+function db() {
+  return getSupabaseAdmin();
+}
 
 type CourseRow = Database["public"]["Tables"]["courses"]["Row"];
 type EnrollmentRow = Database["public"]["Tables"]["enrollments"]["Row"];
@@ -13,7 +18,7 @@ type UserBadgeRow = Database["public"]["Tables"]["user_badges"]["Row"];
 
 export async function getCourses() {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await db()
       .from("courses")
       .select("*")
       .order("created_at", { ascending: false });
@@ -27,7 +32,7 @@ export async function getCourses() {
 
 export async function getCourseBySlug(slug: string) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await db()
       .from("courses")
       .select("*")
       .eq("slug", slug)
@@ -41,7 +46,7 @@ export async function getCourseBySlug(slug: string) {
 }
 
 export async function createCourse(course: Database["public"]["Tables"]["courses"]["Insert"]) {
-  const { data, error } = await supabase
+  const { data, error } = await db()
     .from("courses")
     .insert(course)
     .select()
@@ -52,7 +57,7 @@ export async function createCourse(course: Database["public"]["Tables"]["courses
 }
 
 export async function getEnrollments(userEmail: string) {
-  const { data, error } = await supabase
+  const { data, error } = await db()
     .from("enrollments")
     .select("*")
     .eq("user_email", userEmail)
@@ -63,7 +68,7 @@ export async function getEnrollments(userEmail: string) {
 }
 
 export async function createEnrollment(userEmail: string, courseSlug: string) {
-  const { data, error } = await supabase
+  const { data, error } = await db()
     .from("enrollments")
     .insert({ user_email: userEmail, course_slug: courseSlug, status: "active" })
     .select()
@@ -74,7 +79,7 @@ export async function createEnrollment(userEmail: string, courseSlug: string) {
 }
 
 export async function hasEnrollment(userEmail: string, courseSlug: string) {
-  const { data, error } = await supabase
+  const { data, error } = await db()
     .from("enrollments")
     .select("id")
     .eq("user_email", userEmail)
@@ -87,7 +92,7 @@ export async function hasEnrollment(userEmail: string, courseSlug: string) {
 }
 
 export async function createOrder(order: Database["public"]["Tables"]["orders"]["Insert"]) {
-  const { data, error } = await supabase
+  const { data, error } = await db()
     .from("orders")
     .insert(order)
     .select()
@@ -98,7 +103,7 @@ export async function createOrder(order: Database["public"]["Tables"]["orders"][
 }
 
 export async function getOrderById(orderId: string) {
-  const { data, error } = await supabase
+  const { data, error } = await db()
     .from("orders")
     .select("*")
     .eq("order_id", orderId)
@@ -109,7 +114,7 @@ export async function getOrderById(orderId: string) {
 }
 
 export async function updateOrderStatus(orderId: string, status: OrderRow["status"], paymentType?: string, midtransResponse?: Record<string, unknown>) {
-  const { data, error } = await supabase
+  const { data, error } = await db()
     .from("orders")
     .update({
       status,
@@ -125,7 +130,7 @@ export async function updateOrderStatus(orderId: string, status: OrderRow["statu
 }
 
 export async function getProgress(userEmail: string, courseSlug: string) {
-  const { data, error } = await supabase
+  const { data, error } = await db()
     .from("progress")
     .select("*")
     .eq("user_email", userEmail)
@@ -137,7 +142,7 @@ export async function getProgress(userEmail: string, courseSlug: string) {
 }
 
 export async function updateProgress(userEmail: string, courseSlug: string, moduleIndex: number, completed: boolean) {
-  const { data, error } = await supabase
+  const { data, error } = await db()
     .from("progress")
     .upsert(
       {
@@ -157,7 +162,7 @@ export async function updateProgress(userEmail: string, courseSlug: string, modu
 }
 
 export async function getCourseMaterials(courseSlug: string) {
-  const { data, error } = await supabase
+  const { data, error } = await db()
     .from("materials")
     .select("*")
     .eq("course_slug", courseSlug)
@@ -168,7 +173,7 @@ export async function getCourseMaterials(courseSlug: string) {
 }
 
 export async function createMaterial(material: Database["public"]["Tables"]["materials"]["Insert"]) {
-  const { data, error } = await supabase
+  const { data, error } = await db()
     .from("materials")
     .insert(material)
     .select()
@@ -180,7 +185,7 @@ export async function createMaterial(material: Database["public"]["Tables"]["mat
 
 // Certificate functions
 export async function getCertificate(userEmail: string, courseSlug: string) {
-  const { data, error } = await supabase
+  const { data, error } = await db()
     .from("certificates")
     .select("*")
     .eq("user_email", userEmail)
@@ -192,7 +197,7 @@ export async function getCertificate(userEmail: string, courseSlug: string) {
 }
 
 export async function createCertificate(certificate: Database["public"]["Tables"]["certificates"]["Insert"]) {
-  const { data, error } = await supabase
+  const { data, error } = await db()
     .from("certificates")
     .insert(certificate)
     .select()
@@ -204,7 +209,7 @@ export async function createCertificate(certificate: Database["public"]["Tables"
 
 // Voucher functions
 export async function getVoucherByCode(code: string) {
-  const { data, error } = await supabase
+  const { data, error } = await db()
     .from("vouchers")
     .select("*")
     .eq("code", code)
@@ -216,7 +221,7 @@ export async function getVoucherByCode(code: string) {
 }
 
 export async function updateVoucherUsage(code: string, usedCount: number) {
-  const { data, error } = await supabase
+  const { data, error } = await db()
     .from("vouchers")
     .update({ used_count: usedCount })
     .eq("code", code)
@@ -229,7 +234,7 @@ export async function updateVoucherUsage(code: string, usedCount: number) {
 
 // Badge functions
 export async function getBadges() {
-  const { data, error } = await supabase
+  const { data, error } = await db()
     .from("badges")
     .select("*")
     .order("required_points", { ascending: true });
@@ -239,7 +244,7 @@ export async function getBadges() {
 }
 
 export async function getUserBadges(userEmail: string) {
-  const { data, error } = await supabase
+  const { data, error } = await db()
     .from("user_badges")
     .select("*, badges(*)")
     .eq("user_email", userEmail);
@@ -250,7 +255,7 @@ export async function getUserBadges(userEmail: string) {
 
 // User points functions
 export async function getUserPoints(userEmail: string) {
-  const { data, error } = await supabase
+  const { data, error } = await db()
     .from("user_points")
     .select("*")
     .eq("user_email", userEmail)
@@ -261,7 +266,7 @@ export async function getUserPoints(userEmail: string) {
 }
 
 export async function updateUserPoints(userEmail: string, points: number) {
-  const { data, error } = await supabase
+  const { data, error } = await db()
     .from("user_points")
     .upsert({ user_email: userEmail, points })
     .select()

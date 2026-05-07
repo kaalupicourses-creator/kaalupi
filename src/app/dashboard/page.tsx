@@ -215,7 +215,7 @@ export default async function DashboardPage() {
                 .map((course) => (
                   <Link
                     key={course.slug}
-                    href={`/access/${course.slug}${course.lastModuleIndex >= 0 ? `?modul=${course.lastModuleIndex}` : ""}`}
+                    href={`/access/${course.slug}${course.lastModuleIndex >= 0 ? `?module=${course.lastModuleIndex}` : ""}`}
                     className="flex items-center gap-4 rounded-xl border border-[#F0E8D8] bg-white p-4 transition hover:border-[#F5A62A] hover:shadow-sm"
                   >
                     <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-[#2D5016] text-white font-bold text-sm">
@@ -271,7 +271,7 @@ export default async function DashboardPage() {
                     </div>
 
                     <Link
-                      href={`/access/${course.slug}${course.lastModuleIndex >= 0 ? `?modul=${course.lastModuleIndex}` : ""}`}
+                      href={`/access/${course.slug}${course.lastModuleIndex >= 0 ? `?module=${course.lastModuleIndex}` : ""}`}
                       className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[#F5A62A] hover:text-[#2D5016] transition"
                     >
                       {course.progress === 100 ? "Lihat Sertifikat" : "Lanjut Belajar"}

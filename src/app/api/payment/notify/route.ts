@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { isPaymentSuccessful, verifyMidtransSignature } from "@/lib/midtrans";
-import { supabase } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 export async function POST(request: Request) {
+  const supabaseAdmin = getSupabaseAdmin();
   const body = (await request.json()) as {
     order_id?: string;
     status_code?: string;
@@ -30,7 +31,7 @@ export async function POST(request: Request) {
   });
 
   if (success && body.order_id) {
-    await supabase
+    await supabaseAdmin
       .from("orders")
       .update({
         status: "paid",
@@ -39,14 +40,14 @@ export async function POST(request: Request) {
       })
       .eq("order_id", body.order_id);
 
-    const { data: order } = await supabase
+    const { data: order } = await supabaseAdmin
       .from("orders")
       .select("user_email, course_slug")
       .eq("order_id", body.order_id)
       .single();
 
     if (order) {
-      await supabase
+      await supabaseAdmin
         .from("enrollments")
         .upsert(
           { user_email: order.user_email, course_slug: order.course_slug, status: "active" },

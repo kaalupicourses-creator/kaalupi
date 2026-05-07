@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { auth, clerkClient } from "@clerk/nextjs/server";
-import { supabase } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { getCourseBySlug } from "@/lib/content";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 
 export async function POST(request: Request) {
+  const supabaseAdmin = getSupabaseAdmin();
   const { userId } = await auth();
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -34,21 +35,22 @@ export async function POST(request: Request) {
   }
 
   // Check if certificate already exists
-  const { data: existingCert } = await supabase
+  const { data: existingCert } = await supabaseAdmin
     .from("certificates")
-    .select("certificate_url")
+    .select("*")
     .eq("user_email", userEmail)
     .eq("course_slug", body.courseSlug)
-    .single();
+    .maybeSingle();
 
-  let certificateUrl = existingCert?.certificate_url;
+  const existingRow = existingCert as { certificate_url?: string | null } | null;
+  let certificateUrl = existingRow?.certificate_url ?? null;
 
   if (!certificateUrl) {
     try {
       certificateUrl = await generateCertificate(userName, course.title, userId, userEmail);
       
       // Save certificate record
-      await supabase.from("certificates").insert({
+      await supabaseAdmin.from("certificates").insert({
         user_email: userEmail,
         course_slug: body.courseSlug,
         certificate_url: certificateUrl,
@@ -76,6 +78,7 @@ export async function POST(request: Request) {
 }
 
 async function generateCertificate(userName: string, courseTitle: string, userId: string, userEmail: string): Promise<string> {
+  const supabaseAdmin = getSupabaseAdmin();
   const pdfDoc = await PDFDocument.create();
   const page = pdfDoc.addPage([842, 595]); // A4 landscape
   const { width, height } = page.getSize();
@@ -188,7 +191,7 @@ async function generateCertificate(userName: string, courseTitle: string, userId
   const fileName = `${safeEmail}/${courseTitle}-${Date.now()}.pdf`;
   
   // Upload to Supabase Storage
-  const { data: uploadData, error: uploadError } = await supabase.storage
+  const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
     .from('certificates')
     .upload(fileName, pdfBytes, {
       contentType: 'application/pdf',
@@ -198,7 +201,7 @@ async function generateCertificate(userName: string, courseTitle: string, userId
   if (uploadError) throw uploadError;
   
   // Get public URL
-  const { data: { publicUrl } } = supabase.storage
+  const { data: { publicUrl } } = supabaseAdmin.storage
     .from('certificates')
     .getPublicUrl(fileName);
     
