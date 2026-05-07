@@ -560,7 +560,7 @@ export default async function HomePage() {
             <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-[#F5A62A]/10" />
             <div className="absolute -left-16 -bottom-16 h-48 w-48 rounded-full bg-[#7AB648]/10" />
 
-            <h2 className="relative text-3xl font-extrabold text-[#F5A62A] md:text-4xl">
+            <h2 className="relative text-3xl font-extrabold md:text-4xl" style={{ color: "#F5A62A" }}>
                Masih Ragu? Coba Gratis Dulu
              </h2>
             <p className="relative mt-4 max-w-xl mx-auto text-base leading-8" style={{color: 'white'}}>

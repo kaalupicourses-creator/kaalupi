@@ -5,7 +5,6 @@ import { RoleBadge } from "@/components/role-badge";
 import { getEnrollments, getProgress, getUserPoints, getUserBadges, getBadges } from "@/lib/db";
 import { getCourses } from "@/lib/content";
 import { CourseThumbnail } from "@/components/course-thumbnail";
-import { ProgressTracker } from "@/components/progress-tracker";
 
 const roleDescriptions = {
   admin:
@@ -43,7 +42,7 @@ export default async function DashboardPage() {
   // Fetch progress for each course
   const coursesWithProgress = await Promise.all(
     ownedCourses.map(async (course) => {
-      let progress: any[] = [];
+      let progress: Array<{ completed: boolean; module_index: number }> = [];
       try {
         progress = await getProgress(userEmail, course.slug);
       } catch (error) {
@@ -73,12 +72,12 @@ export default async function DashboardPage() {
   }
 
   // Fetch badges
-  let allBadges: any[] = [];
+  let allBadges: Array<{ id: string; name: string; description: string | null; icon: string | null; required_points: number }> = [];
   let earnedBadgeIds = new Set<string>();
   try {
     allBadges = await getBadges();
     const userBadgesData = await getUserBadges(userEmail);
-    earnedBadgeIds = new Set(userBadgesData?.map((ub: any) => ub.badge_id) ?? []);
+    earnedBadgeIds = new Set(userBadgesData?.map((ub: { badge_id: string }) => ub.badge_id) ?? []);
   } catch (error) {
     console.error("Failed to fetch badges:", error);
   }
@@ -125,7 +124,7 @@ export default async function DashboardPage() {
               href="/dashboard/code-review"
               className="rounded-xl bg-[#E3F2FD] px-5 py-3 text-sm font-bold text-[#1565C0] transition hover:bg-[#1565C0] hover:text-white border border-[#1565C0]"
             >
-              🤖 AI Code Review
+              AI Code Review
             </Link>
             <Link
               href="/courses"

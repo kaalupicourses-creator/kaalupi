@@ -42,6 +42,10 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGci...
 MIDTRANS_SERVER_KEY=Mid-server-...
 NEXT_PUBLIC_MIDTRANS_CLIENT_KEY=Mid-client-...
 MIDTRANS_IS_PRODUCTION=false
+
+# Email notification Gmail
+EMAIL_USER=kaalupicourses@gmail.com
+EMAIL_APP_PASSWORD=your-gmail-app-password
 ```
 
 ---

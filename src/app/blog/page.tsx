@@ -148,15 +148,64 @@ export default async function BlogPage({
       )}
 
       {/* CTA Section */}
-      <div className="mt-16 rounded-3xl bg-[#2D5016] p-8 text-center md:p-12">
-        <h3 className="text-2xl font-extrabold text-[#F5A62A]">Ingin Tips Belajar Langsung ke Email?</h3>
-        <p className="mt-3 text-[#FEFBF5]">Daftar waitlist dan dapatkan update course terbaru.</p>
-        <Link
-          href="/waitlist"
-          className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#F5A62A] px-8 py-3 text-sm font-bold text-[#2D5016] transition hover:opacity-90"
-        >
-          Daftar Waitlist →
-        </Link>
+      <div className="relative mt-16 overflow-hidden rounded-[2rem] border border-[#1A2E0A] bg-[#1A2E0A] p-6 shadow-xl shadow-[#1A2E0A]/10 md:p-10">
+        <div className="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-[#F5A62A]/20 blur-3xl" />
+        <div className="absolute -bottom-28 -left-16 h-72 w-72 rounded-full bg-[#7AB648]/20 blur-3xl" />
+        <div className="relative grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+          <div>
+            <span className="inline-flex rounded-full border border-[#F5A62A]/30 bg-[#F5A62A]/15 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-[#F5A62A]">
+              Early access
+            </span>
+            <h3 className="mt-4 text-3xl font-extrabold leading-tight text-[#F5A62A] md:text-4xl">
+              Masuk waitlist, dapat update course sebelum publik.
+            </h3>
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-[#FEFBF5]/85 md:text-base">
+              Jadi orang pertama yang tahu saat cohort baru dibuka, dapat harga early bird,
+              dan ikut voting materi yang paling kamu butuhin.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3 text-xs font-semibold text-[#FEFBF5]">
+              {[
+                "Update rilis course",
+                "Harga early bird",
+                "Prioritas beta tester",
+              ].map((item) => (
+                <span key={item} className="rounded-full border border-white/15 bg-white/10 px-3 py-2">
+                  {item}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-white/15 bg-[#FEFBF5] p-5 shadow-2xl shadow-black/20">
+            <div className="rounded-2xl bg-[#FFF3D6] p-4">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#5C4813]">
+                Waitlist snapshot
+              </p>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <div className="rounded-2xl bg-white p-4">
+                  <p className="text-2xl font-extrabold text-[#2D5016]">AI</p>
+                  <p className="mt-1 text-xs text-[#444444]">Course pertama</p>
+                </div>
+                <div className="rounded-2xl bg-white p-4">
+                  <p className="text-2xl font-extrabold text-[#F5A62A]">50</p>
+                  <p className="mt-1 text-xs text-[#444444]">Seat beta awal</p>
+                </div>
+              </div>
+              <div className="mt-4 rounded-2xl bg-white p-4">
+                <p className="text-sm font-bold text-[#2D5016]">Yang kamu dapat</p>
+                <p className="mt-1 text-xs leading-6 text-[#444444]">
+                  Reminder email, info diskon, dan kesempatan bantu nentuin modul lanjutan.
+                </p>
+              </div>
+            </div>
+            <Link
+              href="/waitlist"
+              className="mt-5 flex w-full items-center justify-center rounded-xl bg-[#F5A62A] px-8 py-3.5 text-sm font-bold text-[#2D5016] transition hover:opacity-90"
+            >
+              Daftar Waitlist Sekarang →
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );

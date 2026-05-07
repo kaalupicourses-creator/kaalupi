@@ -4,7 +4,7 @@ import { useState } from "react";
 import { siteConfig } from "@/lib/data";
 
 export default function ContactPage() {
-  const [form, setForm] = useState({ nama: "", subjek: "", pesan: "" });
+  const [form, setForm] = useState({ nama: "", email: "", subjek: "", pesan: "" });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,6 +24,7 @@ export default function ContactPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           from: form.nama,
+          email: form.email,
           subject: form.subjek,
           body: form.pesan,
         }),
@@ -36,7 +37,7 @@ export default function ContactPage() {
       }
 
       setSuccess(true);
-      setForm({ nama: "", subjek: "", pesan: "" });
+      setForm({ nama: "", email: "", subjek: "", pesan: "" });
     } catch {
       setError("Koneksi gagal. Cek internet kamu.");
     } finally {
@@ -169,6 +170,18 @@ export default function ContactPage() {
                     onChange={handleChange}
                     placeholder="Budi Santoso"
                     type="text"
+                    required
+                    className="w-full rounded-xl border border-[#F0E8D8] bg-[#FEFBF5] px-4 py-3 text-sm text-[#444444] outline-none transition focus:border-[#2D5016] focus:ring-2 focus:ring-[#2D5016]/10"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-bold text-[#2D5016]">Email</label>
+                  <input
+                    name="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    placeholder="budi@example.com"
+                    type="email"
                     required
                     className="w-full rounded-xl border border-[#F0E8D8] bg-[#FEFBF5] px-4 py-3 text-sm text-[#444444] outline-none transition focus:border-[#2D5016] focus:ring-2 focus:ring-[#2D5016]/10"
                   />

@@ -191,7 +191,7 @@ export default function CodeReviewForm() {
               disabled={loading || !code.trim()}
               className="rounded-xl bg-[#F5A62A] px-6 py-3 text-sm font-bold text-[#2D5016] transition hover:opacity-90 disabled:opacity-50"
             >
-              {loading ? "⏳ Sedang menganalisis..." : "🤖 Mulai AI Review"}
+              {loading ? "Sedang menganalisis..." : "Mulai AI Review"}
             </button>
           </form>
         </>
@@ -201,7 +201,7 @@ export default function CodeReviewForm() {
       {step === "questioning" && currentQuestion && (
         <>
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-xl font-extrabold text-[#2D5016]">🤖 AI Sedang Bertanya</h2>
+            <h2 className="text-xl font-extrabold text-[#2D5016]">AI Sedang Bertanya</h2>
             <span className="rounded-full bg-[#FFF3D6] px-3 py-1 text-xs font-semibold text-[#5C4813]">
               {Math.floor(messages.length / 2) + 1} pertanyaan
             </span>
@@ -268,7 +268,7 @@ export default function CodeReviewForm() {
               disabled={loading || currentSelections.length === 0}
               className="rounded-xl bg-[#F5A62A] px-6 py-3 text-sm font-bold text-[#2D5016] transition hover:opacity-90 disabled:opacity-50"
             >
-              {loading ? "⏳ Menganalisis..." : "Lanjut →"}
+              {loading ? "Menganalisis..." : "Lanjut →"}
             </button>
           </div>
         </>
