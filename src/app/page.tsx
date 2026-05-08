@@ -5,6 +5,8 @@ import { FoundingSlotCounter } from "@/components/founding-slot-counter";
 import { audienceTracks, blogPosts, stats, siteConfig } from "@/lib/data";
 import { getCourses } from "@/lib/content";
 
+import { OnboardingModal } from "@/components/onboarding-modal";
+
 // Vercel deploy trigger - updated 2026-05-04
 
 const howItWorks = [
@@ -81,6 +83,9 @@ export default async function HomePage() {
 
   return (
     <div className="bg-[#FEFBF5]">
+      {/* Onboarding Modal for guests */}
+      <OnboardingModal />
+
       {/* JSON-LD Structured Data */}
       <Script
         id="json-ld"

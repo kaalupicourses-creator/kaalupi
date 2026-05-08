@@ -5,6 +5,7 @@ import { RoleBadge } from "@/components/role-badge";
 import { getEnrollments, getProgress, getUserPoints, getUserBadges, getBadges } from "@/lib/db";
 import { getCourses } from "@/lib/content";
 import { CourseThumbnail } from "@/components/course-thumbnail";
+import { DashboardOnboarding } from "@/components/dashboard-onboarding";
 
 const roleDescriptions = {
   admin:
@@ -128,6 +129,9 @@ export default async function DashboardPage() {
             </Link>
           </div>
         </section>
+
+        {/* Onboarding for new students */}
+        <DashboardOnboarding userName={userName} enrollmentsCount={ownedCourses.length} />
 
         {/* Stats Overview */}
         <section className="mb-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">

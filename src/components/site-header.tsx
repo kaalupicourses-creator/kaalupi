@@ -70,12 +70,20 @@ export function SiteHeaderClient() {
               />
             </>
           ) : (
-            <Link
-              href="/login"
-              className="rounded-full bg-[#F5A62A] px-5 py-2 text-sm font-bold text-[#2D5016] transition hover:opacity-90"
-            >
-              Login
-            </Link>
+            <>
+              <Link
+                href="/courses/ai-untuk-pemula"
+                className="hidden rounded-full border-2 border-[#F5A62A] px-5 py-2 text-sm font-extrabold text-[#2D5016] transition hover:bg-[#F5A62A] hover:text-white md:block animate-pulse"
+              >
+                Mulai Dari Sini 🚀
+              </Link>
+              <Link
+                href="/login"
+                className="rounded-full bg-[#F5A62A] px-5 py-2 text-sm font-bold text-[#2D5016] transition hover:opacity-90"
+              >
+                Login
+              </Link>
+            </>
           )}
 
           {/* Hamburger */}
