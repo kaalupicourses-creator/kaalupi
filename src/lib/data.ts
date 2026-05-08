@@ -49,48 +49,53 @@ export const siteConfig = {
   email: "kaalupicourses@gmail.com",
   address: "Bogor, Indonesia",
   community: {
-    discord: "https://discord.gg/kaalupi",
-    whatsapp: "https://chat.whatsapp.com/kaalupi",
-    notion: "https://kaalupi.notion.site",
-    drive: "https://drive.google.com/drive/folders/kaalupi",
-    instagram: "https://instagram.com/kaalupi",
-    tiktok: "https://tiktok.com/@kaalupi",
-    youtube: "https://youtube.com/@kaalupi",
+    discord: "https://discord.gg/hKbnPpVr",
+    whatsapp: "https://chat.whatsapp.com/GFEmZeqQZ901xQQwobzyHl",
+    instagram: "https://www.instagram.com/kaalupicourses/",
+    youtube: "https://www.youtube.com/@Kaalupi-r9j",
   },
 };
 
-export const founders = [
+export type Founder = {
+  name: string;
+  role: string;
+  bio: string;
+  skills: string[];
+  illustration: {
+    bg: string;
+    accent: string;
+    shape: "blob" | "wave" | "lattice" | "burst";
+  };
+};
+
+export const founders: Founder[] = [
   {
     name: "Kamil Alfaris",
     role: "Founder & Head of AI",
-    bio: "AI engineer, fullstack developer, designer. Bangun Kaalupi dari nol untuk demokratisasi AI di Indonesia.",
+    bio: "Bangun Kaalupi dari nol. Fokus AI tooling, automation, dan integrasi end-to-end di setiap track.",
     skills: ["AI Engineering", "Fullstack", "Cyber", "Design"],
-    initial: "K",
-    color: "#F5A62A",
+    illustration: { bg: "#F5A62A", accent: "#FFF3D6", shape: "blob" },
   },
   {
-    name: "Tim Programming",
+    name: "Akbar Rizki Pratama",
+    role: "Head of Brand & Media",
+    bio: "Anak Media. Pegang visual, video, dan storytelling — bikin Kaalupi keliatan profesional tapi tetap manusiawi.",
+    skills: ["Video", "Visual", "Brand", "Story"],
+    illustration: { bg: "#7AB648", accent: "#E8F5E9", shape: "wave" },
+  },
+  {
+    name: "Raden Muhammad Fadhel Suradipraja",
     role: "Head of Engineering",
-    bio: "Programmer berpengalaman bangun fullstack production app. Backbone teknis platform Kaalupi.",
-    skills: ["Backend", "DevOps", "API"],
-    initial: "P",
-    color: "#7AB648",
+    bio: "Anak Programming. Backbone teknis platform — fitur baru, automation, dan integrasi sistem belajar.",
+    skills: ["Backend", "API", "DevOps", "Frontend"],
+    illustration: { bg: "#2D5016", accent: "#F0E8D8", shape: "lattice" },
   },
   {
-    name: "Tim Designer",
-    role: "Head of Brand & Design",
-    bio: "Designer dengan focus pada visual hierarchy, design system, dan user experience.",
-    skills: ["UI/UX", "Brand", "Visual"],
-    initial: "D",
-    color: "#2D5016",
-  },
-  {
-    name: "Tim Network",
+    name: "Lutfi Hakim Atharie",
     role: "Head of Network & Cyber",
-    bio: "Network engineer praktisi. Akan jadi instruktur utama track Network Engineer & Cyber Security.",
-    skills: ["Network", "Cyber", "Infra"],
-    initial: "N",
-    color: "#5C4813",
+    bio: "Anak Network Engineer. Akan jadi instruktur utama track Network Engineer & Cyber Security yang akan rilis.",
+    skills: ["Network", "Cyber", "Infra", "Security"],
+    illustration: { bg: "#5C4813", accent: "#FFF3D6", shape: "burst" },
   },
 ];
 
@@ -162,7 +167,7 @@ export const courses: Course[] = [
     is_published: true,
   },
 
-  // 💎 MASTERY (PAID) - Bottom of funnel, revenue
+  // MASTERY (PAID) - Bottom of funnel, revenue
   {
     slug: "ai-untuk-pemula-mastery",
     title: "AI untuk Pemula — Mastery (Founding Members)",
@@ -175,9 +180,9 @@ export const courses: Course[] = [
     founding_price: 149000,
     regular_price: 299000,
     summary:
-      "Course full lengkap: 5 modul, sertifikat, AI Tutor 24/7, Discord komunitas, dan akses lifetime. Harga early bird khusus 100 Founding Members pertama.",
+      "Founding Members — 100 orang pertama dapet akses lifetime ke semua course Kaalupi (termasuk yang akan rilis: Network, Cyber, Designer, Data Science). Harga balik normal 299K setelah slot habis.",
     hero:
-      "Naik level dari pemahaman ke penguasaan. Akses 5 modul lengkap + Discord komunitas + AI Tutor pribadi. Slot Founding Members terbatas — harga balik ke Rp 299K setelah 100 student.",
+      "Bukan cuma course AI — Founding Members dapet lifetime access ke SEMUA course Kaalupi sekarang dan yang akan rilis. Slot terbatas 100 orang pertama, harga balik ke Rp 299K setelahnya.",
     outcomes: [
       "Menguasai prompt engineering dari dasar sampai advanced (chain-of-thought, role prompting, few-shot)",
       "Pakai AI buat hemat 2-3 jam kerja per hari (email, analisis, riset, dokumentasi)",
@@ -197,12 +202,13 @@ export const courses: Course[] = [
     is_lifetime_access: true,
     is_published: true,
     perks: [
-      "🎓 Sertifikat resmi Kaalupi (PDF + LinkedIn share)",
-      "🤖 AI Tutor 24/7 — tanya apa aja per modul",
-      "💬 Akses Discord Komunitas Founding Members",
-      "🏅 Badge Founding Member eksklusif",
-      "♾️ Lifetime access — update materi gratis selamanya",
-      "🎯 Final Project: Portfolio AI yang bisa dipajang",
+      "Lifetime access ke SEMUA course Kaalupi (sekarang & yang akan rilis)",
+      "Sertifikat resmi Kaalupi (PDF + LinkedIn share)",
+      "AI Tutor 24/7 — tanya apa aja per modul",
+      "Akses Discord komunitas Founding Members",
+      "Badge Founding Member eksklusif & permanen",
+      "Update materi gratis selamanya",
+      "Final Project: Portfolio AI yang bisa dipajang",
     ],
   },
 ];

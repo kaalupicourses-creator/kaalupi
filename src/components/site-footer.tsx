@@ -5,7 +5,6 @@ const socialLinks = [
   { href: siteConfig.community.discord, label: "Discord" },
   { href: siteConfig.community.whatsapp, label: "WhatsApp" },
   { href: siteConfig.community.instagram, label: "Instagram" },
-  { href: siteConfig.community.tiktok, label: "TikTok" },
   { href: siteConfig.community.youtube, label: "YouTube" },
 ];
 

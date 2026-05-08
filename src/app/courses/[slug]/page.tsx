@@ -43,12 +43,12 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
               <span className="rounded-full bg-[#FFF3D6] px-3 py-1 text-xs font-semibold text-[#5C4813]">{course.level}</span>
               {course.is_free && (
                 <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-800">
-                  🆓 Gratis
+                  Gratis
                 </span>
               )}
               {course.is_lifetime_access && (
                 <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-800">
-                  ♾️ Lifetime Access
+                  Lifetime Access
                 </span>
               )}
             </div>

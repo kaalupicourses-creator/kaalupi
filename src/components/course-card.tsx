@@ -49,12 +49,12 @@ export function CourseCard({ course }: { course: Course }) {
           )}
           {!isComingSoon && course.is_free && (
             <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-800">
-              🆓 Gratis
+              Gratis
             </span>
           )}
           {!isComingSoon && course.is_lifetime_access && (
             <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-800">
-              ♾️ Lifetime
+              Lifetime
             </span>
           )}
         </div>

@@ -20,7 +20,9 @@ export default function CoursesPage() {
             <span className="text-[#F5A62A]">Naik Level Saat Siap</span>
           </h1>
           <p className="mt-6 text-base leading-8 text-[#444444]">
-            Cobain Foundation gratis dulu. Kalau cocok, lanjut ke Mastery — slot Founding Members terbatas 100 spot pertama.
+            Cobain Foundation gratis dulu. Kalau cocok, jadi <strong className="text-[#2D5016]">Founding Member</strong> —
+            100 orang pertama dapet lifetime access ke <strong className="text-[#2D5016]">SEMUA course</strong> Kaalupi
+            (sekarang & yang akan rilis: Network, Cyber, Designer, Data Science).
           </p>
         </div>
       </section>
@@ -35,7 +37,7 @@ export default function CoursesPage() {
                 <div className="relative">
                   <CourseThumbnail title={foundation.title} category={foundation.category} large />
                   <div className="absolute top-4 left-4 rounded-full bg-[#7AB648] px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-white">
-                    🆓 Foundation
+                    Foundation
                   </div>
                 </div>
                 <div className="p-8 flex flex-col flex-1">
@@ -94,7 +96,7 @@ export default function CoursesPage() {
                 <div className="relative">
                   <CourseThumbnail title={mastery.title} category={mastery.category} large />
                   <div className="absolute top-4 left-4 rounded-full bg-[#F5A62A] px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-[#2D5016]">
-                    💎 Mastery
+                    Mastery
                   </div>
                 </div>
                 <div className="p-8 flex flex-col flex-1">

@@ -2,6 +2,7 @@
 import Script from "next/script";
 import { CourseThumbnail } from "@/components/course-thumbnail";
 import { FoundingSlotCounter } from "@/components/founding-slot-counter";
+import { FounderIllustration } from "@/components/founder-illustration";
 import { audienceTracks, blogPosts, stats, siteConfig, founders } from "@/lib/data";
 import { getCourses } from "@/lib/content";
 
@@ -59,9 +60,9 @@ export default async function HomePage() {
     url: "https://kaalupi.vercel.app",
     logo: "https://kaalupi.vercel.app/logo_kaalupi.png",
     sameAs: [
-      "https://instagram.com/kaalupi",
-      "https://tiktok.com/@kaalupi",
-      "https://youtube.com/@kaalupi",
+      siteConfig.community.instagram,
+      siteConfig.community.youtube,
+      siteConfig.community.discord,
     ],
     offers: {
       "@type": "Offer",
@@ -314,12 +315,11 @@ export default async function HomePage() {
                 key={founder.name}
                 className="group relative overflow-hidden rounded-2xl border-2 border-[#F0E8D8] bg-white p-6 transition hover:border-[#F5A62A] hover:shadow-lg"
               >
-                <div
-                  className="flex h-16 w-16 items-center justify-center rounded-2xl text-3xl font-black text-white shadow-md"
-                  style={{ backgroundColor: founder.color }}
-                >
-                  {founder.initial}
-                </div>
+                <FounderIllustration
+                  bg={founder.illustration.bg}
+                  accent={founder.illustration.accent}
+                  shape={founder.illustration.shape}
+                />
                 <h3 className="mt-5 text-lg font-extrabold text-[#2D5016] group-hover:text-[#F5A62A] transition">
                   {founder.name}
                 </h3>
@@ -362,60 +362,53 @@ export default async function HomePage() {
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
-            {[
-              {
-                name: "Discord",
-                desc: "Channel diskusi per topik, voice room mingguan, AMA sama founder.",
-                cta: "Gabung Discord",
-                href: siteConfig.community.discord,
-                color: "#5865F2",
-                emoji: "💬",
-              },
-              {
-                name: "WhatsApp Group",
-                desc: "Update real-time, mini quiz harian, fast response untuk pertanyaan urgent.",
-                cta: "Gabung WhatsApp",
-                href: siteConfig.community.whatsapp,
-                color: "#25D366",
-                emoji: "📱",
-              },
-              {
-                name: "Notion Knowledge Base",
-                desc: "Cheat sheet, template prompt, FAQ. Knowledge base untuk semua member.",
-                cta: "Buka Notion",
-                href: siteConfig.community.notion,
-                color: "#F5A62A",
-                emoji: "📚",
-              },
-            ].map((channel) => (
-              <a
-                key={channel.name}
-                href={channel.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex flex-col rounded-2xl border-2 border-white/10 bg-white/5 p-6 transition hover:border-[#F5A62A] hover:bg-white/10"
-              >
-                <div
-                  className="flex h-12 w-12 items-center justify-center rounded-xl text-2xl"
-                  style={{ backgroundColor: `${channel.color}20` }}
-                >
-                  {channel.emoji}
-                </div>
-                <h3 className="mt-4 text-xl font-extrabold text-white">{channel.name}</h3>
-                <p className="mt-2 flex-1 text-sm leading-6 text-white/70">{channel.desc}</p>
-                <span className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-[#F5A62A] transition group-hover:gap-2">
-                  {channel.cta} →
-                </span>
-              </a>
-            ))}
+          <div className="grid gap-6 md:grid-cols-2">
+            <a
+              href={siteConfig.community.discord}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex flex-col rounded-2xl border-2 border-white/10 bg-white/5 p-7 transition hover:border-[#F5A62A] hover:bg-white/10"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#5865F2]/20 text-[#5865F2]">
+                <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.35-.76-.54-1.09c-.01-.02-.04-.03-.07-.03c-1.5.26-2.93.71-4.27 1.33c-.01 0-.02.01-.03.02c-2.72 4.07-3.47 8.03-3.1 11.95c0 .02.01.04.03.05c1.8 1.32 3.53 2.12 5.24 2.65c.03.01.06 0 .07-.02c.4-.55.76-1.13 1.07-1.74c.02-.04 0-.08-.04-.09c-.57-.22-1.11-.48-1.64-.78c-.04-.02-.04-.08-.01-.11c.11-.08.22-.17.33-.25c.02-.02.05-.02.07-.01c3.44 1.57 7.15 1.57 10.55 0c.02-.01.05-.01.07.01c.11.09.22.17.33.26c.04.03.04.09-.01.11c-.52.31-1.07.56-1.64.78c-.04.01-.05.06-.04.09c.32.61.68 1.19 1.07 1.74c.03.01.06.02.09.01c1.72-.53 3.45-1.33 5.25-2.65c.02-.01.03-.03.03-.05c.44-4.53-.73-8.46-3.1-11.95c-.01-.01-.02-.02-.04-.02zM8.52 14.91c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.84 2.12-1.89 2.12zm6.97 0c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.83 2.12-1.89 2.12z" />
+                </svg>
+              </div>
+              <h3 className="mt-4 text-xl font-extrabold text-white">Discord Server</h3>
+              <p className="mt-2 flex-1 text-sm leading-6 text-white/70">
+                Channel diskusi per topik, voice room mingguan, AMA dengan founder, sharing project.
+              </p>
+              <span className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-[#F5A62A] transition group-hover:gap-2">
+                Gabung Discord →
+              </span>
+            </a>
+
+            <a
+              href={siteConfig.community.whatsapp}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex flex-col rounded-2xl border-2 border-white/10 bg-white/5 p-7 transition hover:border-[#F5A62A] hover:bg-white/10"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#25D366]/20 text-[#25D366]">
+                <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M17.6 6.32A7.85 7.85 0 0 0 12.05 4c-4.34 0-7.87 3.53-7.87 7.87c0 1.39.36 2.74 1.05 3.94L4.11 20l4.3-1.13a7.93 7.93 0 0 0 3.64.93h.01c4.34 0 7.87-3.53 7.87-7.87c0-2.1-.82-4.08-2.31-5.61zM12.05 18.45h-.01a6.5 6.5 0 0 1-3.31-.91l-.24-.14l-2.45.65l.65-2.39l-.16-.25a6.5 6.5 0 0 1-1-3.49c0-3.6 2.93-6.53 6.54-6.53c1.74 0 3.38.68 4.62 1.91s1.91 2.88 1.91 4.62c-.01 3.61-2.94 6.53-6.55 6.53zm3.59-4.89c-.2-.1-1.16-.57-1.34-.64c-.18-.07-.31-.1-.45.1c-.13.2-.51.64-.62.77c-.11.13-.23.15-.43.05c-.2-.1-.83-.31-1.59-.98c-.59-.52-.99-1.17-1.1-1.37c-.11-.2-.01-.31.09-.41c.09-.09.2-.23.3-.34c.1-.11.13-.2.2-.33c.07-.13.03-.25-.02-.35c-.05-.1-.45-1.09-.62-1.49c-.16-.39-.33-.34-.45-.34h-.39c-.13 0-.35.05-.53.25s-.7.68-.7 1.66s.71 1.93.81 2.06c.1.13 1.4 2.13 3.39 2.99c.47.2.85.32 1.14.41c.48.15.91.13 1.26.08c.38-.06 1.16-.47 1.33-.93c.16-.46.16-.85.12-.93c-.05-.08-.18-.13-.39-.23z" />
+                </svg>
+              </div>
+              <h3 className="mt-4 text-xl font-extrabold text-white">WhatsApp Group</h3>
+              <p className="mt-2 flex-1 text-sm leading-6 text-white/70">
+                Update materi cepat, mini quiz harian, fast response untuk pertanyaan urgent dari mentor.
+              </p>
+              <span className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-[#F5A62A] transition group-hover:gap-2">
+                Gabung WhatsApp →
+              </span>
+            </a>
           </div>
 
           <div className="mt-10 text-center">
             <p className="text-sm text-white/60">
-              Mau preview dulu sebelum gabung?{" "}
+              Lihat aturan komunitas dulu?{" "}
               <Link href="/komunitas" className="font-bold text-[#F5A62A] hover:underline">
-                Lihat detail komunitas →
+                Detail komunitas →
               </Link>
             </p>
           </div>
@@ -433,7 +426,8 @@ export default async function HomePage() {
               Mulai Gratis. <span className="text-[#F5A62A]">Naik Level Saat Lu Siap.</span>
             </h2>
             <p className="mt-4 text-base leading-7 text-[#444444]">
-              Cobain Foundation gratis dulu. Kalau cocok, lanjut ke Mastery — slot Founding Members terbatas.
+              Cobain Foundation gratis dulu. Pas siap, jadi Founding Member — 100 orang pertama
+              dapet lifetime access ke <strong className="text-[#2D5016]">SEMUA course</strong> Kaalupi.
             </p>
           </div>
 
@@ -442,7 +436,7 @@ export default async function HomePage() {
             <div className="rounded-3xl border-2 border-[#7AB648]/30 bg-white p-8 flex flex-col">
               <div className="flex items-center justify-between">
                 <span className="rounded-full bg-[#7AB648] px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-white">
-                  🆓 Foundation
+                  Foundation
                 </span>
                 <div className="text-right">
                   <p className="text-3xl font-black text-[#7AB648]">Gratis</p>
@@ -484,7 +478,7 @@ export default async function HomePage() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="rounded-full bg-[#F5A62A] px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-[#2D5016]">
-                  💎 Mastery
+                  Mastery
                 </span>
                 <div className="text-right">
                   <p className="text-xs text-[#444] line-through">Rp 299.000</p>
@@ -496,16 +490,17 @@ export default async function HomePage() {
                 AI untuk Pemula — Mastery
               </h3>
               <p className="mt-2 text-sm text-[#444444]">
-                Course full lengkap. Naik level dari paham jadi praktisi yang siap pake AI di kerjaan & bisnis.
+                Founding Members 100 orang pertama dapet lifetime access ke <strong>SEMUA course Kaalupi</strong> — sekarang & yang akan rilis.
               </p>
               <ul className="mt-5 space-y-2.5 text-sm text-[#444] flex-1">
                 {[
+                  "Lifetime access ke SEMUA course Kaalupi",
                   "5 modul lengkap · 7.5 jam praktik",
-                  "🤖 AI Tutor 24/7 (tanya bebas)",
-                  "💬 Discord eksklusif Founding Members",
-                  "🎓 Sertifikat resmi + LinkedIn share",
-                  "🏅 Badge Founding Member permanent",
-                  "♾️ Lifetime access + update gratis",
+                  "AI Tutor 24/7 (tanya bebas per modul)",
+                  "Discord eksklusif Founding Members",
+                  "Sertifikat resmi + LinkedIn share",
+                  "Badge Founding Member permanen",
+                  "Update materi gratis selamanya",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-2">
                     <svg className="h-4 w-4 flex-shrink-0 text-[#F5A62A] mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
@@ -609,7 +604,7 @@ export default async function HomePage() {
                     href={withUTM("/courses/ai-untuk-pemula-mastery", "spotlight_upgrade_mastery")}
                     className="rounded-xl border-2 border-[#2D5016] px-8 py-3.5 text-sm font-bold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-[#FEFBF5]"
                   >
-                    Upgrade ke Mastery 💎
+                    Upgrade ke Mastery
                   </Link>
                 </div>
               </div>
@@ -804,7 +799,7 @@ export default async function HomePage() {
                 href={withUTM("/courses/ai-untuk-pemula-mastery", "cta_upgrade_mastery")}
                 className="rounded-xl border-2 border-white/40 px-8 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10"
               >
-                Lihat Mastery 💎
+                Lihat Mastery
               </Link>
             </div>
             <p className="relative mt-6 text-xs text-white/70">
