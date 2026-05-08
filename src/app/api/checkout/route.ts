@@ -41,7 +41,27 @@ export async function POST(request: Request) {
 
   // Harga dari SERVER — jangan percaya client
   const isFreeCourse = course.is_free || course.price === 0;
-  const serverPrice = isFreeCourse ? 0 : course.price;
+  let serverPrice = isFreeCourse ? 0 : course.price;
+
+  // Dynamic Founding Members pricing: setelah 100 buyer, harga naik ke regular
+  if (
+    !isFreeCourse &&
+    course.founding_members_limit &&
+    course.regular_price &&
+    course.founding_price
+  ) {
+    const { count: enrolledCount } = await supabaseAdmin
+      .from("enrollments")
+      .select("id", { count: "exact", head: true })
+      .eq("course_slug", body.slug)
+      .eq("status", "active");
+
+    if ((enrolledCount ?? 0) >= course.founding_members_limit) {
+      serverPrice = course.regular_price;
+    } else {
+      serverPrice = course.founding_price;
+    }
+  }
 
   try {
     const { data: existing } = await supabaseAdmin

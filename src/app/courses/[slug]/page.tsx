@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { CheckoutButton } from "@/components/checkout-button";
+import { FoundingSlotCounter } from "@/components/founding-slot-counter";
 import { getCourseBySlug } from "@/lib/content";
 import { getEnrollments } from "@/lib/db";
 import { CourseThumbnail } from "@/components/course-thumbnail";
@@ -112,12 +113,42 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
 
             <aside>
               <div className="sticky top-24 rounded-2xl border border-[#F0E8D8] bg-white p-8 shadow-sm">
-                <p className="text-sm font-semibold text-[#444444]">Investasi belajar</p>
-                <p className="mt-2 text-4xl font-extrabold text-[#2D5016]">{formatter.format(course.price)}</p>
+                {course.founding_members_limit && course.original_price ? (
+                  <>
+                    <p className="text-xs font-bold uppercase tracking-wider text-[#7AB648]">
+                      Founding Members Price
+                    </p>
+                    <div className="mt-1 flex items-baseline gap-2">
+                      <p className="text-4xl font-extrabold text-[#F5A62A]">
+                        {formatter.format(course.price)}
+                      </p>
+                      <p className="text-sm text-[#444] line-through">
+                        {formatter.format(course.original_price)}
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-sm font-semibold text-[#444444]">Investasi belajar</p>
+                    <p className="mt-2 text-4xl font-extrabold text-[#2D5016]">
+                      {course.price === 0 ? "Gratis" : formatter.format(course.price)}
+                    </p>
+                  </>
+                )}
                 <p className="mt-4 text-sm leading-7 text-[#444444]">{course.summary}</p>
-                <div className="mt-8">
+
+                {course.founding_members_limit && (
+                  <div className="mt-5">
+                    <FoundingSlotCounter slug={course.slug} variant="inline" />
+                  </div>
+                )}
+
+                <div className="mt-6">
                   {hasAccess ? (
-                    <Link href={`/access/${course.slug}`} className="block rounded-xl bg-[#F5A62A] px-5 py-3.5 text-center text-sm font-bold text-[#2D5016] hover:opacity-90 transition">
+                    <Link
+                      href={`/access/${course.slug}`}
+                      className="block rounded-xl bg-[#F5A62A] px-5 py-3.5 text-center text-sm font-bold text-[#2D5016] hover:opacity-90 transition"
+                    >
                       Mulai Belajar
                     </Link>
                   ) : course.is_free ? (
@@ -126,16 +157,41 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
                     <CheckoutButton slug={course.slug} amount={course.price} />
                   )}
                 </div>
-                <div className="mt-6 space-y-3 text-sm text-[#444444]">
-                  {["Pembayaran aman via Midtrans", "Akses materi setelah pembayaran", "Progress tracking per modul", "Lifetime access"].map((item) => (
-                    <div key={item} className="flex items-center gap-2">
-                      <svg className="h-4 w-4 flex-shrink-0 text-[#7AB648]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span>{item}</span>
-                    </div>
-                  ))}
-                </div>
+
+                {course.perks && course.perks.length > 0 ? (
+                  <div className="mt-6 space-y-2 text-sm text-[#444444]">
+                    <p className="text-xs font-bold uppercase tracking-wider text-[#2D5016]">
+                      Yang Lu Dapat:
+                    </p>
+                    {course.perks.map((perk) => (
+                      <div key={perk} className="text-sm">
+                        {perk}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="mt-6 space-y-3 text-sm text-[#444444]">
+                    {[
+                      "Pembayaran aman via Midtrans",
+                      "Akses materi setelah pembayaran",
+                      "Progress tracking per modul",
+                      course.is_lifetime_access ? "Lifetime access" : "Akses sesuai paket",
+                    ].map((item) => (
+                      <div key={item} className="flex items-center gap-2">
+                        <svg
+                          className="h-4 w-4 flex-shrink-0 text-[#7AB648]"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </aside>
           </div>

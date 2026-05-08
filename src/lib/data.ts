@@ -7,6 +7,7 @@ export type Course = {
   level: string;
   duration: string;
   price: number;
+  original_price?: number; // harga asli sebelum diskon early bird
   summary: string;
   hero: string;
   outcomes: string[];
@@ -17,6 +18,11 @@ export type Course = {
   is_free?: boolean;
   is_lifetime_access?: boolean;
   is_published?: boolean;
+  // Founding Members tier
+  founding_members_limit?: number; // total slot early bird (e.g., 100)
+  founding_price?: number; // harga early bird
+  regular_price?: number; // harga setelah quota habis
+  perks?: string[]; // bullet point perks (Discord, AI Tutor, dll)
 };
 
 export type BlogPost = {
@@ -47,8 +53,8 @@ export const siteConfig = {
 export const demoUsers: DemoUser[] = [];
 
 export const stats = [
-  { label: "Course Aktif", value: "1" },
-  { label: "Status", value: "First Launch" },
+  { label: "Course Aktif", value: "2" },
+  { label: "Tier Gratis", value: "Tersedia" },
   { label: "Bahasa", value: "Indonesia" },
   { label: "Metode", value: "Praktik" },
 ];
@@ -84,35 +90,76 @@ export const audienceTracks = [
 ];
 
 export const courses: Course[] = [
-  // FIRST LAUNCH - FREE COURSE
+  // 🆓 FOUNDATION (FREE) - Top of funnel, lead magnet
   {
     slug: "ai-untuk-pemula",
-    title: "AI untuk Pemula — Dari Nol ke Produktif",
+    title: "AI untuk Pemula — Foundation",
     category: "Artificial Intelligence",
     level: "Beginner",
-    duration: "7.5 jam",
+    duration: "3 jam",
     price: 0,
     summary:
-      "Pelajari cara kerja AI, prompt engineering, dan cara pakai AI untuk produktivitas, karier, dan bisnis — dari nol, dalam bahasa Indonesia.",
+      "Mulai gratis: pahami cara kerja AI dan dasar prompt engineering. Cocok buat semua orang yang penasaran sama AI, tanpa background teknis.",
     hero:
-      "Mulai dari nol, pelajari cara kerja AI dan gunakan untuk produktivitas, karier, dan bisnis — tanpa background teknis.",
+      "Foundation gratis: pahami AI dari nol — cara kerjanya, cara nge-prompt yang bener. Akses 2 modul pertama tanpa biaya, langsung praktik.",
     outcomes: [
       "Memahami cara kerja AI dan model bahasa (LLM) secara konseptual",
-      "Membuat prompt yang efektif untuk berbagai kebutuhan kerja",
-      "Menggunakan AI tools populer untuk produktivitas sehari-hari",
+      "Membuat prompt yang efektif untuk berbagai kebutuhan dasar",
+      "Mencoba langsung AI tools populer (ChatGPT, Claude, Gemini)",
     ],
     modules: [
       "Cara kerja AI & Large Language Models",
-      "Prompt Engineering dasar hingga lanjutan",
-      "AI untuk produktivitas dan pekerjaan",
-      "AI untuk bisnis dan karier",
-      "Tools AI populer & workflow praktis",
+      "Prompt Engineering dasar",
     ],
     format: "video",
     featured: true,
     is_free: true,
     is_lifetime_access: true,
     is_published: true,
+  },
+
+  // 💎 MASTERY (PAID) - Bottom of funnel, revenue
+  {
+    slug: "ai-untuk-pemula-mastery",
+    title: "AI untuk Pemula — Mastery (Founding Members)",
+    category: "Artificial Intelligence",
+    level: "Beginner to Intermediate",
+    duration: "7.5 jam",
+    price: 149000, // active price (founding price selama quota belum habis)
+    original_price: 299000, // harga normal (untuk strikethrough)
+    founding_members_limit: 100,
+    founding_price: 149000,
+    regular_price: 299000,
+    summary:
+      "Course full lengkap: 5 modul, sertifikat, AI Tutor 24/7, Discord komunitas, dan akses lifetime. Harga early bird khusus 100 Founding Members pertama.",
+    hero:
+      "Naik level dari pemahaman ke penguasaan. Akses 5 modul lengkap + Discord komunitas + AI Tutor pribadi. Slot Founding Members terbatas — harga balik ke Rp 299K setelah 100 student.",
+    outcomes: [
+      "Menguasai prompt engineering dari dasar sampai advanced (chain-of-thought, role prompting, few-shot)",
+      "Pakai AI buat hemat 2-3 jam kerja per hari (email, analisis, riset, dokumentasi)",
+      "Bangun workflow AI di pekerjaan dan bisnis lu sendiri",
+      "Punya portfolio project AI yang siap dipajang di LinkedIn",
+    ],
+    modules: [
+      "Cara kerja AI & Large Language Models",
+      "Prompt Engineering dasar hingga lanjut",
+      "AI untuk produktivitas dan pekerjaan",
+      "AI untuk bisnis dan karier",
+      "Tools AI 2026 + Final Project Portfolio",
+    ],
+    format: "blended",
+    featured: true,
+    is_free: false,
+    is_lifetime_access: true,
+    is_published: true,
+    perks: [
+      "🎓 Sertifikat resmi Kaalupi (PDF + LinkedIn share)",
+      "🤖 AI Tutor 24/7 — tanya apa aja per modul",
+      "💬 Akses Discord Komunitas Founding Members",
+      "🏅 Badge Founding Member eksklusif",
+      "♾️ Lifetime access — update materi gratis selamanya",
+      "🎯 Final Project: Portfolio AI yang bisa dipajang",
+    ],
   },
 ];
 

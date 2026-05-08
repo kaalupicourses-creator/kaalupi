@@ -95,18 +95,24 @@ export default function WaitlistPage() {
                 <span className="font-extrabold text-[#2D5016]">Kaalupi</span>
               </Link>
               <h1 className="text-3xl font-extrabold text-[#2D5016]">
-                Daftar Waitlist
+                Notifikasi Course Berikutnya
               </h1>
-              <p className="mt-1 text-base font-semibold text-[#444444]">
-                AI untuk Pemula — Dari Nol ke Produktif
+              <p className="mt-2 text-sm text-[#5C4813] leading-6">
+                Dapet notifikasi pertama saat track <strong>Network Engineer, Cyber Security, Designer, atau Data Science</strong> rilis.
               </p>
-              <p className="mt-2 text-sm text-[#5C4813]">
-                Masuk list pertama dan dapat harga early bird eksklusif.
-              </p>
-              <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#FFF3D6] px-4 py-2 text-sm font-semibold text-[#5C4813]">
-                <span>🏷️</span>
-                <span>Early Bird: <strong>Rp 149.000</strong></span>
-                <span className="line-through text-xs text-gray-400 ml-1">Rp 299.000</span>
+              <div className="mt-4 rounded-xl bg-[#FFF3D6] px-4 py-3 text-xs text-[#5C4813] leading-5">
+                💡 Mau course AI? Dua course AI udah live:{" "}
+                <Link href="/courses/ai-untuk-pemula" className="font-bold underline">
+                  Foundation gratis
+                </Link>{" "}
+                atau{" "}
+                <Link
+                  href="/courses/ai-untuk-pemula-mastery"
+                  className="font-bold underline"
+                >
+                  Mastery Founding Members
+                </Link>
+                .
               </div>
             </div>
 
@@ -189,7 +195,7 @@ export default function WaitlistPage() {
                 disabled={loading}
                 className="w-full rounded-xl bg-[#F5A62A] py-3.5 text-sm font-bold text-[#2D5016] transition hover:opacity-90 disabled:opacity-60"
               >
-                {loading ? "Mendaftarkan..." : "Daftar Sekarang →"}
+                {loading ? "Mendaftarkan..." : "Daftar Notifikasi →"}
               </button>
 
               <p className="text-center text-xs text-[#444444]">

@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { CourseThumbnail } from "@/components/course-thumbnail";
+import { FoundingSlotCounter } from "@/components/founding-slot-counter";
 import { courses, comingSoonTracks } from "@/lib/data";
 
 export default function CoursesPage() {
-  const publishedCourses = courses.filter((c) => c.is_published);
+  const foundation = courses.find((c) => c.slug === "ai-untuk-pemula");
+  const mastery = courses.find((c) => c.slug === "ai-untuk-pemula-mastery");
 
   return (
     <div className="bg-[#FEFBF5]">
@@ -11,121 +13,176 @@ export default function CoursesPage() {
       <section className="mx-auto max-w-7xl px-6 py-16">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">
-            Our First Launch
+            Course Catalog
           </p>
           <h1 className="mt-4 text-4xl font-extrabold text-[#2D5016] md:text-5xl">
-            AI untuk Pemula — <span className="text-[#F5A62A]">Gratis</span>
+            Mulai Gratis,{" "}
+            <span className="text-[#F5A62A]">Naik Level Saat Siap</span>
           </h1>
           <p className="mt-6 text-base leading-8 text-[#444444]">
-            Course perdana Kaalupi. Pelajari AI dari nol tanpa background teknis. 
-            Langsung praktik dengan tools AI populer.
+            Cobain Foundation gratis dulu. Kalau cocok, lanjut ke Mastery — slot Founding Members terbatas 100 spot pertama.
           </p>
         </div>
       </section>
 
-      {/* Published Course - AI untuk Pemula */}
-      {publishedCourses.map((course) => (
-        <section key={course.slug} className="border-t border-[#F0E8D8]">
-          <div className="mx-auto max-w-7xl px-6 py-12">
-            <div className="mx-auto max-w-5xl">
-              <div className="overflow-hidden rounded-3xl border border-[#F0E8D8] bg-white lg:grid lg:grid-cols-2">
-                {/* Thumbnail */}
-                <div className="relative w-full min-h-[250px] md:min-h-[300px]">
-                  <CourseThumbnail
-                    title={course.title}
-                    category={course.category}
-                    className="h-full w-full object-cover"
-                    large={true}
-                  />
+      {/* 2 Course Cards */}
+      <section className="border-t border-[#F0E8D8]">
+        <div className="mx-auto max-w-6xl px-6 py-12">
+          <div className="grid gap-6 lg:grid-cols-2">
+            {/* Foundation - Free */}
+            {foundation && (
+              <article className="overflow-hidden rounded-3xl border-2 border-[#7AB648]/30 bg-white flex flex-col">
+                <div className="relative">
+                  <CourseThumbnail title={foundation.title} category={foundation.category} large />
+                  <div className="absolute top-4 left-4 rounded-full bg-[#7AB648] px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-white">
+                    🆓 Foundation
+                  </div>
                 </div>
-
-                {/* Content */}
-                <div className="flex flex-col justify-center p-8 md:p-12">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="rounded-full bg-[#F5A62A] px-3 py-1 text-xs font-bold text-[#2D5016]">
-                      FREE
+                <div className="p-8 flex flex-col flex-1">
+                  <div className="flex items-center gap-2 flex-wrap text-xs">
+                    <span className="rounded-full bg-[#FFF3D6] px-3 py-1 font-semibold text-[#5C4813]">
+                      {foundation.level}
                     </span>
-                    <span className="rounded-full bg-[#FFF3D6] px-3 py-1 text-xs font-semibold text-[#5C4813]">
-                      {course.category}
+                    <span className="rounded-full bg-[#FFF3D6] px-3 py-1 font-semibold text-[#5C4813]">
+                      {foundation.duration}
                     </span>
-                    <span className="rounded-full bg-[#FFF3D6] px-3 py-1 text-xs font-semibold text-[#5C4813]">
-                      {course.level}
-                    </span>
-                    <span className="rounded-full bg-[#FFF3D6] px-3 py-1 text-xs font-semibold text-[#5C4813]">
-                      {course.duration}
+                    <span className="rounded-full bg-[#FFF3D6] px-3 py-1 font-semibold text-[#5C4813]">
+                      {foundation.modules.length} modul
                     </span>
                   </div>
-
-                  <h2 className="mt-4 text-2xl font-extrabold text-[#2D5016] md:text-3xl">
-                    {course.title}
+                  <h2 className="mt-4 text-2xl font-extrabold text-[#2D5016]">
+                    {foundation.title}
                   </h2>
+                  <p className="mt-3 text-sm leading-7 text-[#444444]">{foundation.summary}</p>
 
-                  <p className="mt-4 text-base leading-7 text-[#444444]">
-                    {course.hero}
-                  </p>
-
-                  <div className="mt-6 space-y-3">
-                    {course.outcomes.slice(0, 3).map((outcome, index) => (
-                      <div key={index} className="flex items-start gap-3">
-                        <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#7AB648]/20 mt-0.5">
-                          <svg className="h-3 w-3 text-[#7AB648]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                        <p className="text-sm text-[#444444]">{outcome}</p>
-                      </div>
+                  <ul className="mt-5 space-y-2 text-sm flex-1">
+                    {foundation.outcomes.map((o, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <svg
+                          className="h-4 w-4 flex-shrink-0 text-[#7AB648] mt-0.5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={3}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span className="text-[#444]">{o}</span>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
 
-                  <div className="mt-8 flex flex-wrap items-center gap-4">
-                    <Link
-                      href={`/courses/${course.slug}`}
-                      className="rounded-xl bg-[#F5A62A] px-8 py-3 text-sm font-bold text-[#2D5016] transition hover:opacity-90"
-                    >
-                      Mulai Belajar Gratis →
-                    </Link>
-                    <Link
-                      href="/waitlist"
-                      className="rounded-xl border-2 border-[#2D5016] px-8 py-3 text-sm font-bold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-[#FEFBF5]"
-                    >
-                      Waitlist Paid Course
-                    </Link>
+                  <div className="mt-6 flex items-center justify-between">
+                    <span className="text-3xl font-black text-[#7AB648]">Gratis</span>
+                  </div>
+                  <Link
+                    href={`/courses/${foundation.slug}`}
+                    className="mt-4 block w-full rounded-xl border-2 border-[#7AB648] bg-white px-6 py-3 text-center text-sm font-bold text-[#7AB648] hover:bg-[#7AB648] hover:text-white transition"
+                  >
+                    Mulai Belajar Gratis →
+                  </Link>
+                </div>
+              </article>
+            )}
+
+            {/* Mastery - Paid Founding Members */}
+            {mastery && (
+              <article className="overflow-hidden rounded-3xl border-2 border-[#F5A62A] bg-gradient-to-br from-[#FFF3D6] to-white flex flex-col relative shadow-xl">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 rounded-full bg-[#2D5016] px-4 py-1 text-[10px] font-extrabold uppercase tracking-wider text-[#F5A62A]">
+                  ⭐ Most Recommended
+                </div>
+                <div className="relative">
+                  <CourseThumbnail title={mastery.title} category={mastery.category} large />
+                  <div className="absolute top-4 left-4 rounded-full bg-[#F5A62A] px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-[#2D5016]">
+                    💎 Mastery
                   </div>
                 </div>
-              </div>
-            </div>
+                <div className="p-8 flex flex-col flex-1">
+                  <div className="flex items-center gap-2 flex-wrap text-xs">
+                    <span className="rounded-full bg-[#FFF3D6] px-3 py-1 font-semibold text-[#5C4813]">
+                      {mastery.level}
+                    </span>
+                    <span className="rounded-full bg-[#FFF3D6] px-3 py-1 font-semibold text-[#5C4813]">
+                      {mastery.duration}
+                    </span>
+                    <span className="rounded-full bg-[#FFF3D6] px-3 py-1 font-semibold text-[#5C4813]">
+                      {mastery.modules.length} modul
+                    </span>
+                  </div>
+                  <h2 className="mt-4 text-2xl font-extrabold text-[#2D5016]">{mastery.title}</h2>
+                  <p className="mt-3 text-sm leading-7 text-[#444444]">{mastery.summary}</p>
+
+                  <ul className="mt-5 space-y-2 text-sm flex-1">
+                    {(mastery.perks ?? []).map((p, i) => (
+                      <li key={i} className="text-[#444]">
+                        {p}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="mt-6 flex items-end justify-between">
+                    <div>
+                      <p className="text-xs text-[#444] line-through">
+                        Rp {(mastery.original_price ?? 299000).toLocaleString("id-ID")}
+                      </p>
+                      <span className="text-3xl font-black text-[#F5A62A]">
+                        Rp {mastery.price.toLocaleString("id-ID")}
+                      </span>
+                      <p className="text-[10px] font-bold text-[#7AB648]">
+                        Founding Members Price
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <FoundingSlotCounter slug={mastery.slug} variant="inline" />
+                  </div>
+
+                  <Link
+                    href={`/courses/${mastery.slug}`}
+                    className="mt-4 block w-full rounded-xl bg-[#F5A62A] px-6 py-3 text-center text-sm font-extrabold text-[#2D5016] hover:opacity-90 shadow-md transition"
+                  >
+                    Daftar Founding Members →
+                  </Link>
+                </div>
+              </article>
+            )}
           </div>
-        </section>
-      ))}
+        </div>
+      </section>
 
       {/* Coming Soon Tracks */}
       <section className="border-t border-[#F0E8D8] bg-white">
         <div className="mx-auto max-w-7xl px-6 py-12">
           <div className="mx-auto mb-8 max-w-2xl text-center">
-            <span className="rounded-full bg-[#FFF3D6] px-4 py-1.5 text-sm font-bold text-[#5C4813]">
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">
               Coming Soon
-            </span>
-            <h2 className="mt-4 text-2xl font-extrabold text-[#2D5016]">
-              Track Lainnya Segera Hadir
+            </p>
+            <h2 className="mt-3 text-2xl font-extrabold text-[#2D5016]">
+              Track Berikutnya — Notifikasi Saat Rilis
             </h2>
             <p className="mt-3 text-sm text-[#444444]">
-              Dalam pengembangan. Daftar waitlist untuk mendapatkan notifikasi saat rilis.
+              Daftar email kami buat dapet notifikasi saat track baru rilis.
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-5">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {comingSoonTracks.map((track) => (
               <div
                 key={track.title}
-                className="rounded-2xl border border-[#F0E8D8] bg-[#FEFBF5] p-5 text-center transition hover:border-[#F5A62A]"
+                className="rounded-2xl border border-[#F0E8D8] bg-[#FEFBF5] p-5"
               >
-                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-[#FFF3D6] mx-auto">
-                  <svg className="h-6 w-6 text-[#F5A62A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
+                <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-[#F0E8D8] px-2.5 py-0.5">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#F5A62A] opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-[#F5A62A]" />
+                  </span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#444]">
+                    Coming Soon
+                  </span>
                 </div>
-                <h3 className="text-sm font-bold text-[#2D5016]">{track.title}</h3>
-                <p className="mt-2 text-xs text-[#444444] line-clamp-3">{track.description}</p>
+                <p className="font-bold text-[#2D5016]">{track.title}</p>
+                <p className="mt-1 text-xs text-[#444]">{track.description}</p>
               </div>
             ))}
           </div>
@@ -135,7 +192,7 @@ export default function CoursesPage() {
               href="/waitlist"
               className="inline-block rounded-xl border-2 border-[#2D5016] px-8 py-3 text-sm font-bold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-[#FEFBF5]"
             >
-              Daftar Waitlist untuk Semua Track →
+              Notifikasi Saat Track Baru Rilis →
             </Link>
           </div>
         </div>

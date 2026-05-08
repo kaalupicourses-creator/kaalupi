@@ -1,6 +1,7 @@
 ﻿import Link from "next/link";
 import Script from "next/script";
 import { CourseThumbnail } from "@/components/course-thumbnail";
+import { FoundingSlotCounter } from "@/components/founding-slot-counter";
 import { audienceTracks, blogPosts, stats, siteConfig } from "@/lib/data";
 import { getCourses } from "@/lib/content";
 
@@ -114,29 +115,68 @@ export default async function HomePage() {
             Bahasa Indonesia, langsung praktik, portofolio nyata.
           </p>
 
-          {/* CTA Buttons */}
-          <div className="mt-10 flex flex-wrap justify-center gap-4">
+          {/* DUAL CTA — Tiered Strategy */}
+          <div className="mt-10 grid gap-4 md:grid-cols-2 max-w-2xl mx-auto">
+            {/* Free CTA */}
             <Link
-              href={withUTM("/waitlist", "hero_waitlist_earlybird")}
-              className="rounded-xl bg-[#F5A62A] px-8 py-3.5 text-sm font-bold text-[#2D5016] shadow-md transition hover:opacity-90 pulse-amber"
+              href={withUTM("/courses/ai-untuk-pemula", "hero_free_foundation")}
+              className="group rounded-2xl border-2 border-[#2D5016] bg-white p-5 text-left transition hover:bg-[#2D5016] hover:text-white"
             >
-              Daftar Waitlist Early Bird →
+              <div className="flex items-center justify-between">
+                <span className="rounded-full bg-[#7AB648]/15 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-[#7AB648] group-hover:bg-white/20 group-hover:text-white">
+                  🆓 Foundation
+                </span>
+                <span className="text-2xl font-extrabold text-[#7AB648] group-hover:text-white">
+                  Gratis
+                </span>
+              </div>
+              <p className="mt-2 font-bold text-[#2D5016] group-hover:text-white">
+                AI untuk Pemula — Foundation
+              </p>
+              <p className="mt-1 text-xs text-[#444] group-hover:text-white/80">
+                2 modul · 3 jam · langsung akses
+              </p>
+              <p className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-[#7AB648] group-hover:text-white">
+                Mulai gratis sekarang →
+              </p>
             </Link>
+
+            {/* Premium CTA */}
             <Link
-              href={withUTM("/courses/ai-untuk-pemula", "hero_try_free")}
-              className="rounded-xl border-2 border-[#2D5016] px-8 py-3.5 text-sm font-bold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-[#FEFBF5]"
+              href={withUTM("/courses/ai-untuk-pemula-mastery", "hero_mastery_founding")}
+              className="group rounded-2xl border-2 border-[#F5A62A] bg-gradient-to-br from-[#F5A62A] to-[#E89020] p-5 text-left text-[#2D5016] transition hover:opacity-95 shadow-lg"
             >
-              Coba Gratis Dulu
+              <div className="flex items-center justify-between">
+                <span className="rounded-full bg-[#2D5016] px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-[#F5A62A]">
+                  💎 Mastery
+                </span>
+                <div className="text-right">
+                  <span className="text-2xl font-extrabold">Rp 149K</span>
+                  <span className="block text-[10px] line-through opacity-70">Rp 299K</span>
+                </div>
+              </div>
+              <p className="mt-2 font-bold">Founding Members</p>
+              <p className="mt-1 text-xs opacity-80">
+                5 modul · sertifikat · Discord · AI Tutor 24/7
+              </p>
+              <p className="mt-3 inline-flex items-center gap-1 text-xs font-bold">
+                Daftar Sekarang →
+              </p>
             </Link>
           </div>
 
+          {/* Founding slot counter */}
+          <div className="mt-4 max-w-md mx-auto">
+            <FoundingSlotCounter slug="ai-untuk-pemula-mastery" variant="inline" />
+          </div>
+
           {/* Trust Signals */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-[#444444]">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-[#444444]">
             <span className="flex items-center gap-1">
               <svg className="h-4 w-4 text-[#7AB648]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
-              Gratis untuk pemula
+              Coba gratis dulu, no risk
             </span>
             <span className="flex items-center gap-1">
               <svg className="h-4 w-4 text-[#7AB648]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -148,7 +188,7 @@ export default async function HomePage() {
               <svg className="h-4 w-4 text-[#7AB648]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
-              Garansi uang kembali 14 hari
+              Garansi 14 hari uang kembali
             </span>
           </div>
 
@@ -277,24 +317,105 @@ export default async function HomePage() {
       </section>
 
       {/* ─── BE THE FIRST TESTER ─── */}
+      {/* ─── 2-TIER COURSE COMPARISON ─── */}
       <section className="border-t border-[#F0E8D8] bg-[#FEFBF5]">
         <div className="mx-auto max-w-7xl px-6 py-16">
-          <div className="mx-auto max-w-2xl text-center animate-fade-in-up">
+          <div className="mx-auto mb-10 max-w-2xl text-center">
             <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">
-              First Launch
+              Pilih Path Lu
             </p>
             <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016] md:text-4xl">
-              Jadilah Tester Pertama Kaalupi
+              Mulai Gratis. <span className="text-[#F5A62A]">Naik Level Saat Lu Siap.</span>
             </h2>
             <p className="mt-4 text-base leading-7 text-[#444444]">
-              Kami baru meluncurkan course pertama kami. Daftar waitlist sekarang dan jadilah salah satu tester awal yang memberikan feedback untuk perkembangan platform kami.
+              Cobain Foundation gratis dulu. Kalau cocok, lanjut ke Mastery — slot Founding Members terbatas.
             </p>
-            <div className="mt-8">
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-2 max-w-5xl mx-auto">
+            {/* Foundation - Free */}
+            <div className="rounded-3xl border-2 border-[#7AB648]/30 bg-white p-8 flex flex-col">
+              <div className="flex items-center justify-between">
+                <span className="rounded-full bg-[#7AB648] px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-white">
+                  🆓 Foundation
+                </span>
+                <div className="text-right">
+                  <p className="text-3xl font-black text-[#7AB648]">Gratis</p>
+                </div>
+              </div>
+              <h3 className="mt-4 text-xl font-extrabold text-[#2D5016]">
+                AI untuk Pemula — Foundation
+              </h3>
+              <p className="mt-2 text-sm text-[#444444]">
+                Pahami AI dari nol — cara kerjanya, cara nge-prompt yang bener. Cocok buat warming up.
+              </p>
+              <ul className="mt-5 space-y-2.5 text-sm text-[#444] flex-1">
+                {[
+                  "2 modul · 3 jam total",
+                  "Akses langsung tanpa daftar tunggu",
+                  "Materi video + artikel",
+                  "Komunitas terbuka",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2">
+                    <svg className="h-4 w-4 flex-shrink-0 text-[#7AB648] mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
               <Link
-                href={withUTM("/waitlist", "be_first_tester")}
-                className="rounded-xl bg-[#F5A62A] px-8 py-3.5 text-sm font-bold text-[#2D5016] shadow-md transition hover:opacity-90 hover:shadow-lg pulse-amber"
+                href={withUTM("/courses/ai-untuk-pemula", "comparison_free")}
+                className="mt-6 block rounded-xl border-2 border-[#7AB648] bg-white px-6 py-3 text-center text-sm font-bold text-[#7AB648] hover:bg-[#7AB648] hover:text-white transition"
               >
-                Daftar Waitlist & Jadi Tester Pertama →
+                Mulai Gratis →
+              </Link>
+            </div>
+
+            {/* Mastery - Paid */}
+            <div className="rounded-3xl border-2 border-[#F5A62A] bg-gradient-to-br from-[#FFF3D6] to-white p-8 flex flex-col relative shadow-xl">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#2D5016] px-4 py-1 text-[10px] font-extrabold uppercase tracking-wider text-[#F5A62A]">
+                ⭐ Most Recommended
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="rounded-full bg-[#F5A62A] px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-[#2D5016]">
+                  💎 Mastery
+                </span>
+                <div className="text-right">
+                  <p className="text-xs text-[#444] line-through">Rp 299.000</p>
+                  <p className="text-3xl font-black text-[#F5A62A]">Rp 149K</p>
+                  <p className="text-[10px] font-bold text-[#7AB648]">Founding Members</p>
+                </div>
+              </div>
+              <h3 className="mt-4 text-xl font-extrabold text-[#2D5016]">
+                AI untuk Pemula — Mastery
+              </h3>
+              <p className="mt-2 text-sm text-[#444444]">
+                Course full lengkap. Naik level dari paham jadi praktisi yang siap pake AI di kerjaan & bisnis.
+              </p>
+              <ul className="mt-5 space-y-2.5 text-sm text-[#444] flex-1">
+                {[
+                  "5 modul lengkap · 7.5 jam praktik",
+                  "🤖 AI Tutor 24/7 (tanya bebas)",
+                  "💬 Discord eksklusif Founding Members",
+                  "🎓 Sertifikat resmi + LinkedIn share",
+                  "🏅 Badge Founding Member permanent",
+                  "♾️ Lifetime access + update gratis",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2">
+                    <svg className="h-4 w-4 flex-shrink-0 text-[#F5A62A] mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <FoundingSlotCounter slug="ai-untuk-pemula-mastery" variant="inline" />
+              <Link
+                href={withUTM("/courses/ai-untuk-pemula-mastery", "comparison_paid")}
+                className="mt-4 block rounded-xl bg-[#F5A62A] px-6 py-3 text-center text-sm font-extrabold text-[#2D5016] hover:opacity-90 shadow-md transition"
+              >
+                Daftar Founding Members →
               </Link>
             </div>
           </div>
@@ -380,10 +501,10 @@ export default async function HomePage() {
                     Mulai Belajar Gratis →
                   </Link>
                   <Link
-                    href={withUTM("/waitlist", "spotlight_waitlist_paid")}
+                    href={withUTM("/courses/ai-untuk-pemula-mastery", "spotlight_upgrade_mastery")}
                     className="rounded-xl border-2 border-[#2D5016] px-8 py-3.5 text-sm font-bold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-[#FEFBF5]"
                   >
-                    Waitlist Paid Course
+                    Upgrade ke Mastery 💎
                   </Link>
                 </div>
               </div>
@@ -458,10 +579,10 @@ export default async function HomePage() {
                     <p className="text-sm leading-7 text-[#444444]">{track.description}</p>
 
                     <Link
-                      href={withUTM("/waitlist", `track_${track.title.toLowerCase().replace(/\s+/g, '_')}`)}
+                      href={withUTM("/notify", `track_${track.title.toLowerCase().replace(/\s+/g, '_')}`)}
                       className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[#2D5016] transition hover:text-[#F5A62A] group-hover:gap-2"
                     >
-                      Daftar Waitlist
+                      Notifikasi Saat Rilis
                       <svg className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                       </svg>
@@ -476,7 +597,7 @@ export default async function HomePage() {
           <div className="mt-10 text-center">
             <p className="text-sm text-[#444444] mb-4">Gak yakin jalur mana yang cocok?</p>
             <Link
-              href={withUTM("/waitlist", "track_consultation")}
+              href={withUTM("/contact", "track_consultation")}
               className="inline-flex items-center gap-2 rounded-xl border-2 border-[#2D5016] px-6 py-3 text-sm font-bold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-[#FEFBF5]"
             >
               Konsultasi Gratis
@@ -575,10 +696,10 @@ export default async function HomePage() {
                 Mulai Gratis Sekarang →
               </Link>
               <Link
-                href={withUTM("/waitlist", "cta_waitlist_paid")}
+                href={withUTM("/courses/ai-untuk-pemula-mastery", "cta_upgrade_mastery")}
                 className="rounded-xl border-2 border-white/40 px-8 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10"
               >
-                Daftar Waitlist Paid
+                Lihat Mastery 💎
               </Link>
             </div>
             <p className="relative mt-6 text-xs text-white/70">

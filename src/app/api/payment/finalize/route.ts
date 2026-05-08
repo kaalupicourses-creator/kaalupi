@@ -50,8 +50,68 @@ export async function POST(request: Request) {
       { onConflict: "user_email,course_slug" },
     );
 
+  // Auto-assign Founding Member badge for first 100 buyers of mastery
+  let foundingBadgeAwarded = false;
+  if (order.course_slug === "ai-untuk-pemula-mastery") {
+    const { count: enrolledCount } = await supabaseAdmin
+      .from("enrollments")
+      .select("id", { count: "exact", head: true })
+      .eq("course_slug", "ai-untuk-pemula-mastery")
+      .eq("status", "active");
+
+    if ((enrolledCount ?? 0) <= 100) {
+      // Find or create Founding Member badge
+      let { data: badge } = await supabaseAdmin
+        .from("badges")
+        .select("id")
+        .eq("name", "Founding Member")
+        .maybeSingle();
+
+      if (!badge) {
+        const { data: newBadge } = await supabaseAdmin
+          .from("badges")
+          .insert({
+            name: "Founding Member",
+            description: "100 student pertama AI Mastery — supporter awal Kaalupi",
+            icon: "👑",
+            required_points: 0,
+          })
+          .select()
+          .single();
+        badge = newBadge;
+      }
+
+      if (badge?.id) {
+        await supabaseAdmin
+          .from("user_badges")
+          .upsert(
+            { user_email: userEmail, badge_id: badge.id },
+            { onConflict: "user_email,badge_id" },
+          );
+        foundingBadgeAwarded = true;
+      }
+
+      // Award founding bonus points
+      const { data: existingPoints } = await supabaseAdmin
+        .from("user_points")
+        .select("points")
+        .eq("user_email", userEmail)
+        .maybeSingle();
+      const newPoints = ((existingPoints?.points as number | undefined) ?? 0) + 100;
+      await supabaseAdmin
+        .from("user_points")
+        .upsert(
+          { user_email: userEmail, points: newPoints },
+          { onConflict: "user_email" },
+        );
+    }
+  }
+
   return NextResponse.json({
     success: true,
-    message: "Pembayaran tervalidasi. Akses course sudah aktif.",
+    message: foundingBadgeAwarded
+      ? "🎉 Selamat! Lu jadi Founding Member. Badge & 100 bonus poin udah masuk akun lu."
+      : "Pembayaran tervalidasi. Akses course sudah aktif.",
+    founding_badge: foundingBadgeAwarded,
   });
 }
