@@ -2,11 +2,11 @@ import { NextResponse } from "next/server";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { getCourseBySlug } from "@/lib/content";
+import { generateContent } from "@/lib/ai-provider";
 
 /**
  * POST /api/ai/auto-fill-course
- * Generate semua materi (1 per modul) sekaligus pakai Gemini.
- * Tiap modul jadi 1 materi inti + topik dari `modules[]` di data.ts.
+ * Generate 1 materi pembuka per modul (idempotent: skip yang udah ada).
  *
  * Body: { course_slug }
  */
@@ -32,25 +32,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Course tidak ditemukan." }, { status: 404 });
   }
 
-  const geminiKey = process.env.GEMINI_API_KEY;
-  const anthropicKey = process.env.ANTHROPIC_API_KEY;
-  if (!geminiKey && !anthropicKey) {
-    return NextResponse.json(
-      {
-        error:
-          "GEMINI_API_KEY belum diset. Daftar gratis di https://aistudio.google.com/apikey",
-      },
-      { status: 500 }
-    );
-  }
-
   const supabase = getSupabaseAdmin();
-  const results: Array<{ module: number; status: "ok" | "skip" | "error"; reason?: string }> = [];
+  const results: Array<{
+    module: number;
+    status: "ok" | "skip" | "error";
+    reason?: string;
+    provider?: string;
+  }> = [];
 
   for (let moduleIdx = 0; moduleIdx < course.modules.length; moduleIdx++) {
     const moduleTitle = course.modules[moduleIdx];
 
-    // Cek kalau materi udah ada (skip biar idempotent)
+    // Idempotent: skip kalau modul ini udah punya materi order_index 0
     const { data: existing } = await supabase
       .from("materials")
       .select("id")
@@ -78,71 +71,17 @@ Aturan WAJIB:
 
 Buat materi PEMBUKA modul ini yang kasih overview lengkap topik. Output HTML siap pakai.`;
 
-    let content = "";
+    const ai = await generateContent(systemPrompt, userPrompt, 4096);
 
-    // Try Gemini first
-    if (geminiKey) {
-      try {
-        const r = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${geminiKey}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              systemInstruction: { parts: [{ text: systemPrompt }] },
-              contents: [{ role: "user", parts: [{ text: userPrompt }] }],
-              generationConfig: { temperature: 0.7, maxOutputTokens: 4096 },
-            }),
-          }
-        );
-        if (r.ok) {
-          const d = (await r.json()) as {
-            candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
-          };
-          content = d.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
-        }
-      } catch {
-        /* fallthrough */
-      }
-    }
-
-    // Fallback Claude
-    if (!content && anthropicKey) {
-      try {
-        const r = await fetch("https://api.anthropic.com/v1/messages", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key": anthropicKey,
-            "anthropic-version": "2023-06-01",
-          },
-          body: JSON.stringify({
-            model: "claude-sonnet-4-5-20250929",
-            max_tokens: 4000,
-            system: systemPrompt,
-            messages: [{ role: "user", content: userPrompt }],
-          }),
-        });
-        if (r.ok) {
-          const d = (await r.json()) as { content?: Array<{ type: string; text?: string }> };
-          content = d.content?.find((c) => c.type === "text")?.text ?? "";
-        }
-      } catch {
-        /* fallthrough */
-      }
-    }
-
-    if (!content) {
-      results.push({ module: moduleIdx, status: "error", reason: "AI gagal generate" });
+    if (!ai.content) {
+      results.push({ module: moduleIdx, status: "error", reason: ai.error ?? "AI kosong" });
       continue;
     }
-
-    content = content.replace(/^```html\s*/i, "").replace(/```\s*$/i, "").trim();
 
     const { error: insertError } = await supabase.from("materials").insert({
       course_slug: courseSlug,
       title: moduleTitle,
-      content,
+      content: ai.content,
       module_index: moduleIdx,
       order_index: 0,
     });
@@ -150,7 +89,7 @@ Buat materi PEMBUKA modul ini yang kasih overview lengkap topik. Output HTML sia
     if (insertError) {
       results.push({ module: moduleIdx, status: "error", reason: insertError.message });
     } else {
-      results.push({ module: moduleIdx, status: "ok" });
+      results.push({ module: moduleIdx, status: "ok", provider: ai.provider });
     }
   }
 
