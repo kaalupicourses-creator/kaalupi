@@ -71,28 +71,28 @@ export type Founder = {
 export const founders: Founder[] = [
   {
     name: "Kamil Alfaris",
-    role: "Founder & Head of AI",
-    bio: "Bangun Kaalupi dari nol. Fokus AI tooling, automation, dan integrasi end-to-end di setiap track.",
+    role: "AI & Platform",
+    bio: "Pegang AI engineering, automation, dan integrasi platform Kaalupi end-to-end.",
     skills: ["AI Engineering", "Fullstack", "Cyber", "Design"],
     illustration: { bg: "#F5A62A", accent: "#FFF3D6", shape: "blob" },
   },
   {
     name: "Akbar Rizki Pratama",
-    role: "Head of Brand & Media",
+    role: "Brand & Media",
     bio: "Anak Media. Pegang visual, video, dan storytelling — bikin Kaalupi keliatan profesional tapi tetap manusiawi.",
     skills: ["Video", "Visual", "Brand", "Story"],
     illustration: { bg: "#7AB648", accent: "#E8F5E9", shape: "wave" },
   },
   {
     name: "Raden Muhammad Fadhel Suradipraja",
-    role: "Head of Engineering",
+    role: "Engineering",
     bio: "Anak Programming. Backbone teknis platform — fitur baru, automation, dan integrasi sistem belajar.",
     skills: ["Backend", "API", "DevOps", "Frontend"],
     illustration: { bg: "#2D5016", accent: "#F0E8D8", shape: "lattice" },
   },
   {
     name: "Lutfi Hakim Atharie",
-    role: "Head of Network & Cyber",
+    role: "Network & Cyber",
     bio: "Anak Network Engineer. Akan jadi instruktur utama track Network Engineer & Cyber Security yang akan rilis.",
     skills: ["Network", "Cyber", "Infra", "Security"],
     illustration: { bg: "#5C4813", accent: "#FFF3D6", shape: "burst" },
@@ -145,7 +145,7 @@ export const courses: Course[] = [
     title: "AI untuk Pemula — Foundation",
     category: "Artificial Intelligence",
     level: "Beginner",
-    duration: "3 jam",
+    duration: "Self-paced",
     price: 0,
     summary:
       "Mulai gratis: pahami cara kerja AI dan dasar prompt engineering. Cocok buat semua orang yang penasaran sama AI, tanpa background teknis.",
@@ -173,7 +173,7 @@ export const courses: Course[] = [
     title: "AI untuk Pemula — Mastery (Founding Members)",
     category: "Artificial Intelligence",
     level: "Beginner to Intermediate",
-    duration: "7.5 jam",
+    duration: "Self-paced",
     price: 149000, // active price (founding price selama quota belum habis)
     original_price: 299000, // harga normal (untuk strikethrough)
     founding_members_limit: 100,

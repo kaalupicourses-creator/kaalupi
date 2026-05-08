@@ -1,107 +1,210 @@
-import { siteConfig, valueProps } from "@/lib/data";
+import Link from "next/link";
+import type { Metadata } from "next";
+import { siteConfig, founders } from "@/lib/data";
+import { FounderIllustration } from "@/components/founder-illustration";
+
+export const metadata: Metadata = {
+  title: "Tentang Kaalupi — Kenapa Kami Bangun Ini",
+  description:
+    "Kaalupi dibangun untuk demokratisasi AI dan IT skill di Indonesia. Cerita di balik platform, tim, dan kenapa kami pilih jalur Founding Members.",
+};
+
+const milestones = [
+  {
+    label: "Hari nol",
+    title: "Ide muncul, sempet mati",
+    body: "Ide Kaalupi sempat muncul tapi mati ditengah jalan karena minim resource dan fokus. Project ini sempet jadi 'cita-cita yg ditunda'.",
+  },
+  {
+    label: "Reboot",
+    title: "Dihidupin lagi",
+    body: "Modal pribadi 600K+, deploy stack modern (Next.js, Supabase, Clerk, Midtrans), bangun infrastruktur dari nol sampai deployable di Vercel.",
+  },
+  {
+    label: "Tim 4 orang",
+    title: "Bareng-bareng dari awal",
+    body: "Tim 4 orang gabung — masing-masing pegang track yang akan dibangun. Belum ngomongin equity formal — fokusnya bangun produk dulu.",
+  },
+  {
+    label: "Hari ini",
+    title: "Founding Members buka",
+    body: "Course gratis 'AI untuk Pemula' siap akses. Slot 100 Founding Members dibuka — early supporters dapet akses lifetime ke semua course Kaalupi.",
+  },
+];
+
+const principles = [
+  {
+    title: "Bahasa Indonesia tanpa nge-formal",
+    body: "Kami nulis kayak ngobrol antar teman dewasa — bukan dosen, bukan iklan. Lu gampang ngerti, ngga capek baca.",
+  },
+  {
+    title: "Pace lu sendiri",
+    body: "Ngga ada deadline live class. Materi singkat, padet, banyak edit. Bisa di-pause, ulang, atau lompat sesuai kebutuhan.",
+  },
+  {
+    title: "AI as a leverage",
+    body: "Kaalupi ngga jualan AI sebagai trend. AI dipakai sebagai akselerator buat target lu — kerjaan, bisnis, atau skill personal.",
+  },
+  {
+    title: "Komunitas > sekedar materi",
+    body: "Discord & WhatsApp aktif. Mentor langsung jawab. Belajar bareng punya completion 65% vs sendirian 10% — jadi kami buka komunitas dari hari pertama.",
+  },
+];
 
 export default function AboutPage() {
   return (
     <div className="bg-[#FEFBF5]">
+      {/* Hero */}
       <section className="mx-auto max-w-7xl px-6 py-16">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">
-            About Kaalupi
+            Tentang Kaalupi
           </p>
           <h1 className="mt-6 text-4xl font-extrabold text-[#2D5016] md:text-5xl">
-            Platform kursus IT yang{" "}
-            <span className="text-[#F5A62A]">serius soal kualitas</span>
+            Kami bangun{" "}
+            <span className="text-[#F5A62A]">platform belajar IT yang jujur</span>
           </h1>
           <p className="mt-6 text-lg leading-8 text-[#444444]">
-            Kaalupi dirancang sebagai tempat belajar teknologi yang tidak hanya menjual akses video,
-            tapi juga menjual struktur, arah, dan kejelasan outcome.
+            Bukan course factory yang jual jam belajar. Kaalupi dibangun untuk bantu orang
+            Indonesia memanfaatkan AI dan teknologi buat capai target hidup —
+            karier, bisnis, atau sekadar skill baru.
           </p>
         </div>
       </section>
 
+      {/* Story / Timeline */}
       <section className="border-t border-[#F0E8D8]">
-        <div className="mx-auto max-w-7xl px-6 py-16">
-          <div className="grid gap-8 lg:grid-cols-2">
-            <div className="rounded-2xl border border-[#F0E8D8] bg-white p-8">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[#FFF3D6]">
-                <svg className="h-6 w-6 text-[#F5A62A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-[#2D5016]">Visi</h2>
-              <p className="mt-4 text-sm leading-7 text-[#444444]">
-                Menjadi platform pembelajaran IT yang membantu lebih banyak orang membangun skill digital
-                berkualitas tinggi dengan pendekatan yang praktis, kredibel, dan relevan dengan kebutuhan industri.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-[#F0E8D8] bg-white p-8">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[#FFF3D6]">
-                <svg className="h-6 w-6 text-[#F5A62A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5" />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-[#2D5016]">Misi</h2>
-              <ul className="mt-4 space-y-3 text-sm leading-7 text-[#444444]">
-                {[
-                  "Menyediakan learning path yang jelas untuk berbagai jalur karier IT",
-                  "Menghubungkan materi, proyek, dan assessment dalam satu alur belajar",
-                  "Mendorong instructor untuk membangun materi yang rapi dan bernilai jual",
-                  "Menyiapkan fondasi platform untuk operasi course marketplace yang real",
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <svg className="mt-1 h-4 w-4 flex-shrink-0 text-[#7AB648]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
+        <div className="mx-auto max-w-5xl px-6 py-16">
+          <div className="mb-10 max-w-2xl">
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">Cerita</p>
+            <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016]">
+              Dari ide yg sempet mati ke product hidup
+            </h2>
           </div>
-        </div>
-      </section>
 
-      <section className="border-t border-[#F0E8D8]">
-        <div className="mx-auto max-w-7xl px-6 py-16">
-          <div className="mx-auto mb-12 max-w-2xl text-center">
-            <h2 className="text-3xl font-extrabold text-[#2D5016]">Kenapa Kaalupi?</h2>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            {valueProps.map((item, index) => (
-              <div
-                key={item}
-                className="flex items-start gap-4 rounded-2xl border border-[#F0E8D8] bg-white p-6 transition hover:border-[#F5A62A] hover:shadow-sm"
+          <div className="relative grid gap-6 md:grid-cols-2">
+            {milestones.map((m) => (
+              <article
+                key={m.title}
+                className="rounded-2xl border border-[#F0E8D8] bg-white p-6 transition hover:border-[#F5A62A] hover:shadow-sm"
               >
-                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-[#FFF3D6] font-bold text-[#F5A62A]">
-                  {index + 1}
-                </div>
-                <p className="pt-1 text-sm leading-7 text-[#444444]">{item}</p>
-              </div>
+                <span className="inline-block rounded-full bg-[#FFF3D6] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#5C4813]">
+                  {m.label}
+                </span>
+                <h3 className="mt-4 text-lg font-extrabold text-[#2D5016]">{m.title}</h3>
+                <p className="mt-2 text-sm leading-7 text-[#444]">{m.body}</p>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
+      {/* Principles */}
+      <section className="border-t border-[#F0E8D8] bg-white">
+        <div className="mx-auto max-w-7xl px-6 py-16">
+          <div className="mx-auto mb-12 max-w-2xl text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">Prinsip</p>
+            <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016]">
+              4 hal yang ngga akan kami kompromiin
+            </h2>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            {principles.map((p, i) => (
+              <article
+                key={p.title}
+                className="rounded-2xl border border-[#F0E8D8] bg-[#FEFBF5] p-7 transition hover:border-[#F5A62A]"
+              >
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F5A62A] text-sm font-extrabold text-[#2D5016]">
+                  {i + 1}
+                </div>
+                <h3 className="mt-4 text-lg font-extrabold text-[#2D5016]">{p.title}</h3>
+                <p className="mt-2 text-sm leading-7 text-[#444]">{p.body}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Team */}
       <section className="border-t border-[#F0E8D8]">
         <div className="mx-auto max-w-7xl px-6 py-16">
-          <div className="rounded-2xl border border-[#F0E8D8] bg-white p-8">
-            <h2 className="text-2xl font-bold text-[#2D5016]">Hubungi Kami</h2>
-            <div className="mt-6 grid gap-6 sm:grid-cols-3">
-              {[
-                { icon: "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z", label: siteConfig.email },
-                { icon: "M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z", label: siteConfig.phone },
-                { icon: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z", label: siteConfig.address },
-              ].map((item) => (
-                <div key={item.label} className="flex items-center gap-3">
-                  <svg className="h-5 w-5 text-[#F5A62A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
-                  </svg>
-                  <span className="text-sm text-[#444444]">{item.label}</span>
-                </div>
-              ))}
-            </div>
+          <div className="mx-auto mb-12 max-w-2xl text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">Tim</p>
+            <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016]">4 orang. 4 disiplin.</h2>
+            <p className="mt-3 text-sm leading-7 text-[#444]">
+              Tiap track Kaalupi dipegang sama orang yang emang jago di bidangnya.
+              Kami masih kecil — tapi itu bonus: respon cepat, feedback langsung dipakai.
+            </p>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {founders.map((founder) => (
+              <article
+                key={founder.name}
+                className="rounded-2xl border border-[#F0E8D8] bg-white p-6 transition hover:border-[#F5A62A]"
+              >
+                <FounderIllustration
+                  bg={founder.illustration.bg}
+                  accent={founder.illustration.accent}
+                  shape={founder.illustration.shape}
+                />
+                <h3 className="mt-5 text-base font-extrabold text-[#2D5016]">{founder.name}</h3>
+                <p className="mt-1 text-xs font-bold uppercase tracking-wider text-[#7AB648]">
+                  {founder.role}
+                </p>
+                <p className="mt-3 text-sm leading-6 text-[#444]">{founder.bio}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Contact */}
+      <section className="border-t border-[#F0E8D8] bg-[#FEFBF5]">
+        <div className="mx-auto max-w-4xl px-6 py-16 text-center">
+          <h2 className="text-3xl font-extrabold text-[#2D5016]">Mau ngobrol langsung?</h2>
+          <p className="mt-3 text-sm leading-7 text-[#444]">
+            Ada saran, mau partnership, atau cuma mau nanya — kami balas semua DM.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-sm">
+            <a
+              href={`mailto:${siteConfig.email}`}
+              className="rounded-xl border-2 border-[#2D5016] px-5 py-2.5 font-bold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-white"
+            >
+              Email — {siteConfig.email}
+            </a>
+            <a
+              href={siteConfig.community.discord}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-xl bg-[#5865F2] px-5 py-2.5 font-bold text-white transition hover:opacity-90"
+            >
+              Discord
+            </a>
+            <a
+              href={siteConfig.community.whatsapp}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-xl bg-[#25D366] px-5 py-2.5 font-bold text-white transition hover:opacity-90"
+            >
+              WhatsApp Group
+            </a>
+          </div>
+
+          <div className="mt-12 inline-flex flex-wrap items-center justify-center gap-6 rounded-2xl border border-[#F0E8D8] bg-white px-6 py-4 text-xs text-[#5C4813]">
+            <span>Bogor, Indonesia</span>
+            <span className="text-[#F0E8D8]">·</span>
+            <span>{siteConfig.phone}</span>
+          </div>
+
+          <div className="mt-8">
+            <Link
+              href="/courses"
+              className="inline-flex items-center gap-2 text-sm font-bold text-[#F5A62A] hover:underline"
+            >
+              Cek course yang udah rilis →
+            </Link>
           </div>
         </div>
       </section>

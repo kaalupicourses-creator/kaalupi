@@ -82,7 +82,7 @@ export function DashboardOnboarding({ userName, enrollmentsCount }: DashboardOnb
                   <div className="flex-1">
                     <p className="font-bold text-[#2D5016]">Mulai Course Gratis</p>
                     <p className="mt-0.5 text-sm text-[#5C4813]">
-                      &quot;AI untuk Pemula&quot; — 2 modul, 3 jam. Foundation buat semua track.
+                      &quot;AI untuk Pemula&quot; — 2 modul singkat. Foundation buat semua track.
                     </p>
                   </div>
                   <span className="text-sm font-bold text-[#F5A62A]">→</span>

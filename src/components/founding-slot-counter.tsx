@@ -47,7 +47,7 @@ export function FoundingSlotCounter({
         </span>
         {info.is_sold_out
           ? "Founding Members SOLD OUT"
-          : `Slot tersisa: ${info.remaining}/${info.founding_limit}`}
+          : `${info.taken}/${info.founding_limit} slot terisi`}
       </div>
     );
   }
@@ -58,8 +58,8 @@ export function FoundingSlotCounter({
         <div className="flex items-center justify-between text-xs font-bold text-[#5C4813]">
           <span>
             {info.is_sold_out
-              ? "🔥 Founding Members SOLD OUT — harga regular"
-              : `🔥 Founding Members tersisa: ${info.remaining}/${info.founding_limit}`}
+              ? "Founding Members SOLD OUT — harga sekarang regular"
+              : `Founding Members: ${info.taken}/${info.founding_limit} slot terisi`}
           </span>
           <span>{percent}%</span>
         </div>
@@ -90,14 +90,13 @@ export function FoundingSlotCounter({
 
       {info.is_sold_out ? (
         <p className="mt-3 text-sm font-bold text-[#2D5016]">
-          🎉 Founding Members SOLD OUT — sekarang harga regular Rp{" "}
+          Founding Members SOLD OUT — harga sekarang Rp{" "}
           {info.current_price.toLocaleString("id-ID")}
         </p>
       ) : (
         <>
           <p className="mt-3 text-sm font-bold text-[#2D5016]">
-            Slot tersisa: <span className="text-[#F5A62A]">{info.remaining}</span>/
-            {info.founding_limit}
+            <span className="text-[#F5A62A]">{info.taken}</span>/{info.founding_limit} slot terisi
           </p>
           <div className="mt-2 h-2 rounded-full bg-white overflow-hidden">
             <div
@@ -107,7 +106,8 @@ export function FoundingSlotCounter({
           </div>
           <p className="mt-3 text-xs text-[#5C4813] leading-5">
             Setelah <strong>{info.founding_limit} student</strong> terdaftar, harga balik ke{" "}
-            <strong>Rp {info.original_price.toLocaleString("id-ID")}</strong>. Jangan ketinggalan.
+            <strong>Rp {info.original_price.toLocaleString("id-ID")}</strong>. Sisa{" "}
+            <strong>{info.remaining}</strong> slot.
           </p>
         </>
       )}

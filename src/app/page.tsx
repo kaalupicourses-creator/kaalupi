@@ -1,5 +1,6 @@
 ﻿import Link from "next/link";
 import Script from "next/script";
+import { auth } from "@clerk/nextjs/server";
 import { CourseThumbnail } from "@/components/course-thumbnail";
 import { FoundingSlotCounter } from "@/components/founding-slot-counter";
 import { FounderIllustration } from "@/components/founder-illustration";
@@ -50,6 +51,8 @@ export default async function HomePage() {
     allCourses.find((c) => c.slug === "ai-untuk-pemula") ??
     allCourses.find((c) => c.featured) ??
     allCourses[0];
+  const { userId } = await auth();
+  const isSignedIn = !!userId;
 
   // JSON-LD structured data
   const jsonLd = {
@@ -110,39 +113,40 @@ export default async function HomePage() {
           </div>
 
           <h1 className="text-4xl font-extrabold leading-tight text-[#2D5016] md:text-5xl lg:text-6xl">
-            Dari Nol Jadi <span className="text-[#F5A62A]">AI Specialist</span> dalam 3 Bulan
+            Manfaatin <span className="text-[#F5A62A]">AI</span> buat capai target hidup lu
           </h1>
 
           <p className="mt-6 max-w-2xl mx-auto text-lg leading-8 text-[#444444]">
-            Course IT pertama di Indonesia yang mengintegrasikan{" "}
-            <strong className="text-[#2D5016]">AI tools ke setiap project</strong>.
-            Bahasa Indonesia, langsung praktik, portofolio nyata.
+            Belajar pakai AI buat hemat waktu kerja, bantu bisnis, naikin skill —
+            atau apapun yang lagi lu kejar. Bahasa Indonesia, langsung praktik, pace lu sendiri.
           </p>
 
           {/* SINGLE PRIMARY CTA — clear direction */}
           <div className="mt-10 flex flex-col items-center gap-3">
             <Link
-              href={withUTM("/register", "hero_primary")}
+              href={withUTM(isSignedIn ? "/dashboard" : "/register", "hero_primary")}
               className="group inline-flex items-center gap-2 rounded-2xl bg-[#F5A62A] px-8 py-4 text-base font-extrabold text-[#2D5016] shadow-lg transition hover:opacity-90 hover:shadow-xl"
             >
-              Daftar Gratis & Mulai Belajar
+              {isSignedIn ? "Buka Dashboard" : "Daftar Gratis & Mulai Belajar"}
               <span className="transition group-hover:translate-x-1">→</span>
             </Link>
-            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-[#5C4813]">
-              <Link
-                href={withUTM("/courses/ai-untuk-pemula", "hero_secondary_free")}
-                className="font-semibold underline-offset-4 transition hover:text-[#F5A62A] hover:underline"
-              >
-                Lihat course gratis →
-              </Link>
-              <span className="text-[#F0E8D8]">·</span>
-              <Link
-                href="/login"
-                className="font-semibold underline-offset-4 transition hover:text-[#F5A62A] hover:underline"
-              >
-                Sudah punya akun? Masuk
-              </Link>
-            </div>
+            {!isSignedIn && (
+              <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-[#5C4813]">
+                <Link
+                  href={withUTM("/courses/ai-untuk-pemula", "hero_secondary_free")}
+                  className="font-semibold underline-offset-4 transition hover:text-[#F5A62A] hover:underline"
+                >
+                  Lihat course gratis →
+                </Link>
+                <span className="text-[#F0E8D8]">·</span>
+                <Link
+                  href="/login"
+                  className="font-semibold underline-offset-4 transition hover:text-[#F5A62A] hover:underline"
+                >
+                  Sudah punya akun? Masuk
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Founding slot counter — social proof */}
@@ -150,13 +154,13 @@ export default async function HomePage() {
             <FoundingSlotCounter slug="ai-untuk-pemula-mastery" variant="inline" />
           </div>
 
-          {/* Trust Signals — terse & honest */}
+          {/* Trust Signals — honest & spesifik */}
           <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-[#444444]">
             {[
-              "Tanpa kartu kredit",
-              "Sertifikat resmi",
-              "Akses lifetime",
-              "Garansi 14 hari",
+              "Daftar gratis, ngga butuh data bayar",
+              "Belajar pace lu sendiri",
+              "Sertifikat PDF setelah selesai",
+              "Akses lifetime untuk Founding Members",
             ].map((item) => (
               <span key={item} className="flex items-center gap-1">
                 <svg className="h-4 w-4 text-[#7AB648]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -450,10 +454,10 @@ export default async function HomePage() {
               </p>
               <ul className="mt-5 space-y-2.5 text-sm text-[#444] flex-1">
                 {[
-                  "2 modul · 3 jam total",
+                  "2 modul singkat — pace lu sendiri",
                   "Akses langsung tanpa daftar tunggu",
                   "Materi video + artikel",
-                  "Komunitas terbuka",
+                  "Komunitas Discord terbuka",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-2">
                     <svg className="h-4 w-4 flex-shrink-0 text-[#7AB648] mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
@@ -472,9 +476,9 @@ export default async function HomePage() {
             </div>
 
             {/* Mastery - Paid */}
-            <div className="rounded-3xl border-2 border-[#F5A62A] bg-gradient-to-br from-[#FFF3D6] to-white p-8 flex flex-col relative shadow-xl">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#2D5016] px-4 py-1 text-[10px] font-extrabold uppercase tracking-wider text-[#F5A62A]">
-                ⭐ Most Recommended
+            <div className="relative rounded-3xl border-2 border-[#F5A62A] bg-gradient-to-br from-[#FFF3D6] to-white p-8 flex flex-col shadow-xl mt-3">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 rounded-full bg-[#2D5016] px-4 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-[#F5A62A] shadow-md">
+                Most Recommended
               </div>
               <div className="flex items-center justify-between">
                 <span className="rounded-full bg-[#F5A62A] px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-[#2D5016]">
@@ -495,7 +499,7 @@ export default async function HomePage() {
               <ul className="mt-5 space-y-2.5 text-sm text-[#444] flex-1">
                 {[
                   "Lifetime access ke SEMUA course Kaalupi",
-                  "5 modul lengkap · 7.5 jam praktik",
+                  "5 modul lengkap — pace lu sendiri",
                   "AI Tutor 24/7 (tanya bebas per modul)",
                   "Discord eksklusif Founding Members",
                   "Sertifikat resmi + LinkedIn share",
@@ -538,8 +542,8 @@ export default async function HomePage() {
                   Mulai Gratis,<br /><span className="text-[#F5A62A]">Upgrade Kapan Aja</span>
                 </h2>
                 <p className="mt-4 max-w-2xl text-base leading-7 text-[#444444]">
-                  Coba course <strong className="text-[#2D5016]">AI untuk Pemula</strong> gratis. Pas udah ngerasa cocok, lanjut ke track lainnya.
-                  Garansi uang kembali 14 hari kalau nggak cocok.
+                  Coba course <strong className="text-[#2D5016]">AI untuk Pemula</strong> gratis dulu — ngga ada catch.
+                  Pas udah ngerasa cocok, jadi Founding Member buat akses semua course.
                 </p>
               </div>
 
@@ -566,8 +570,8 @@ export default async function HomePage() {
                   <span className="rounded-full bg-[#FFF3D6] px-3 py-1 text-xs font-semibold text-[#5C4813]">
                     {spotlightCourse.level}
                   </span>
-                  <span className="rounded-full bg-[#FFF3D6] px-3 py-1 text-xs font-semibeld text-[#5C4813]">
-                    {spotlightCourse.duration}
+                  <span className="rounded-full bg-[#FFF3D6] px-3 py-1 text-xs font-semibold text-[#5C4813]">
+                    {spotlightCourse.modules.length} modul
                   </span>
                 </div>
 
@@ -785,8 +789,7 @@ export default async function HomePage() {
                Masih Ragu? Coba Gratis Dulu
              </h2>
             <p className="relative mt-4 max-w-xl mx-auto text-base leading-8" style={{color: 'white'}}>
-              Ngapain beli kalau belum yakin? Coba course <strong>AI untuk Pemula</strong> gratis.
-              Pas udah ngerasa cocok, lanjut ke track lainnya. Garansi uang kembali 14 hari.
+              Ngga ada catch. Coba course <strong>AI untuk Pemula</strong> gratis dulu, lihat materinya, baru naik ke Founding Members.
             </p>
             <div className="relative mt-8 flex flex-wrap justify-center gap-4">
               <Link

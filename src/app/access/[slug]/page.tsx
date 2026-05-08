@@ -6,6 +6,8 @@ import { getCourseBySlug } from "@/lib/content";
 import { ProgressTracker } from "@/components/progress-tracker";
 import { CourseThumbnail } from "@/components/course-thumbnail";
 import { VideoPlayer } from "@/components/video-player";
+import { CertificateButton } from "@/components/certificate-button";
+import { AiTutorChat } from "@/components/ai-tutor-chat";
 
 export default async function CourseAccessPage({
   params,
@@ -24,110 +26,94 @@ export default async function CourseAccessPage({
 
   const { slug } = await params;
   const course = await getCourseBySlug(slug);
-
   if (!course) {
     redirect("/access");
   }
 
-  const safeCourse = course;
-
-  const enrollments = await getEnrollments(userEmail);
-  const hasAccess = enrollments.includes(safeCourse.slug);
+  let enrollments: string[] = [];
+  try {
+    enrollments = await getEnrollments(userEmail);
+  } catch (err) {
+    console.error("[access] getEnrollments failed:", err);
+  }
+  const hasAccess = enrollments.includes(course.slug);
 
   if (!hasAccess) {
-    redirect(`/checkout/${safeCourse.slug}`);
+    redirect(`/checkout/${course.slug}`);
   }
 
-  // Get current module from query param
   const { module: moduleParam } = await searchParams;
-  const currentModuleIndex = moduleParam ? parseInt(moduleParam) : 0;
-  const validModuleIndex = Math.max(0, Math.min(currentModuleIndex, safeCourse.modules.length - 1));
+  const currentModuleIndex = moduleParam ? parseInt(moduleParam, 10) : 0;
+  const validModuleIndex = Math.max(
+    0,
+    Math.min(Number.isFinite(currentModuleIndex) ? currentModuleIndex : 0, course.modules.length - 1),
+  );
 
-  // Fetch materials for this course
-  const materials = await getCourseMaterials(safeCourse.slug);
+  let materials: Awaited<ReturnType<typeof getCourseMaterials>> = [];
+  try {
+    materials = await getCourseMaterials(course.slug);
+  } catch (err) {
+    console.error("[access] getCourseMaterials failed:", err);
+  }
   const currentMaterial = materials.find((m) => m.module_index === validModuleIndex);
 
-  const progress = await getProgress(userEmail, safeCourse.slug);
-  const completedModules = progress.filter((p) => p.completed).map((p) => p.module_index);
-  const courseSlug = safeCourse.slug;
-
-  async function handleModuleComplete(moduleIndex: number) {
-    "use server";
-    await updateProgress(userEmail, courseSlug, moduleIndex, true);
-    
-    // Check if all modules completed - trigger certificate generation
-    const updatedProgress = await getProgress(userEmail, courseSlug);
-    const completedCount = updatedProgress.filter((p) => p.completed).length;
-    
-    if (completedCount === totalModules) {
-      try {
-        await fetch("/api/certificates", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ courseSlug: safeCourse.slug }),
-        });
-      } catch (err) {
-        console.error("Certificate generation failed:", err);
-      }
-    }
+  let progress: Awaited<ReturnType<typeof getProgress>> = [];
+  try {
+    progress = await getProgress(userEmail, course.slug);
+  } catch (err) {
+    console.error("[access] getProgress failed:", err);
   }
+  const completedModules = progress.filter((p) => p.completed).map((p) => p.module_index);
 
-  async function handleVideoProgress(moduleIndex: number, progressPct: number) {
+  const courseSlug = course.slug;
+  const totalModules = course.modules.length;
+
+  async function markModuleComplete(moduleIndex: number) {
     "use server";
-    // Auto-complete when watched >80%
-    if (progressPct >= 80 && !completedModules.includes(moduleIndex)) {
+    try {
       await updateProgress(userEmail, courseSlug, moduleIndex, true);
+    } catch (err) {
+      console.error("[access] updateProgress failed:", err);
     }
   }
 
   const completedCount = completedModules.length;
-  const totalModules = safeCourse.modules.length;
   const progressPercent = totalModules > 0 ? Math.round((completedCount / totalModules) * 100) : 0;
+  const courseFinished = completedCount === totalModules && totalModules > 0;
 
   return (
     <div className="bg-[#FEFBF5] min-h-screen">
       <div className="mx-auto max-w-7xl px-6 py-12">
-        {/* Header */}
         <div className="mb-8 flex flex-wrap items-center gap-4">
           <Link
-            href="/access"
+            href="/dashboard"
             className="flex items-center gap-2 rounded-xl border-2 border-[#2D5016] px-4 py-2 text-sm font-semibold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-white"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
-            Kembali
+            Dashboard
           </Link>
           <div className="h-6 w-px bg-[#F0E8D8]" />
           <div>
-            <span className="rounded-full bg-[#F0E8D8] px-2 py-0.5 text-xs font-semibold text-[#2D5016]">{safeCourse.category}</span>
-            <h1 className="mt-1 text-2xl font-extrabold text-[#2D5016]">{safeCourse.title}</h1>
+            <span className="rounded-full bg-[#F0E8D8] px-2 py-0.5 text-xs font-semibold text-[#2D5016]">{course.category}</span>
+            <h1 className="mt-1 text-2xl font-extrabold text-[#2D5016]">{course.title}</h1>
           </div>
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[1.5fr_1fr]">
           <div className="space-y-6">
-            {/* Material Viewer - Video or Article */}
             {currentMaterial ? (
               <div className="overflow-hidden rounded-2xl border border-[#F0E8D8] bg-white shadow-sm">
                 {currentMaterial.video_url ? (
-                  <VideoPlayer
-                    src={currentMaterial.video_url}
-                    title={currentMaterial.title}
-                    onProgress={(pct) => handleVideoProgress(validModuleIndex, pct)}
-                  />
+                  <VideoPlayer src={currentMaterial.video_url} title={currentMaterial.title} />
                 ) : currentMaterial.content ? (
                   <div className="p-6">
                     <h2 className="text-xl font-bold text-[#2D5016]">{currentMaterial.title}</h2>
-                    <div className="mt-4 prose prose-sm max-w-none text-[#444444]"
+                    <div
+                      className="mt-4 prose prose-sm max-w-none text-[#444444]"
                       dangerouslySetInnerHTML={{ __html: currentMaterial.content }}
                     />
-                    <button
-                      onClick={() => handleModuleComplete(validModuleIndex)}
-                      className="mt-6 rounded-xl bg-[#7AB648] px-6 py-2.5 text-sm font-bold text-white transition hover:bg-[#5C8A36]"
-                    >
-                      Tandai Selesai ✓
-                    </button>
                   </div>
                 ) : (
                   <div className="p-10 text-center">
@@ -136,26 +122,32 @@ export default async function CourseAccessPage({
                 )}
               </div>
             ) : (
-              /* Show course thumbnail if no material */
-              <div className="overflow-hidden rounded-2xl border border-[#F0E8D8]">
-                <CourseThumbnail title={safeCourse.title} category={safeCourse.category} large />
+              <div className="overflow-hidden rounded-2xl border border-[#F0E8D8] bg-white">
+                <CourseThumbnail title={course.title} category={course.category} large />
+                <div className="p-6 text-center">
+                  <p className="text-sm font-semibold text-[#2D5016]">Materi modul ini belum tersedia</p>
+                  <p className="mt-2 text-xs text-[#5C4813]">
+                    Tim Kaalupi sedang siapin video & materi. Pantau dashboard untuk update.
+                  </p>
+                </div>
               </div>
             )}
 
-            {/* Module List with Navigation */}
             <div className="rounded-2xl border border-[#F0E8D8] bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-extrabold text-[#2D5016]">Modul Course</h2>
-                <span className="text-sm text-[#444444]">{completedCount}/{totalModules} selesai</span>
+                <span className="text-sm text-[#444444]">
+                  {completedCount}/{totalModules} selesai
+                </span>
               </div>
               <div className="mt-4 space-y-2">
-                {safeCourse.modules.map((module, index) => {
+                {course.modules.map((module, index) => {
                   const isCompleted = completedModules.includes(index);
                   const isActive = index === validModuleIndex;
                   return (
                     <Link
                       key={index}
-                      href={`/access/${safeCourse.slug}?module=${index}`}
+                      href={`/access/${course.slug}?module=${index}`}
                       className={`flex items-center gap-3 rounded-xl border px-4 py-3 transition ${
                         isActive
                           ? "border-[#F5A62A] bg-[#FFF3D6]"
@@ -171,28 +163,25 @@ export default async function CourseAccessPage({
                           </svg>
                         </div>
                       ) : (
-                        <div className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                          isActive ? "bg-[#F5A62A] text-white" : "bg-[#FFF3D6] text-[#F5A62A]"
-                        }`}>
+                        <div
+                          className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                            isActive ? "bg-[#F5A62A] text-white" : "bg-[#FFF3D6] text-[#F5A62A]"
+                          }`}
+                        >
                           {index + 1}
                         </div>
                       )}
                       <span className={`flex-1 text-sm ${isCompleted ? "text-[#2D5016] font-medium" : "text-[#444444]"}`}>{module}</span>
-                      {isCompleted && (
-                        <span className="text-xs font-semibold text-[#7AB648]">Selesai</span>
-                      )}
-                      {isActive && !isCompleted && (
-                        <span className="text-xs font-semibold text-[#F5A62A]">Sedang dibuka</span>
-                      )}
+                      {isCompleted && <span className="text-xs font-semibold text-[#7AB648]">Selesai</span>}
+                      {isActive && !isCompleted && <span className="text-xs font-semibold text-[#F5A62A]">Sedang dibuka</span>}
                     </Link>
                   );
                 })}
               </div>
 
-              {/* Next/Prev Navigation */}
               <div className="mt-4 flex justify-between">
                 <Link
-                  href={`/access/${safeCourse.slug}${validModuleIndex > 0 ? `?module=${validModuleIndex - 1}` : ""}`}
+                  href={`/access/${course.slug}${validModuleIndex > 0 ? `?module=${validModuleIndex - 1}` : ""}`}
                   className={`rounded-lg border px-4 py-2 text-sm font-semibold transition ${
                     validModuleIndex > 0
                       ? "border-[#2D5016] text-[#2D5016] hover:bg-[#2D5016] hover:text-white"
@@ -202,7 +191,7 @@ export default async function CourseAccessPage({
                   ← Sebelumnya
                 </Link>
                 <Link
-                  href={`/access/${safeCourse.slug}${validModuleIndex < totalModules - 1 ? `?module=${validModuleIndex + 1}` : ""}`}
+                  href={`/access/${course.slug}${validModuleIndex < totalModules - 1 ? `?module=${validModuleIndex + 1}` : ""}`}
                   className={`rounded-lg border px-4 py-2 text-sm font-semibold transition ${
                     validModuleIndex < totalModules - 1
                       ? "border-[#2D5016] text-[#2D5016] hover:bg-[#2D5016] hover:text-white"
@@ -216,7 +205,6 @@ export default async function CourseAccessPage({
           </div>
 
           <div className="space-y-6">
-             {/* Progress Card */}
             <div className="rounded-2xl border border-[#F0E8D8] bg-white p-6 shadow-sm">
               <h3 className="text-lg font-extrabold text-[#2D5016]">Progress Kamu</h3>
               <div className="mt-4">
@@ -232,59 +220,39 @@ export default async function CourseAccessPage({
                 </div>
               </div>
               <ProgressTracker
-                totalModules={safeCourse.modules.length}
+                totalModules={course.modules.length}
                 completedModules={completedModules}
-                onModuleComplete={handleModuleComplete}
+                onModuleComplete={markModuleComplete}
               />
-              {completedCount === totalModules && (
+              {courseFinished && (
                 <div className="mt-6 rounded-xl bg-[#FFF3D6] p-4">
-                  <p className="text-sm font-bold text-[#5C4813]">🎉 Selamat! Course telah selesai</p>
-                  <p className="mt-1 text-xs text-[#444444]">Sertifikat akan segera dibuatkan</p>
-                  <button
-                    onClick={async () => {
-                      const response = await fetch("/api/certificates", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ courseSlug: safeCourse.slug }),
-                      });
-                      const data = await response.json();
-                      if (data.url) {
-                        window.open(data.url, "_blank");
-                      }
-                    }}
-                    className="mt-3 rounded-lg bg-[#2D5016] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1A3A0F] transition"
-                  >
-                    📜 Lihat Sertifikat & Share ke LinkedIn
-                  </button>
+                  <p className="text-sm font-bold text-[#5C4813]">Selamat — course selesai!</p>
+                  <p className="mt-1 text-xs text-[#444444]">Klaim sertifikat & share ke LinkedIn</p>
+                  <CertificateButton courseSlug={course.slug} />
                 </div>
               )}
             </div>
 
-            {/* Course Info */}
             <div className="rounded-2xl border border-[#F0E8D8] bg-white p-6 shadow-sm">
               <h3 className="text-lg font-extrabold text-[#2D5016]">Info Course</h3>
               <div className="mt-4 space-y-3 text-sm">
                 {[
-                  { icon: "M13 10V3L4 14h7v7l9-11h-7z", label: "Level", value: safeCourse.level },
-                  { icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z", label: "Durasi", value: safeCourse.duration },
-                  { icon: "M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z", label: "Format", value: safeCourse.format, capitalize: true },
-                  { icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z", label: "Modul", value: safeCourse.modules.length },
+                  { label: "Level", value: course.level },
+                  { label: "Format", value: course.format, capitalize: true },
+                  { label: "Modul", value: course.modules.length },
                 ].map((item) => (
                   <div key={item.label} className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-[#444444]">
-                      <svg className="h-4 w-4 text-[#F5A62A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
-                      </svg>
-                      {item.label}
-                    </div>
+                    <span className="text-[#444444]">{item.label}</span>
                     <span className={`font-semibold text-[#2D5016] ${item.capitalize ? "capitalize" : ""}`}>{item.value}</span>
                   </div>
                 ))}
               </div>
             </div>
-            </div>
+          </div>
         </div>
       </div>
+
+      <AiTutorChat courseSlug={course.slug} courseTitle={course.title} moduleIndex={validModuleIndex} />
     </div>
   );
 }

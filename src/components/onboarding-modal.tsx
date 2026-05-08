@@ -22,7 +22,7 @@ const intents: Array<{
     id: "learn_free",
     emoji: "🆓",
     title: "Saya pemula, mau coba dulu",
-    description: "Belajar AI dari nol gratis — 2 modul, 3 jam, langsung akses tanpa kartu kredit.",
+    description: "Belajar AI dari nol gratis — 2 modul, langsung akses, tanpa data bayar.",
     highlight: "Paling Populer",
     href: "/register?intent=learn_free",
     cta: "Daftar Gratis & Mulai →",

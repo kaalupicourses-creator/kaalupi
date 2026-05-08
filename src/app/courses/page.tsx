@@ -46,9 +46,6 @@ export default function CoursesPage() {
                       {foundation.level}
                     </span>
                     <span className="rounded-full bg-[#FFF3D6] px-3 py-1 font-semibold text-[#5C4813]">
-                      {foundation.duration}
-                    </span>
-                    <span className="rounded-full bg-[#FFF3D6] px-3 py-1 font-semibold text-[#5C4813]">
                       {foundation.modules.length} modul
                     </span>
                   </div>
@@ -89,11 +86,11 @@ export default function CoursesPage() {
 
             {/* Mastery - Paid Founding Members */}
             {mastery && (
-              <article className="overflow-hidden rounded-3xl border-2 border-[#F5A62A] bg-gradient-to-br from-[#FFF3D6] to-white flex flex-col relative shadow-xl">
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 rounded-full bg-[#2D5016] px-4 py-1 text-[10px] font-extrabold uppercase tracking-wider text-[#F5A62A]">
-                  ⭐ Most Recommended
+              <article className="relative rounded-3xl border-2 border-[#F5A62A] bg-gradient-to-br from-[#FFF3D6] to-white flex flex-col shadow-xl mt-3">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 rounded-full bg-[#2D5016] px-4 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-[#F5A62A] shadow-md">
+                  Most Recommended
                 </div>
-                <div className="relative">
+                <div className="relative overflow-hidden rounded-t-3xl">
                   <CourseThumbnail title={mastery.title} category={mastery.category} large />
                   <div className="absolute top-4 left-4 rounded-full bg-[#F5A62A] px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-[#2D5016]">
                     Mastery
@@ -105,9 +102,6 @@ export default function CoursesPage() {
                       {mastery.level}
                     </span>
                     <span className="rounded-full bg-[#FFF3D6] px-3 py-1 font-semibold text-[#5C4813]">
-                      {mastery.duration}
-                    </span>
-                    <span className="rounded-full bg-[#FFF3D6] px-3 py-1 font-semibold text-[#5C4813]">
                       {mastery.modules.length} modul
                     </span>
                   </div>
@@ -116,8 +110,17 @@ export default function CoursesPage() {
 
                   <ul className="mt-5 space-y-2 text-sm flex-1">
                     {(mastery.perks ?? []).map((p, i) => (
-                      <li key={i} className="text-[#444]">
-                        {p}
+                      <li key={i} className="flex items-start gap-2 text-[#444]">
+                        <svg
+                          className="mt-1 h-3.5 w-3.5 flex-shrink-0 text-[#F5A62A]"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={3}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>{p}</span>
                       </li>
                     ))}
                   </ul>
