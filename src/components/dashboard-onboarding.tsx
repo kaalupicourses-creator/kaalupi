@@ -1,81 +1,158 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { siteConfig } from "@/lib/data";
 
 interface DashboardOnboardingProps {
   userName: string;
   enrollmentsCount: number;
 }
 
+function readWelcomeFlag(): boolean {
+  if (typeof window === "undefined") return false;
+  return new URLSearchParams(window.location.search).get("welcome") === "true";
+}
+
 export function DashboardOnboarding({ userName, enrollmentsCount }: DashboardOnboardingProps) {
-  // If they have courses, we don't show the full onboarding, maybe just a smaller version
-  if (enrollmentsCount > 0) return null;
+  const [showWelcome, setShowWelcome] = useState(readWelcomeFlag);
+
+  useEffect(() => {
+    if (!showWelcome) return;
+    const timeout = setTimeout(() => setShowWelcome(false), 8000);
+    return () => clearTimeout(timeout);
+  }, [showWelcome]);
+
+  if (enrollmentsCount > 0 && !showWelcome) return null;
 
   return (
-    <section className="mb-8 overflow-hidden rounded-2xl border-2 border-[#F5A62A] bg-[#FFF3D6] shadow-md animate-fade-in-up">
-      <div className="flex flex-col lg:flex-row lg:items-center">
-        {/* Left Content */}
-        <div className="flex-1 p-8">
-          <div className="inline-flex items-center gap-2 rounded-full bg-[#2D5016] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#F5A62A]">
-            🚀 Getting Started Guide
+    <>
+      {/* Welcome toast — only shown right after onboarding finishes */}
+      {showWelcome && (
+        <div
+          role="status"
+          className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#7AB648]/40 bg-[#E8F5E9] p-4"
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🎉</span>
+            <div>
+              <p className="text-sm font-bold text-[#2D5016]">
+                Mantap, {userName}! Lu udah resmi gabung.
+              </p>
+              <p className="text-xs text-[#5C4813]">
+                Course &quot;AI untuk Pemula&quot; otomatis ke-enroll. Mulai modul pertama bareng kami.
+              </p>
+            </div>
           </div>
-          <h2 className="mt-4 text-2xl font-black text-[#2D5016]">
-            Halo {userName}! Yuk Mulai Langkah Pertama Kamu.
-          </h2>
-          <p className="mt-3 text-base leading-7 text-[#5C4813]">
-            Akun kamu sudah siap. Sekarang saatnya memilih ilmu baru yang akan kamu pelajari. Kami merekomendasikan langkah berikut:
-          </p>
+          <button
+            onClick={() => setShowWelcome(false)}
+            className="rounded-lg p-1.5 text-[#5C4813] hover:bg-white/60"
+            aria-label="Tutup"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      )}
 
-          <div className="mt-8 space-y-4">
-            <div className="flex items-start gap-4 rounded-xl bg-white/50 p-4 border border-[#F5A62A]/20">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#F5A62A] text-xs font-bold text-[#2D5016]">
-                1
+      {/* Getting Started Guide for users with no enrollments */}
+      {enrollmentsCount === 0 && (
+        <section className="mb-8 overflow-hidden rounded-2xl border-2 border-[#F5A62A] bg-[#FFF3D6] shadow-md animate-fade-in-up">
+          <div className="flex flex-col lg:flex-row lg:items-stretch">
+            <div className="flex-1 p-8">
+              <div className="inline-flex items-center gap-2 rounded-full bg-[#2D5016] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#F5A62A]">
+                🚀 Getting Started
               </div>
-              <div>
-                <p className="font-bold text-[#2D5016]">Pilih Course Gratis</p>
-                <p className="mt-1 text-sm text-[#5C4813]">
-                  Ambil course "AI untuk Pemula" untuk pemanasan. Gratis 100%.
-                </p>
+              <h2 className="mt-4 text-2xl font-black text-[#2D5016]">
+                Halo {userName}! 4 langkah pertama lu.
+              </h2>
+              <p className="mt-3 text-base leading-7 text-[#5C4813]">
+                Akun lu udah siap. Ikutin urutan ini supaya ga keliatan bingung.
+              </p>
+
+              <div className="mt-6 space-y-3">
                 <Link
                   href="/courses/ai-untuk-pemula"
-                  className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-[#F5A62A] hover:underline"
+                  className="flex items-start gap-4 rounded-xl border border-[#F5A62A]/40 bg-white/70 p-4 transition hover:border-[#F5A62A] hover:bg-white"
                 >
-                  Ambil Course Gratis →
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#F5A62A] text-xs font-bold text-[#2D5016]">
+                    1
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-bold text-[#2D5016]">Mulai Course Gratis</p>
+                    <p className="mt-0.5 text-sm text-[#5C4813]">
+                      &quot;AI untuk Pemula&quot; — 2 modul, 3 jam. Foundation buat semua track.
+                    </p>
+                  </div>
+                  <span className="text-sm font-bold text-[#F5A62A]">→</span>
+                </Link>
+
+                <a
+                  href={siteConfig.community.discord}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-4 rounded-xl border border-[#F5A62A]/40 bg-white/70 p-4 transition hover:border-[#F5A62A] hover:bg-white"
+                >
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#F5A62A] text-xs font-bold text-[#2D5016]">
+                    2
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-bold text-[#2D5016]">Gabung Discord</p>
+                    <p className="mt-0.5 text-sm text-[#5C4813]">
+                      Tempat tanya-jawab, sharing project, AMA mingguan dengan founder.
+                    </p>
+                  </div>
+                  <span className="text-sm font-bold text-[#F5A62A]">→</span>
+                </a>
+
+                <Link
+                  href="/courses/ai-untuk-pemula-mastery"
+                  className="flex items-start gap-4 rounded-xl border border-[#F5A62A]/40 bg-white/70 p-4 transition hover:border-[#F5A62A] hover:bg-white"
+                >
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#F5A62A] text-xs font-bold text-[#2D5016]">
+                    3
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-bold text-[#2D5016]">Cek Mastery (Opsional)</p>
+                    <p className="mt-0.5 text-sm text-[#5C4813]">
+                      Slot Founding Members 149K — sertifikat, AI Tutor 24/7, badge eksklusif.
+                    </p>
+                  </div>
+                  <span className="text-sm font-bold text-[#F5A62A]">→</span>
+                </Link>
+
+                <Link
+                  href="/dashboard/code-review"
+                  className="flex items-start gap-4 rounded-xl border border-[#F5A62A]/40 bg-white/70 p-4 transition hover:border-[#F5A62A] hover:bg-white"
+                >
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#F5A62A] text-xs font-bold text-[#2D5016]">
+                    4
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-bold text-[#2D5016]">Coba AI Code Review</p>
+                    <p className="mt-0.5 text-sm text-[#5C4813]">
+                      Tool gratis: paste kode lu, dapet feedback otomatis. Jadi bonus member.
+                    </p>
+                  </div>
+                  <span className="text-sm font-bold text-[#F5A62A]">→</span>
                 </Link>
               </div>
             </div>
 
-            <div className="flex items-start gap-4 rounded-xl bg-white/50 p-4 border border-[#F5A62A]/20 opacity-70">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#F0E8D8] text-xs font-bold text-[#444]">
-                2
-              </div>
-              <div>
-                <p className="font-bold text-[#444]">Pelajari Modul Pertama</p>
-                <p className="mt-1 text-sm text-[#444]">
-                  Tonton video atau baca artikel di modul 1 untuk mulai progres kamu.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4 rounded-xl bg-white/50 p-4 border border-[#F5A62A]/20 opacity-70">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#F0E8D8] text-xs font-bold text-[#444]">
-                3
-              </div>
-              <div>
-                <p className="font-bold text-[#444]">Klaim Badge & Sertifikat</p>
-                <p className="mt-1 text-sm text-[#444]">
-                  Selesaikan course dan dapatkan badge serta sertifikat resmi.
-                </p>
-              </div>
+            {/* Right visual */}
+            <div className="hidden flex-col justify-center gap-3 bg-[#F5A62A] p-8 lg:flex lg:w-72 lg:shrink-0">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#2D5016]">
+                Tip founder
+              </p>
+              <p className="text-sm font-bold leading-6 text-[#2D5016]">
+                &ldquo;Belajar 30 menit per hari konsisten lebih jago dari 8 jam sekali doang. Pace lu sendiri, tapi konsisten.&rdquo;
+              </p>
+              <p className="text-xs text-[#2D5016]/70">— Kamil, Founder Kaalupi</p>
             </div>
           </div>
-        </div>
-
-        {/* Right Visual (optional/decorative) */}
-        <div className="hidden lg:flex lg:h-full lg:w-72 lg:shrink-0 lg:items-center lg:justify-center bg-[#F5A62A] p-12 text-6xl">
-          🎯
-        </div>
-      </div>
-    </section>
+        </section>
+      )}
+    </>
   );
 }

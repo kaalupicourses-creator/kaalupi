@@ -1,9 +1,18 @@
 import Link from "next/link";
 import { siteConfig } from "@/lib/data";
 
+const socialLinks = [
+  { href: siteConfig.community.discord, label: "Discord" },
+  { href: siteConfig.community.whatsapp, label: "WhatsApp" },
+  { href: siteConfig.community.instagram, label: "Instagram" },
+  { href: siteConfig.community.tiktok, label: "TikTok" },
+  { href: siteConfig.community.youtube, label: "YouTube" },
+];
+
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/courses", label: "Courses" },
+  { href: "/komunitas", label: "Komunitas" },
   { href: "/waitlist", label: "Waitlist" },
   { href: "/blog", label: "Blog" },
   { href: "/about", label: "Tentang" },
@@ -55,8 +64,21 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-white/10 pt-8 text-center text-xs text-white/40">
-          <p>&copy; {year} Kaalupi. All rights reserved.</p>
+        <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs text-white/40">&copy; {year} Kaalupi. All rights reserved.</p>
+          <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-white/60">
+            {socialLinks.map((s) => (
+              <a
+                key={s.label}
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition hover:text-[#F5A62A]"
+              >
+                {s.label}
+              </a>
+            ))}
+          </div>
         </div>
       </div>
     </footer>

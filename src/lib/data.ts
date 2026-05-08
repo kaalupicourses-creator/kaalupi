@@ -48,15 +48,59 @@ export const siteConfig = {
   phone: "+62 819-3004-5321",
   email: "kaalupicourses@gmail.com",
   address: "Bogor, Indonesia",
+  community: {
+    discord: "https://discord.gg/kaalupi",
+    whatsapp: "https://chat.whatsapp.com/kaalupi",
+    notion: "https://kaalupi.notion.site",
+    drive: "https://drive.google.com/drive/folders/kaalupi",
+    instagram: "https://instagram.com/kaalupi",
+    tiktok: "https://tiktok.com/@kaalupi",
+    youtube: "https://youtube.com/@kaalupi",
+  },
 };
+
+export const founders = [
+  {
+    name: "Kamil Alfaris",
+    role: "Founder & Head of AI",
+    bio: "AI engineer, fullstack developer, designer. Bangun Kaalupi dari nol untuk demokratisasi AI di Indonesia.",
+    skills: ["AI Engineering", "Fullstack", "Cyber", "Design"],
+    initial: "K",
+    color: "#F5A62A",
+  },
+  {
+    name: "Tim Programming",
+    role: "Head of Engineering",
+    bio: "Programmer berpengalaman bangun fullstack production app. Backbone teknis platform Kaalupi.",
+    skills: ["Backend", "DevOps", "API"],
+    initial: "P",
+    color: "#7AB648",
+  },
+  {
+    name: "Tim Designer",
+    role: "Head of Brand & Design",
+    bio: "Designer dengan focus pada visual hierarchy, design system, dan user experience.",
+    skills: ["UI/UX", "Brand", "Visual"],
+    initial: "D",
+    color: "#2D5016",
+  },
+  {
+    name: "Tim Network",
+    role: "Head of Network & Cyber",
+    bio: "Network engineer praktisi. Akan jadi instruktur utama track Network Engineer & Cyber Security.",
+    skills: ["Network", "Cyber", "Infra"],
+    initial: "N",
+    color: "#5C4813",
+  },
+];
 
 export const demoUsers: DemoUser[] = [];
 
 export const stats = [
-  { label: "Course Aktif", value: "2" },
-  { label: "Tier Gratis", value: "Tersedia" },
-  { label: "Bahasa", value: "Indonesia" },
-  { label: "Metode", value: "Praktik" },
+  { label: "Founding Members", value: "100", suffix: "slot" },
+  { label: "Mulai Belajar", value: "Gratis", suffix: "" },
+  { label: "Akses", value: "Lifetime", suffix: "" },
+  { label: "Bahasa", value: "Indonesia", suffix: "" },
 ];
 
 export const valueProps = [

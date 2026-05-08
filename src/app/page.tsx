@@ -2,7 +2,7 @@
 import Script from "next/script";
 import { CourseThumbnail } from "@/components/course-thumbnail";
 import { FoundingSlotCounter } from "@/components/founding-slot-counter";
-import { audienceTracks, blogPosts, stats, siteConfig } from "@/lib/data";
+import { audienceTracks, blogPosts, stats, siteConfig, founders } from "@/lib/data";
 import { getCourses } from "@/lib/content";
 
 import { OnboardingModal } from "@/components/onboarding-modal";
@@ -104,104 +104,76 @@ export default async function HomePage() {
               <span className="relative inline-flex h-2 w-2 rounded-full bg-[#F5A62A]" />
             </span>
             <p className="text-xs font-bold tracking-[0.2em] text-[#5C4813]">
-              AI-FIRST CAREER PLATFORM
+              AI-FIRST CAREER PLATFORM · INDONESIA
             </p>
           </div>
 
-          {/* H1: Transformation Hook */}
           <h1 className="text-4xl font-extrabold leading-tight text-[#2D5016] md:text-5xl lg:text-6xl">
             Dari Nol Jadi <span className="text-[#F5A62A]">AI Specialist</span> dalam 3 Bulan
           </h1>
 
-          {/* Subheadline */}
           <p className="mt-6 max-w-2xl mx-auto text-lg leading-8 text-[#444444]">
             Course IT pertama di Indonesia yang mengintegrasikan{" "}
             <strong className="text-[#2D5016]">AI tools ke setiap project</strong>.
             Bahasa Indonesia, langsung praktik, portofolio nyata.
           </p>
 
-          {/* DUAL CTA — Tiered Strategy */}
-          <div className="mt-10 grid gap-4 md:grid-cols-2 max-w-2xl mx-auto">
-            {/* Free CTA */}
+          {/* SINGLE PRIMARY CTA — clear direction */}
+          <div className="mt-10 flex flex-col items-center gap-3">
             <Link
-              href={withUTM("/courses/ai-untuk-pemula", "hero_free_foundation")}
-              className="group rounded-2xl border-2 border-[#2D5016] bg-white p-5 text-left transition hover:bg-[#2D5016] hover:text-white"
+              href={withUTM("/register", "hero_primary")}
+              className="group inline-flex items-center gap-2 rounded-2xl bg-[#F5A62A] px-8 py-4 text-base font-extrabold text-[#2D5016] shadow-lg transition hover:opacity-90 hover:shadow-xl"
             >
-              <div className="flex items-center justify-between">
-                <span className="rounded-full bg-[#7AB648]/15 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-[#7AB648] group-hover:bg-white/20 group-hover:text-white">
-                  🆓 Foundation
-                </span>
-                <span className="text-2xl font-extrabold text-[#7AB648] group-hover:text-white">
-                  Gratis
-                </span>
-              </div>
-              <p className="mt-2 font-bold text-[#2D5016] group-hover:text-white">
-                AI untuk Pemula — Foundation
-              </p>
-              <p className="mt-1 text-xs text-[#444] group-hover:text-white/80">
-                2 modul · 3 jam · langsung akses
-              </p>
-              <p className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-[#7AB648] group-hover:text-white">
-                Mulai gratis sekarang →
-              </p>
+              Daftar Gratis & Mulai Belajar
+              <span className="transition group-hover:translate-x-1">→</span>
             </Link>
-
-            {/* Premium CTA */}
-            <Link
-              href={withUTM("/courses/ai-untuk-pemula-mastery", "hero_mastery_founding")}
-              className="group rounded-2xl border-2 border-[#F5A62A] bg-gradient-to-br from-[#F5A62A] to-[#E89020] p-5 text-left text-[#2D5016] transition hover:opacity-95 shadow-lg"
-            >
-              <div className="flex items-center justify-between">
-                <span className="rounded-full bg-[#2D5016] px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-[#F5A62A]">
-                  💎 Mastery
-                </span>
-                <div className="text-right">
-                  <span className="text-2xl font-extrabold">Rp 149K</span>
-                  <span className="block text-[10px] line-through opacity-70">Rp 299K</span>
-                </div>
-              </div>
-              <p className="mt-2 font-bold">Founding Members</p>
-              <p className="mt-1 text-xs opacity-80">
-                5 modul · sertifikat · Discord · AI Tutor 24/7
-              </p>
-              <p className="mt-3 inline-flex items-center gap-1 text-xs font-bold">
-                Daftar Sekarang →
-              </p>
-            </Link>
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-[#5C4813]">
+              <Link
+                href={withUTM("/courses/ai-untuk-pemula", "hero_secondary_free")}
+                className="font-semibold underline-offset-4 transition hover:text-[#F5A62A] hover:underline"
+              >
+                Lihat course gratis →
+              </Link>
+              <span className="text-[#F0E8D8]">·</span>
+              <Link
+                href="/login"
+                className="font-semibold underline-offset-4 transition hover:text-[#F5A62A] hover:underline"
+              >
+                Sudah punya akun? Masuk
+              </Link>
+            </div>
           </div>
 
-          {/* Founding slot counter */}
-          <div className="mt-4 max-w-md mx-auto">
+          {/* Founding slot counter — social proof */}
+          <div className="mt-6 max-w-md mx-auto">
             <FoundingSlotCounter slug="ai-untuk-pemula-mastery" variant="inline" />
           </div>
 
-          {/* Trust Signals */}
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-[#444444]">
-            <span className="flex items-center gap-1">
-              <svg className="h-4 w-4 text-[#7AB648]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-              Coba gratis dulu, no risk
-            </span>
-            <span className="flex items-center gap-1">
-              <svg className="h-4 w-4 text-[#7AB648]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-              Sertifikat resmi
-            </span>
-            <span className="flex items-center gap-1">
-              <svg className="h-4 w-4 text-[#7AB648]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-              Garansi 14 hari uang kembali
-            </span>
+          {/* Trust Signals — terse & honest */}
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-[#444444]">
+            {[
+              "Tanpa kartu kredit",
+              "Sertifikat resmi",
+              "Akses lifetime",
+              "Garansi 14 hari",
+            ].map((item) => (
+              <span key={item} className="flex items-center gap-1">
+                <svg className="h-4 w-4 text-[#7AB648]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                {item}
+              </span>
+            ))}
           </div>
 
           {/* Stats */}
           <div className="mt-14 grid grid-cols-2 gap-6 md:flex md:flex-wrap md:justify-center md:gap-x-12 md:gap-y-6">
             {stats.map((item) => (
               <div key={item.label} className="text-center">
-                <p className="text-2xl font-extrabold text-[#2D5016]">{item.value}</p>
+                <p className="text-2xl font-extrabold text-[#2D5016]">
+                  {item.value}
+                  {item.suffix && <span className="ml-1 text-sm font-bold text-[#5C4813]">{item.suffix}</span>}
+                </p>
                 <p className="mt-0.5 text-xs text-[#444444]">{item.label}</p>
               </div>
             ))}
@@ -321,7 +293,135 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ─── BE THE FIRST TESTER ─── */}
+      {/* ─── FOUNDER TEAM (TRUST SIGNAL) ─── */}
+      <section className="border-t border-[#F0E8D8] bg-white">
+        <div className="mx-auto max-w-7xl px-6 py-16">
+          <div className="mx-auto mb-12 max-w-2xl text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">
+              Tim Founding
+            </p>
+            <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016] md:text-4xl">
+              Dibangun langsung sama praktisi
+            </h2>
+            <p className="mt-4 text-base leading-7 text-[#444444]">
+              4 orang yang lagi kerja di lapangan — bukan akademisi yang teori doang. Tiap track dipegang sama orang yang emang jago di bidangnya.
+            </p>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {founders.map((founder) => (
+              <article
+                key={founder.name}
+                className="group relative overflow-hidden rounded-2xl border-2 border-[#F0E8D8] bg-white p-6 transition hover:border-[#F5A62A] hover:shadow-lg"
+              >
+                <div
+                  className="flex h-16 w-16 items-center justify-center rounded-2xl text-3xl font-black text-white shadow-md"
+                  style={{ backgroundColor: founder.color }}
+                >
+                  {founder.initial}
+                </div>
+                <h3 className="mt-5 text-lg font-extrabold text-[#2D5016] group-hover:text-[#F5A62A] transition">
+                  {founder.name}
+                </h3>
+                <p className="mt-1 text-xs font-bold uppercase tracking-wider text-[#7AB648]">
+                  {founder.role}
+                </p>
+                <p className="mt-3 text-sm leading-6 text-[#444]">{founder.bio}</p>
+                <div className="mt-4 flex flex-wrap gap-1.5">
+                  {founder.skills.map((skill) => (
+                    <span
+                      key={skill}
+                      className="rounded-full bg-[#FFF3D6] px-2.5 py-0.5 text-[10px] font-bold text-[#5C4813]"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── KOMUNITAS (Discord + WA + Notion) ─── */}
+      <section className="border-t border-[#F0E8D8] bg-[#1A2E0A] relative overflow-hidden">
+        <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-[#F5A62A]/10" />
+        <div className="absolute -left-32 -bottom-32 h-80 w-80 rounded-full bg-[#7AB648]/10" />
+
+        <div className="mx-auto max-w-7xl px-6 py-16 relative">
+          <div className="mx-auto mb-10 max-w-2xl text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#F5A62A]">
+              Komunitas
+            </p>
+            <h2 className="mt-3 text-3xl font-extrabold text-white md:text-4xl">
+              Belajar Bareng,{" "}
+              <span className="text-[#F5A62A]">Ga Sendirian</span>
+            </h2>
+            <p className="mt-4 text-base leading-7 text-white/80">
+              Gabung komunitas Founding Members. Tanya jawab, sharing project, dapet feedback langsung dari tim Kaalupi.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {[
+              {
+                name: "Discord",
+                desc: "Channel diskusi per topik, voice room mingguan, AMA sama founder.",
+                cta: "Gabung Discord",
+                href: siteConfig.community.discord,
+                color: "#5865F2",
+                emoji: "💬",
+              },
+              {
+                name: "WhatsApp Group",
+                desc: "Update real-time, mini quiz harian, fast response untuk pertanyaan urgent.",
+                cta: "Gabung WhatsApp",
+                href: siteConfig.community.whatsapp,
+                color: "#25D366",
+                emoji: "📱",
+              },
+              {
+                name: "Notion Knowledge Base",
+                desc: "Cheat sheet, template prompt, FAQ. Knowledge base untuk semua member.",
+                cta: "Buka Notion",
+                href: siteConfig.community.notion,
+                color: "#F5A62A",
+                emoji: "📚",
+              },
+            ].map((channel) => (
+              <a
+                key={channel.name}
+                href={channel.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex flex-col rounded-2xl border-2 border-white/10 bg-white/5 p-6 transition hover:border-[#F5A62A] hover:bg-white/10"
+              >
+                <div
+                  className="flex h-12 w-12 items-center justify-center rounded-xl text-2xl"
+                  style={{ backgroundColor: `${channel.color}20` }}
+                >
+                  {channel.emoji}
+                </div>
+                <h3 className="mt-4 text-xl font-extrabold text-white">{channel.name}</h3>
+                <p className="mt-2 flex-1 text-sm leading-6 text-white/70">{channel.desc}</p>
+                <span className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-[#F5A62A] transition group-hover:gap-2">
+                  {channel.cta} →
+                </span>
+              </a>
+            ))}
+          </div>
+
+          <div className="mt-10 text-center">
+            <p className="text-sm text-white/60">
+              Mau preview dulu sebelum gabung?{" "}
+              <Link href="/komunitas" className="font-bold text-[#F5A62A] hover:underline">
+                Lihat detail komunitas →
+              </Link>
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* ─── 2-TIER COURSE COMPARISON ─── */}
       <section className="border-t border-[#F0E8D8] bg-[#FEFBF5]">
         <div className="mx-auto max-w-7xl px-6 py-16">
