@@ -179,22 +179,190 @@ export default async function DashboardPage() {
         </section>
 
         {/* Badges Section */}
-        <section className="mb-8 rounded-2xl border border-[#F0E8D8] bg-white p-8 shadow-sm">
-          <h2 className="text-2xl font-extrabold text-[#2D5016]">Badges Saya</h2>
-          <p className="mt-2 text-sm text-[#444444]">Kumpulkan poin dan raih badge prestasi</p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {allBadges.map((badge) => {
-              const unlocked = earnedBadgeIds.has(badge.id);
-              return (
-                <div key={badge.id} className={`rounded-xl border p-4 text-center ${unlocked ? "border-[#F5A62A] bg-[#FEFBF5]" : "border-[#F0E8D8] bg-[#F9F9F9] opacity-60"}`}>
-                  <div className="text-3xl">{unlocked ? badge.icon : "🔒"}</div>
-                  <p className={`mt-2 text-sm font-bold ${unlocked ? "text-[#2D5016]" : "text-[#999999]"}`}>{badge.name}</p>
-                  <p className="text-xs text-[#444444]">{badge.description || `${badge.required_points} poin`}</p>
+        {(() => {
+          // Compute progress stats
+          const completedCourses = coursesWithProgress.filter((c) => c.progress === 100).length;
+          const totalEnrolled = ownedCourses.length;
+          const totalModulesCompleted = coursesWithProgress.reduce(
+            (sum, c) => sum + Math.round((c.progress / 100) * c.modules.length),
+            0
+          );
+
+          const badgeList = [
+            {
+              icon: "🎓",
+              name: "Pemula",
+              desc: "Selesain course pertama lu",
+              target: 1,
+              current: completedCourses,
+              unit: "course selesai",
+              points: 50,
+            },
+            {
+              icon: "📚",
+              name: "Rajin Belajar",
+              desc: "Kumpulin 100 poin",
+              target: 100,
+              current: userPoints,
+              unit: "poin",
+              points: 100,
+            },
+            {
+              icon: "🏆",
+              name: "Master",
+              desc: "Selesain 3 course",
+              target: 3,
+              current: completedCourses,
+              unit: "course selesai",
+              points: 500,
+            },
+            {
+              icon: "🔗",
+              name: "Kontributor",
+              desc: "Share sertifikat ke LinkedIn",
+              target: 1,
+              current: 0, // TODO: track LinkedIn shares
+              unit: "share",
+              points: 50,
+            },
+            {
+              icon: "🚀",
+              name: "Konsisten",
+              desc: "Selesain 5 modul",
+              target: 5,
+              current: totalModulesCompleted,
+              unit: "modul",
+              points: 75,
+            },
+            {
+              icon: "🎯",
+              name: "Fokus",
+              desc: "Enroll minimal 1 course",
+              target: 1,
+              current: totalEnrolled,
+              unit: "course",
+              points: 25,
+            },
+          ];
+
+          return (
+            <section className="mb-8 rounded-2xl border border-[#F0E8D8] bg-white p-8 shadow-sm">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <h2 className="text-2xl font-extrabold text-[#2D5016]">Badges Saya</h2>
+                  <p className="mt-2 text-sm text-[#444444]">
+                    Kumpulin poin & buka badge buat tunjukin progress lu.
+                  </p>
                 </div>
-              );
-            })}
-          </div>
-        </section>
+                <div className="rounded-xl border border-[#F0E8D8] bg-[#FFF3D6] px-4 py-2 text-center">
+                  <p className="text-xs text-[#5C4813] font-semibold">Total Poin Lu</p>
+                  <p className="text-2xl font-extrabold text-[#2D5016]">{userPoints}</p>
+                </div>
+              </div>
+
+              <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {badgeList.map((badge) => {
+                  const unlocked = badge.current >= badge.target;
+                  const percent = Math.min(100, Math.round((badge.current / badge.target) * 100));
+                  return (
+                    <div
+                      key={badge.name}
+                      className={`rounded-xl border p-5 transition ${
+                        unlocked
+                          ? "border-[#F5A62A] bg-gradient-to-br from-[#FFF3D6] to-[#FEFBF5] shadow-sm"
+                          : "border-[#F0E8D8] bg-[#F9F9F9]"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className={`text-4xl ${unlocked ? "" : "grayscale opacity-40"}`}>
+                          {unlocked ? badge.icon : "🔒"}
+                        </div>
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-xs font-bold ${
+                            unlocked
+                              ? "bg-[#F5A62A] text-[#2D5016]"
+                              : "bg-white text-[#999] border border-[#F0E8D8]"
+                          }`}
+                        >
+                          +{badge.points} pts
+                        </span>
+                      </div>
+                      <p
+                        className={`mt-3 text-base font-bold ${
+                          unlocked ? "text-[#2D5016]" : "text-[#666]"
+                        }`}
+                      >
+                        {badge.name}
+                      </p>
+                      <p className="mt-1 text-xs text-[#444444]">{badge.desc}</p>
+
+                      {!unlocked && (
+                        <div className="mt-3">
+                          <div className="flex items-center justify-between text-xs text-[#444444]">
+                            <span>
+                              {badge.current}/{badge.target} {badge.unit}
+                            </span>
+                            <span className="font-bold text-[#2D5016]">{percent}%</span>
+                          </div>
+                          <div className="mt-1.5 h-1.5 rounded-full bg-[#F0E8D8] overflow-hidden">
+                            <div
+                              className="h-full rounded-full bg-[#F5A62A] transition-all"
+                              style={{ width: `${percent}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {unlocked && (
+                        <div className="mt-3 flex items-center gap-1.5 text-xs font-bold text-[#7AB648]">
+                          <svg
+                            className="h-3.5 w-3.5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={3}
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                          Tercapai!
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-6 rounded-xl border border-[#F0E8D8] bg-[#FEFBF5] p-5">
+                <div className="flex items-start gap-4">
+                  <div className="text-2xl">💡</div>
+                  <div className="flex-1">
+                    <p className="font-bold text-[#2D5016] text-sm">Cara Cepet Dapet Badge</p>
+                    <ul className="mt-2 space-y-1 text-xs text-[#444444] leading-6">
+                      <li>
+                        ✅ <strong>Selesain modul</strong> → +10 poin per modul
+                      </li>
+                      <li>
+                        ✅ <strong>Selesain course 100%</strong> → +50 poin + sertifikat
+                      </li>
+                      <li>
+                        ✅ <strong>Share sertifikat ke LinkedIn</strong> → +50 poin + badge Kontributor
+                      </li>
+                      <li>
+                        ✅ <strong>Enroll course baru</strong> → +25 poin
+                      </li>
+                    </ul>
+                    <Link
+                      href="/courses"
+                      className="mt-3 inline-flex items-center gap-1 rounded-lg bg-[#F5A62A] px-3 py-1.5 text-xs font-bold text-[#2D5016] hover:opacity-90"
+                    >
+                      Mulai dari sini →
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </section>
+          );
+        })()}
 
         {/* Continue Learning Section (if has progress) */}
         {coursesWithProgress.filter((c) => c.progress > 0 && c.progress < 100).length > 0 && (

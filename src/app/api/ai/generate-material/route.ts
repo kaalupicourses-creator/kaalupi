@@ -4,8 +4,8 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 /**
  * POST /api/ai/generate-material
- * Generate konten materi pakai Anthropic Claude API.
- * Auto-save ke materials table.
+ * Generate konten materi pakai Google Gemini API (FREE 1500 req/day).
+ * Fallback ke Anthropic Claude kalau ANTHROPIC_API_KEY ada.
  *
  * Body: { course_slug, course_title, module_title, module_index, topic, length }
  * length: "short" (200-400 kata) | "medium" (500-900 kata) | "long" (1000-1800 kata)
@@ -30,14 +30,6 @@ export async function POST(request: Request) {
     length?: "short" | "medium" | "long";
   };
 
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    return NextResponse.json(
-      { error: "ANTHROPIC_API_KEY belum diset di .env" },
-      { status: 500 }
-    );
-  }
-
   const wordTarget =
     body.length === "short" ? "200-400" : body.length === "long" ? "1000-1800" : "500-900";
 
@@ -60,70 +52,114 @@ Aturan output WAJIB:
 
 Output: HTML siap pakai (tanpa wrapper <html><body>, langsung dari <h2>).`;
 
-  try {
-    const claudeRes = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-5-20250929",
-        max_tokens: 4000,
-        system: systemPrompt,
-        messages: [{ role: "user", content: userPrompt }],
-      }),
-    });
+  let content = "";
+  let provider = "";
 
-    if (!claudeRes.ok) {
-      const errText = await claudeRes.text();
-      console.error("[Claude] error:", errText);
-      return NextResponse.json(
-        { error: "AI generation gagal. Cek ANTHROPIC_API_KEY." },
-        { status: 500 }
+  // PROVIDER 1: Google Gemini (FREE - 1500 req/day)
+  const geminiKey = process.env.GEMINI_API_KEY;
+  if (geminiKey) {
+    try {
+      const geminiRes = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${geminiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            systemInstruction: { parts: [{ text: systemPrompt }] },
+            contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 4096,
+            },
+          }),
+        }
       );
+
+      if (geminiRes.ok) {
+        const data = (await geminiRes.json()) as {
+          candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+        };
+        content = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+        provider = "gemini";
+      } else {
+        const errText = await geminiRes.text();
+        console.error("[Gemini] error:", errText);
+      }
+    } catch (e) {
+      console.error("[Gemini] fetch error:", e);
     }
-
-    const claudeData = (await claudeRes.json()) as {
-      content?: Array<{ type: string; text?: string }>;
-    };
-    const content = claudeData.content?.find((c) => c.type === "text")?.text ?? "";
-    if (!content) {
-      return NextResponse.json({ error: "AI tidak mengembalikan konten." }, { status: 500 });
-    }
-
-    // Auto-save ke DB
-    const supabase = getSupabaseAdmin();
-    const { data: existing } = await supabase
-      .from("materials")
-      .select("order_index")
-      .eq("course_slug", body.course_slug ?? "")
-      .eq("module_index", body.module_index ?? 0)
-      .order("order_index", { ascending: false })
-      .limit(1);
-
-    const nextOrder = ((existing?.[0]?.order_index as number | undefined) ?? -1) + 1;
-
-    const { error: insertError } = await supabase.from("materials").insert({
-      course_slug: body.course_slug,
-      title: body.topic ?? "Materi AI Generated",
-      content,
-      module_index: body.module_index ?? 0,
-      order_index: nextOrder,
-    });
-
-    if (insertError) {
-      console.error("[AI generate save] error:", insertError.message);
-      return NextResponse.json(
-        { error: "Generated tapi gagal save ke DB." },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ success: true });
-  } catch (e) {
-    console.error("[AI generate] error:", e);
-    return NextResponse.json({ error: "Internal error." }, { status: 500 });
   }
+
+  // PROVIDER 2: Anthropic Claude (FALLBACK if Gemini fails or not set)
+  if (!content) {
+    const anthropicKey = process.env.ANTHROPIC_API_KEY;
+    if (anthropicKey) {
+      try {
+        const claudeRes = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": anthropicKey,
+            "anthropic-version": "2023-06-01",
+          },
+          body: JSON.stringify({
+            model: "claude-sonnet-4-5-20250929",
+            max_tokens: 4000,
+            system: systemPrompt,
+            messages: [{ role: "user", content: userPrompt }],
+          }),
+        });
+
+        if (claudeRes.ok) {
+          const claudeData = (await claudeRes.json()) as {
+            content?: Array<{ type: string; text?: string }>;
+          };
+          content = claudeData.content?.find((c) => c.type === "text")?.text ?? "";
+          provider = "claude";
+        }
+      } catch (e) {
+        console.error("[Claude] error:", e);
+      }
+    }
+  }
+
+  if (!content) {
+    return NextResponse.json(
+      {
+        error:
+          "AI generation gagal. Set GEMINI_API_KEY (gratis di https://aistudio.google.com/apikey) atau ANTHROPIC_API_KEY di .env",
+      },
+      { status: 500 }
+    );
+  }
+
+  // Strip wrapper kalau AI tetep nulis ```html ... ```
+  content = content.replace(/^```html\s*/i, "").replace(/```\s*$/i, "").trim();
+
+  // Auto-save ke DB
+  const supabase = getSupabaseAdmin();
+  const { data: existing } = await supabase
+    .from("materials")
+    .select("order_index")
+    .eq("course_slug", body.course_slug ?? "")
+    .eq("module_index", body.module_index ?? 0)
+    .order("order_index", { ascending: false })
+    .limit(1);
+
+  const nextOrder = ((existing?.[0]?.order_index as number | undefined) ?? -1) + 1;
+
+  const { error: insertError } = await supabase.from("materials").insert({
+    course_slug: body.course_slug,
+    title: body.topic ?? "Materi AI Generated",
+    content,
+    module_index: body.module_index ?? 0,
+    order_index: nextOrder,
+  });
+
+  if (insertError) {
+    console.error("[AI generate save] error:", insertError.message);
+    return NextResponse.json({ error: "Generated tapi gagal save ke DB." }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true, provider });
 }

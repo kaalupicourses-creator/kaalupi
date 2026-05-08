@@ -29,6 +29,7 @@ export function CourseStudio({ courses, initialSlug }: Props) {
   const [editing, setEditing] = useState<Partial<Material> | null>(null);
   const [showAI, setShowAI] = useState(false);
   const [showBulk, setShowBulk] = useState(false);
+  const [autoFilling, setAutoFilling] = useState(false);
   const [toast, setToast] = useState<{ kind: "ok" | "err"; msg: string } | null>(null);
 
   const course = courses.find((c) => c.slug === selectedSlug);
@@ -127,6 +128,40 @@ export function CourseStudio({ courses, initialSlug }: Props) {
       setToast({ kind: "err", msg: e instanceof Error ? e.message : "Gagal hapus" });
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function autoFillCourse() {
+    if (!course) return;
+    if (
+      !confirm(
+        `Auto-generate materi untuk SEMUA ${course.modules.length} modul "${course.title}"?\n\nIni butuh ~30 detik. Materi yang udah ada ngga akan dihapus (skip).`
+      )
+    )
+      return;
+    setAutoFilling(true);
+    try {
+      const res = await fetch("/api/ai/auto-fill-course", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ course_slug: selectedSlug }),
+      });
+      const data = (await res.json()) as {
+        success?: boolean;
+        summary?: { generated: number; skipped: number; errors: number };
+        error?: string;
+      };
+      if (!res.ok || !data.summary) throw new Error(data.error ?? "Gagal auto-fill");
+      const { generated, skipped, errors } = data.summary;
+      setToast({
+        kind: errors === 0 ? "ok" : "err",
+        msg: `${generated} dibuat, ${skipped} di-skip${errors > 0 ? `, ${errors} error` : ""}`,
+      });
+      await fetchMaterials(selectedSlug);
+    } catch (e) {
+      setToast({ kind: "err", msg: e instanceof Error ? e.message : "Auto-fill gagal" });
+    } finally {
+      setAutoFilling(false);
     }
   }
 
@@ -232,6 +267,17 @@ export function CourseStudio({ courses, initialSlug }: Props) {
 
         <div className="rounded-2xl border border-[#F0E8D8] bg-white p-4 space-y-2">
           <button
+            onClick={autoFillCourse}
+            disabled={autoFilling}
+            className="w-full rounded-xl bg-gradient-to-r from-[#7AB648] to-[#2D5016] px-4 py-3 text-sm font-bold text-white hover:opacity-90 disabled:opacity-60 transition"
+          >
+            {autoFilling ? "⏳ Generating..." : "⚡ Auto-Fill Semua Modul"}
+          </button>
+          <p className="text-[10px] text-[#444] text-center leading-4">
+            Sekali klik, AI bikin materi pembuka untuk semua modul.
+          </p>
+          <div className="border-t border-[#F0E8D8] my-2" />
+          <button
             onClick={startNew}
             className="w-full rounded-xl bg-[#F5A62A] px-4 py-2.5 text-sm font-bold text-[#2D5016] hover:opacity-90"
           >
@@ -241,7 +287,7 @@ export function CourseStudio({ courses, initialSlug }: Props) {
             onClick={() => setShowAI(true)}
             className="w-full rounded-xl bg-[#E3F2FD] px-4 py-2.5 text-sm font-bold text-[#1565C0] hover:bg-[#1565C0] hover:text-white border border-[#1565C0] transition"
           >
-            🤖 AI Generate
+            🤖 AI Generate (1 materi)
           </button>
           <button
             onClick={() => setShowBulk(true)}
