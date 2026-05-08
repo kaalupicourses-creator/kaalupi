@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 
 interface Message {
   role: "user" | "assistant" | "system";
@@ -13,10 +13,70 @@ interface Question {
   multiSelect?: boolean;
 }
 
+// Simple in-memory rate limiter: userId -> { count, resetAt }
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_MAX = 10; // max reviews per window
+const RATE_LIMIT_WINDOW = 24 * 60 * 60 * 1000; // 24 jam
+
+function checkRateLimit(userId: string): { allowed: boolean; remaining: number } {
+  const now = Date.now();
+  const entry = rateLimitMap.get(userId);
+
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(userId, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
+    return { allowed: true, remaining: RATE_LIMIT_MAX - 1 };
+  }
+
+  if (entry.count >= RATE_LIMIT_MAX) {
+    return { allowed: false, remaining: 0 };
+  }
+
+  entry.count++;
+  return { allowed: true, remaining: RATE_LIMIT_MAX - entry.count };
+}
+
+export async function GET(_request: Request) {
+  const { userId } = await auth();
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const clerk = await clerkClient();
+    const user = await clerk.users.getUser(userId);
+    const userEmail = user.primaryEmailAddress?.emailAddress ?? "";
+
+    const { getSupabaseAdmin } = await import("@/lib/supabase-admin");
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from("code_reviews")
+      .select("*")
+      .eq("user_email", userEmail)
+      .order("created_at", { ascending: false })
+      .limit(10);
+
+    if (error) {
+      return NextResponse.json({ reviews: [] });
+    }
+
+    return NextResponse.json({ reviews: data ?? [] });
+  } catch {
+    return NextResponse.json({ reviews: [] });
+  }
+}
+
 export async function POST(request: Request) {
   const { userId } = await auth();
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Rate limit check
+  const limit = checkRateLimit(userId);
+  if (!limit.allowed) {
+    return NextResponse.json({
+      error: "Kamu sudah mencapai batas maksimal review hari ini (10x). Silakan coba lagi besok.",
+    }, { status: 429 });
   }
 
   let body: {
@@ -38,19 +98,46 @@ export async function POST(request: Request) {
   try {
     const code = body.code;
     const description = body.description || "";
-    const messages = body.messages || [];
+    // Strip system role dari client — prevent injection
+    const messages = (body.messages || []).filter((m) => m.role !== "system");
 
-    // If OpenAI API key exists, use real AI
+    let responseData: NextResponse;
     if (process.env.OPENAI_API_KEY) {
-      return await handleOpenAIReview(code, description, messages);
+      responseData = await handleOpenAIReview(code, description, messages);
+    } else {
+      responseData = handleSmartReview(code, description, messages);
     }
 
-    // Fallback: Smarter rule-based system
-    return handleSmartReview(code, description, messages);
+    // Non-blocking: save result to review history if this is a final result
+    try {
+      const bodyCopy = await responseData.clone().json();
+      if (bodyCopy && bodyCopy.result) {
+        const clerk = await clerkClient();
+        const user = await clerk.users.getUser(userId);
+        const userEmail = user.primaryEmailAddress?.emailAddress ?? "";
+        await saveReviewHistory(userEmail, code, description, bodyCopy.result);
+      }
+    } catch {
+      // best-effort
+    }
+
+    return responseData;
   } catch (error) {
     console.error("Code review error:", error);
     return NextResponse.json({ error: "Failed to analyze code" }, { status: 500 });
   }
+}
+
+async function saveReviewHistory(userEmail: string, code: string, description: string, result: Record<string, unknown>) {
+  const { getSupabaseAdmin } = await import("@/lib/supabase-admin");
+  const supabase = getSupabaseAdmin();
+  await supabase.from("code_reviews").insert({
+    user_email: userEmail,
+    code: code.slice(0, 2000),
+    description: description.slice(0, 500),
+    summary: (result.summary as string)?.slice(0, 500) ?? "",
+    code_quality: (result.codeQuality as number) ?? 0,
+  });
 }
 
 async function handleOpenAIReview(
@@ -145,7 +232,6 @@ Buat pertanyaan yang SINGKAT dan SPESIFIK untuk kode tersebut. Jangan tanya baha
       return NextResponse.json({ result: parsed.result });
     }
   } catch {
-    // If AI didn't return valid JSON, try to extract question or provide fallback
     console.error("Failed to parse AI response:", aiResponse);
     return NextResponse.json({
       nextQuestion: {
@@ -161,6 +247,20 @@ Buat pertanyaan yang SINGKAT dan SPESIFIK untuk kode tersebut. Jangan tanya baha
       },
     });
   }
+
+  // Fallback if JSON parsed but type is unknown
+  return NextResponse.json({
+    nextQuestion: {
+      id: `q_fallback_${Date.now()}`,
+      question: "Apa yang ingin kamu fokuskan dari kode ini?",
+      options: [
+        { label: "Penjelasan kode", value: "explain" },
+        { label: "Cari bug", value: "bugs" },
+        { label: "Saran perbaikan", value: "improve" },
+      ],
+      multiSelect: true,
+    },
+  });
 }
 
 function handleSmartReview(
