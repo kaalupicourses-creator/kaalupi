@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Analytics } from "@vercel/analytics/react";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeaderClient } from "@/components/site-header";
 import { MidtransProvider } from "@/components/midtrans-provider";
-import { siteConfig } from "@/lib/data";
-import { getMidtransConfig } from "@/lib/midtrans";
 import "./globals.css";
 
 const nunito = Nunito({
@@ -34,7 +33,7 @@ export const metadata: Metadata = {
     siteName: "Kaalupi",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/og",
         width: 1200,
         height: 630,
         alt: "Kaalupi - AI-First Career Platform Indonesia",
@@ -47,7 +46,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Kaalupi | AI-First Career Platform Indonesia",
     description: "Dari nol jadi AI Specialist dalam 3 bulan. Course IT dengan integrasi AI tools.",
-    images: ["/og-image.jpg"],
+    images: ["/og"],
   },
 };
 
@@ -69,6 +68,7 @@ export default function RootLayout({
             <SiteFooter />
           </div>
           <MidtransProvider />
+          <Analytics />
         </body>
       </html>
     </ClerkProvider>
