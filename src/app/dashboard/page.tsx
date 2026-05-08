@@ -25,6 +25,10 @@ export default async function DashboardPage() {
   const user = await currentUser();
   const role = (user?.publicMetadata as { role?: string })?.role ?? "student";
 
+  const metadata = user?.publicMetadata as Record<string, unknown> | undefined;
+  const onboardingCompleted = metadata?.onboarding_completed === true;
+  const onboardingSkipped = metadata?.onboarding_skipped === true;
+
   const nameParts = [user?.firstName, user?.lastName].filter(Boolean).join(" ");
   const userName = nameParts || user?.primaryEmailAddress?.emailAddress || "";
   const userEmail = user?.primaryEmailAddress?.emailAddress ?? "";
@@ -131,6 +135,34 @@ export default async function DashboardPage() {
         </section>
 
         {/* Onboarding for new students */}
+        {!onboardingCompleted && (
+          <section className="mb-8 overflow-hidden rounded-2xl border-2 border-[#F5A62A] bg-gradient-to-r from-[#FFF3D6] to-[#FEFBF5] shadow-md animate-fade-in-up">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6">
+              <div className="flex items-center gap-4">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#F5A62A]">
+                  <span className="text-2xl">🚀</span>
+                </div>
+                <div>
+                  <p className="text-lg font-extrabold text-[#2D5016]">
+                    {onboardingSkipped ? "Lanjutkan Setup Profil" : "Setup Perjalanan Belajarmu"}
+                  </p>
+                  <p className="text-sm text-[#5C4813]">
+                    {onboardingSkipped
+                      ? "Isi preferensi belajar biar kami bisa rekomendasi course yang tepat."
+                      : "Selesaikan 3 langkah mudah untuk pengalaman belajar yang lebih personal."}
+                  </p>
+                </div>
+              </div>
+              <Link
+                href="/onboarding"
+                className="shrink-0 rounded-xl bg-[#F5A62A] px-6 py-3 text-sm font-bold text-[#2D5016] shadow transition hover:opacity-90"
+              >
+                {onboardingSkipped ? "Lanjutkan" : "Mulai Setup →"}
+              </Link>
+            </div>
+          </section>
+        )}
+
         <DashboardOnboarding userName={userName} enrollmentsCount={ownedCourses.length} />
 
         {/* Stats Overview */}

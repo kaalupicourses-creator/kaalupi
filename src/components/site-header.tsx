@@ -53,7 +53,7 @@ export function SiteHeaderClient() {
 
         {/* Auth + Hamburger */}
         <div className="flex items-center gap-3">
-          {isSignedIn ? (
+            {isSignedIn ? (
             <>
               <Link
                 href="/dashboard"
@@ -71,6 +71,12 @@ export function SiteHeaderClient() {
             </>
           ) : (
             <>
+              <Link
+                href="/register"
+                className="hidden rounded-full border-2 border-[#2D5016] px-4 py-2 text-sm font-semibold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-[#FEFBF5] sm:block"
+              >
+                Daftar
+              </Link>
               <Link
                 href="/courses/ai-untuk-pemula"
                 className="hidden rounded-full border-2 border-[#F5A62A] px-5 py-2 text-sm font-extrabold text-[#2D5016] transition hover:bg-[#F5A62A] hover:text-white md:block animate-pulse"
