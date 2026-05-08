@@ -101,16 +101,10 @@ export default async function DashboardPage() {
             {(role === "admin" || role === "instructor") ? (
               <>
                 <Link
-                  href="/dashboard/content/new"
+                  href="/dashboard/studio"
                   className="rounded-xl bg-[#F5A62A] px-5 py-3 text-sm font-bold text-[#2D5016] transition hover:opacity-90"
                 >
-                  + Publish Course
-                </Link>
-                <Link
-                  href="/dashboard/materials/new"
-                  className="rounded-xl bg-[#E8F5E9] px-5 py-3 text-sm font-bold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-white border border-[#7AB648]"
-                >
-                  + Tambah Video
+                  🎬 Course Studio
                 </Link>
                 <Link
                   href="/dashboard/blog/new"
