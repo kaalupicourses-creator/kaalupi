@@ -229,10 +229,9 @@ export function CourseStudio({ courses, initialSlug }: Props) {
           </select>
           {course && (
             <div className="mt-3 space-y-1 text-xs text-[#444444]">
-              <p>📚 {course.modules.length} modul</p>
-              <p>🎯 Level: {course.level}</p>
-              <p>⏱ {course.duration}</p>
-              <p>💰 {course.price === 0 ? "Gratis" : `Rp ${course.price.toLocaleString("id-ID")}`}</p>
+              <p>{course.modules.length} modul</p>
+              <p>Level: {course.level}</p>
+              <p>{course.price === 0 ? "Gratis" : `Rp ${course.price.toLocaleString("id-ID")}`}</p>
             </div>
           )}
         </div>

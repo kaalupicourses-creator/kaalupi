@@ -143,7 +143,7 @@ export default async function DashboardPage() {
               {(role === "admin" || role === "instructor") && (
                 <>
                   <p className="mt-3 px-3 pb-2 pt-1 text-[10px] font-bold uppercase tracking-wider text-[#7AB648]">
-                    Admin
+                    Instructor
                   </p>
                   <Link
                     href="/dashboard/studio"
@@ -162,6 +162,31 @@ export default async function DashboardPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
                     Tulis Artikel
+                  </Link>
+                </>
+              )}
+              {role === "admin" && (
+                <>
+                  <p className="mt-3 px-3 pb-2 pt-1 text-[10px] font-bold uppercase tracking-wider text-[#F5A62A]">
+                    Admin Only
+                  </p>
+                  <Link
+                    href="/dashboard/users"
+                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-[#2D5016] transition hover:bg-[#FFF3D6]"
+                  >
+                    <svg className="h-4 w-4 text-[#F5A62A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 014-4h.5M16 3a4 4 0 110 8 4 4 0 010-8zM8 7a4 4 0 110 8 4 4 0 010-8z" />
+                    </svg>
+                    Kelola User & Role
+                  </Link>
+                  <Link
+                    href="/dashboard/analytics"
+                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-[#2D5016] transition hover:bg-[#FFF3D6]"
+                  >
+                    <svg className="h-4 w-4 text-[#F5A62A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    Analytics Platform
                   </Link>
                 </>
               )}
