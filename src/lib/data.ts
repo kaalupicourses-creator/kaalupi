@@ -54,6 +54,58 @@ export const siteConfig = {
     instagram: "https://www.instagram.com/kaalupicourses/",
     youtube: "https://www.youtube.com/@Kaalupi-r9j",
   },
+  // Manual payment — admin verifies via WhatsApp + dashboard
+  // Update di sini kalau ada perubahan rekening / no admin
+  payment: {
+    // Nomor admin yang nerima bukti bayar (TANPA + atau spasi)
+    // Contoh: "6281930045321" untuk +62 819-3004-5321
+    adminWhatsapp: "6281930045321",
+    methods: [
+      {
+        id: "dana",
+        name: "DANA",
+        type: "ewallet",
+        accountName: "Kamil Alfaris",
+        accountNumber: "0819-3004-5321",
+        instructions: "Buka DANA → Kirim → masukin nomor di atas → masukin nominal → kirim.",
+      },
+      {
+        id: "bca",
+        name: "BCA",
+        type: "bank",
+        accountName: "Kamil Alfaris",
+        accountNumber: "1234567890",
+        instructions: "Transfer via mobile banking, internet banking, atau ATM BCA. Pakai nominal yang sama persis.",
+      },
+      {
+        id: "bsi",
+        name: "BSI (Bank Syariah Indonesia)",
+        type: "bank",
+        accountName: "Kamil Alfaris",
+        accountNumber: "0987654321",
+        instructions: "Transfer via BSI Mobile, internet banking, atau ATM BSI. Nominal harus sama persis.",
+      },
+      {
+        id: "qris",
+        name: "QRIS (GoPay, ShopeePay, OVO, dll)",
+        type: "qris",
+        accountName: "Kaalupi",
+        accountNumber: "Scan QR di bawah",
+        instructions: "Buka aplikasi e-wallet (GoPay/ShopeePay/OVO/DANA/LinkAja) → pilih Scan QRIS → arahkan ke gambar di bawah → bayar sesuai nominal.",
+        qrImage: "/payment/qris-kaalupi.png",
+      },
+    ] as PaymentMethod[],
+  },
+};
+
+export type PaymentMethod = {
+  id: "dana" | "bca" | "bsi" | "qris";
+  name: string;
+  type: "ewallet" | "bank" | "qris";
+  accountName: string;
+  accountNumber: string;
+  instructions: string;
+  qrImage?: string;
 };
 
 export type Founder = {

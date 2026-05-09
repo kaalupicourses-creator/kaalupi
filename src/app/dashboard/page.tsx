@@ -104,7 +104,10 @@ export default async function DashboardPage() {
               <div className="mt-4 flex flex-wrap items-center gap-2">
                 <RoleBadge role={role as "admin" | "instructor" | "student"} />
                 {isFoundingMember && (
-                  <span className="rounded-full bg-[#FFF3D6] px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-[#5C4813]">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-[#F5A62A] to-[#E89020] px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-[#2D5016] shadow-sm">
+                    <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2l2.39 7.36H22l-6.18 4.49L18.21 21 12 16.51 5.79 21l2.39-7.15L2 9.36h7.61z" />
+                    </svg>
                     Founding Member
                   </span>
                 )}
@@ -170,6 +173,15 @@ export default async function DashboardPage() {
                   <p className="mt-3 px-3 pb-2 pt-1 text-[10px] font-bold uppercase tracking-wider text-[#F5A62A]">
                     Admin Only
                   </p>
+                  <Link
+                    href="/dashboard/payments"
+                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-[#2D5016] transition hover:bg-[#FFF3D6]"
+                  >
+                    <svg className="h-4 w-4 text-[#F5A62A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                    </svg>
+                    Pembayaran (Approve)
+                  </Link>
                   <Link
                     href="/dashboard/users"
                     className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-[#2D5016] transition hover:bg-[#FFF3D6]"

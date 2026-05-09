@@ -1,9 +1,11 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getCourseBySlug } from "@/lib/content";
-import { CheckoutButton } from "@/components/checkout-button";
+import { getEnrollments } from "@/lib/db";
 import { CourseThumbnail } from "@/components/course-thumbnail";
+import { ManualCheckout } from "@/components/manual-checkout";
+import { siteConfig } from "@/lib/data";
 
 const formatter = new Intl.NumberFormat("id-ID", {
   style: "currency",
@@ -11,158 +13,109 @@ const formatter = new Intl.NumberFormat("id-ID", {
   maximumFractionDigits: 0,
 });
 
-export default async function CheckoutPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function CheckoutPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const { userId } = await auth();
   if (!userId) {
-    redirect(`/login?redirect=/checkout/${(await params).slug}`);
+    redirect(`/login?redirect=/checkout/${slug}`);
   }
 
-  const { slug } = await params;
-  const course = await getCourseBySlug(slug);
+  const user = await currentUser();
+  const userEmail = user?.primaryEmailAddress?.emailAddress ?? "";
+  const userName =
+    [user?.firstName, user?.lastName].filter(Boolean).join(" ") ||
+    user?.username ||
+    userEmail;
 
+  const course = await getCourseBySlug(slug);
   if (!course) {
     redirect("/courses");
   }
 
+  // Free course — direct enroll (no payment)
+  if (course.is_free || course.price === 0) {
+    redirect(`/courses/${slug}`);
+  }
+
+  // Already enrolled — go straight to access
+  let alreadyEnrolled = false;
+  try {
+    const enrollments = await getEnrollments(userEmail);
+    alreadyEnrolled = enrollments.includes(slug);
+  } catch (err) {
+    console.error("[checkout] enrollment check failed:", err);
+  }
+  if (alreadyEnrolled) {
+    redirect(`/access/${slug}`);
+  }
+
+  const isMastery = !!course.founding_members_limit;
+
   return (
     <div className="bg-[#FEFBF5] min-h-screen">
-      <div className="mx-auto max-w-5xl px-6 py-16">
-        {/* Breadcrumb */}
-        <nav className="mb-8 flex items-center gap-2 text-sm text-[#444444]">
-          <Link href="/courses" className="hover:text-[#F5A62A] transition font-semibold text-[#2D5016]">
+      <div className="mx-auto max-w-6xl px-6 py-12">
+        <nav className="mb-6 flex items-center gap-2 text-sm text-[#444]">
+          <Link href="/courses" className="font-semibold text-[#2D5016] hover:text-[#F5A62A]">
             Courses
           </Link>
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-          <Link href={`/courses/${slug}`} className="hover:text-[#F5A62A] transition font-semibold text-[#2D5016]">
+          <span className="text-[#F0E8D8]">/</span>
+          <Link href={`/courses/${slug}`} className="font-semibold text-[#2D5016] hover:text-[#F5A62A]">
             {course.title}
           </Link>
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-          <span className="text-[#F5A62A] font-semibold">Checkout</span>
+          <span className="text-[#F0E8D8]">/</span>
+          <span className="text-[#F5A62A] font-semibold">Bayar</span>
         </nav>
 
-        <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr]">
-          {/* Course Info */}
-          <section className="rounded-2xl border border-[#F0E8D8] bg-white overflow-hidden">
+        <div className="grid gap-8 lg:grid-cols-[1fr_400px]">
+          {/* MAIN — payment UI */}
+          <ManualCheckout
+            courseSlug={course.slug}
+            courseTitle={course.title}
+            amount={course.price}
+            userEmail={userEmail}
+            userName={userName}
+            isMastery={isMastery}
+            paymentMethods={siteConfig.payment.methods}
+          />
+
+          {/* SIDEBAR — order summary */}
+          <aside className="self-start rounded-2xl border border-[#F0E8D8] bg-white shadow-sm overflow-hidden lg:sticky lg:top-8">
             <CourseThumbnail title={course.title} category={course.category} />
-            <div className="p-8">
-              <div className="flex flex-wrap gap-2">
-                <span className="rounded-full bg-[#F0E8D8] px-3 py-1 text-xs font-semibold text-[#2D5016]">
-                  {course.category}
-                </span>
-                <span className="rounded-full bg-[#FFF3D6] px-3 py-1 text-xs font-semibold text-[#5C4813]">
-                  {course.level}
-                </span>
-              </div>
-              <h1 className="mt-5 text-3xl font-extrabold text-[#2D5016]">
-                {course.title}
-              </h1>
-              <p className="mt-4 text-base leading-7 text-[#444444]">{course.summary}</p>
+            <div className="p-6">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#7AB648]">Pesanan</p>
+              <h2 className="mt-2 text-lg font-extrabold text-[#2D5016]">{course.title}</h2>
+              <p className="mt-2 text-sm text-[#444]">{course.summary}</p>
 
-              {/* What's included */}
-              <div className="mt-8 rounded-xl border border-[#F0E8D8] bg-[#FEFBF5] p-6">
-                <h2 className="text-lg font-bold text-[#2D5016]">Yang Kamu Dapatkan</h2>
-                <div className="mt-4 space-y-3">
-                  {[
-                    `${course.modules.length} modul pembelajaran`,
-                    `${course.duration} akses materi`,
-                    `Format ${course.format}`,
-                    "Lifetime access",
-                  ].map((item) => (
-                    <div key={item} className="flex items-center gap-3 text-sm text-[#444444]">
-                      <svg className="h-5 w-5 text-[#7AB648] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                      {item}
-                    </div>
-                  ))}
+              <div className="mt-5 space-y-2 border-t border-[#F0E8D8] pt-5 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-[#5C4813]">Harga course</span>
+                  <span className="font-semibold text-[#2D5016]">
+                    {formatter.format(course.original_price ?? course.price)}
+                  </span>
+                </div>
+                {course.original_price && course.original_price !== course.price && (
+                  <div className="flex justify-between">
+                    <span className="text-[#7AB648]">Diskon Founding Members</span>
+                    <span className="font-semibold text-[#7AB648]">
+                      -{formatter.format((course.original_price ?? 0) - course.price)}
+                    </span>
+                  </div>
+                )}
+                <div className="flex justify-between border-t border-[#F0E8D8] pt-3 text-base">
+                  <span className="font-bold text-[#2D5016]">Total Bayar</span>
+                  <span className="font-extrabold text-[#F5A62A]">{formatter.format(course.price)}</span>
                 </div>
               </div>
 
-              {/* Modules preview */}
-              <div className="mt-8">
-                <h2 className="text-lg font-bold text-[#2D5016]">Modul Course</h2>
-                <div className="mt-4 space-y-2">
-                  {course.modules.map((module, index) => (
-                    <div key={index} className="flex items-center gap-3 rounded-xl border border-[#F0E8D8] bg-[#FEFBF5] px-4 py-3 text-sm text-[#444444]">
-                      <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#FFF3D6] text-xs font-bold text-[#F5A62A]">
-                        {index + 1}
-                      </div>
-                      {module}
-                    </div>
-                  ))}
+              {isMastery && (
+                <div className="mt-5 rounded-xl bg-[#FFF3D6] p-4 text-xs leading-6 text-[#5C4813]">
+                  <strong className="block text-[#2D5016] mb-1">Founding Member Privilege</strong>
+                  Lifetime access ke <strong>SEMUA course</strong> Kaalupi sekarang &amp; yang akan rilis,
+                  badge eksklusif, +100 bonus poin.
                 </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Pricing Card */}
-          <section className="self-start rounded-2xl border border-[#F0E8D8] bg-white p-8 shadow-sm lg:sticky lg:top-8">
-            <h2 className="text-xl font-extrabold text-[#2D5016]">Daftar Sekarang</h2>
-            <p className="mt-2 text-sm text-[#444444]">Akses materi langsung setelah pembayaran</p>
-
-            <div className="mt-6 rounded-xl bg-[#FFF3D6] p-6 text-center">
-              <p className="text-sm font-semibold text-[#5C4813]">Investasi belajar</p>
-              {course.is_free || course.price === 0 ? (
-                <p className="mt-1 text-4xl font-extrabold text-[#7AB648]">Gratis</p>
-              ) : (
-                <p className="mt-1 text-4xl font-extrabold text-[#2D5016]">
-                  {formatter.format(course.price)}
-                </p>
               )}
             </div>
-
-            <div className="mt-6 space-y-4">
-              {/* Voucher Input */}
-              <div className="rounded-xl border border-[#F0E8D8] bg-[#FEFBF5] p-4">
-                <label htmlFor="voucher" className="block text-sm font-semibold text-[#2D5016] mb-2">
-                  Kode Voucher (Opsional)
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    id="voucher"
-                    placeholder="Masukkan kode voucher"
-                    className="flex-1 rounded-lg border border-[#F0E8D8] bg-white px-3 py-2 text-sm focus:border-[#F5A62A] focus:outline-none"
-                  />
-                  <button
-                    type="button"
-                    className="rounded-lg bg-[#2D5016] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1A3A0F] transition"
-                  >
-                    Terapkan
-                  </button>
-                </div>
-                <p className="mt-2 text-xs text-[#444444]">
-                  Coba: KAA LUPI2026 (diskon 20%) atau WELCOME50 (diskon 50%)
-                </p>
-              </div>
-
-              <CheckoutButton slug={course.slug} amount={course.price} isFree={course.is_free || course.price === 0} />
-            </div>
-
-            <div className="mt-6 space-y-3 text-sm text-[#444444]">
-              {[
-                "Pembayaran aman via Midtrans",
-                "Akses instan setelah pembayaran",
-                "Lifetime access ke semua materi",
-                "Tersedia cicilan 3, 6, 12 bulan",
-              ].map((item) => (
-                <div key={item} className="flex items-center gap-2">
-                  <svg className="h-4 w-4 flex-shrink-0 text-[#7AB648]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  {item}
-                </div>
-              ))}
-            </div>
-          </section>
+          </aside>
         </div>
       </div>
     </div>

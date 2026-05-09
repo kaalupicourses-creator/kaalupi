@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth, clerkClient } from "@clerk/nextjs/server";
-import { CheckoutButton } from "@/components/checkout-button";
+import { FreeEnrollButton } from "@/components/free-enroll-button";
 import { FoundingSlotCounter } from "@/components/founding-slot-counter";
 import { CourseEnrollPrompt } from "@/components/course-enroll-prompt";
 import { getCourseBySlug } from "@/lib/content";
@@ -175,9 +175,14 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
                   ) : !userId ? (
                     <CourseEnrollPrompt slug={course.slug} isFree={course.is_free} />
                   ) : course.is_free ? (
-                    <CheckoutButton slug={course.slug} amount={0} isFree={true} />
+                    <FreeEnrollButton slug={course.slug} />
                   ) : (
-                    <CheckoutButton slug={course.slug} amount={course.price} />
+                    <Link
+                      href={`/checkout/${course.slug}`}
+                      className="block rounded-xl bg-[#F5A62A] px-5 py-3.5 text-center text-sm font-bold text-[#2D5016] hover:opacity-90 transition shadow-md"
+                    >
+                      Lanjut ke Pembayaran →
+                    </Link>
                   )}
                 </div>
 
