@@ -2,18 +2,16 @@ import nodemailer from "nodemailer";
 import { siteConfig } from "@/lib/data";
 
 /**
- * Email helper. Pakai SMTP creds dari env:
- *   SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM
+ * Email helper — Gmail SMTP.
  *
- * Kalau pakai Gmail:
- *   SMTP_HOST=smtp.gmail.com
- *   SMTP_PORT=465
- *   SMTP_USER=kaalupicourses@gmail.com
- *   SMTP_PASS=<App Password — bukan password gmail biasa>
- *   SMTP_FROM="Kaalupi <kaalupicourses@gmail.com>"
+ * Required env vars (Vercel):
+ *   EMAIL_USER          — Gmail address (e.g. kaalupicourses@gmail.com)
+ *   EMAIL_APP_PASSWORD  — 16-char App Password (myaccount.google.com/apppasswords)
  *
- * Cara dapet App Password:
- *   https://myaccount.google.com/apppasswords (butuh 2FA aktif dulu)
+ * Optional overrides:
+ *   SMTP_HOST  (default smtp.gmail.com)
+ *   SMTP_PORT  (default 465)
+ *   EMAIL_FROM (default "Kaalupi <EMAIL_USER>")
  */
 
 let transporterCache: nodemailer.Transporter | null = null;
@@ -21,13 +19,15 @@ let transporterCache: nodemailer.Transporter | null = null;
 function getTransporter(): nodemailer.Transporter | null {
   if (transporterCache) return transporterCache;
 
-  const host = process.env.SMTP_HOST;
+  const host = process.env.SMTP_HOST ?? "smtp.gmail.com";
   const port = Number(process.env.SMTP_PORT ?? 465);
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
+  const user = process.env.EMAIL_USER ?? process.env.SMTP_USER;
+  // Gmail App Password sometimes copied with spaces — strip them defensively
+  const passRaw = process.env.EMAIL_APP_PASSWORD ?? process.env.SMTP_PASS;
+  const pass = passRaw ? passRaw.replace(/\s+/g, "") : undefined;
 
-  if (!host || !user || !pass) {
-    console.warn("[email] SMTP env vars belum di-set — email tidak akan dikirim.");
+  if (!user || !pass) {
+    console.warn("[email] EMAIL_USER atau EMAIL_APP_PASSWORD belum di-set — email skipped.");
     return null;
   }
 
@@ -51,7 +51,8 @@ export async function sendApprovalEmail(args: ApprovalArgs) {
   const transporter = getTransporter();
   if (!transporter) return;
 
-  const from = process.env.SMTP_FROM ?? `Kaalupi <${siteConfig.email}>`;
+  const fromEmail = process.env.EMAIL_USER ?? siteConfig.email;
+  const from = process.env.EMAIL_FROM ?? process.env.SMTP_FROM ?? `Kaalupi <${fromEmail}>`;
   const dashboard = "https://kaalupi.vercel.app/dashboard";
   const discord = siteConfig.community.discord;
 
