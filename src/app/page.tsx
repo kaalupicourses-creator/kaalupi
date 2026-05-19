@@ -777,6 +777,77 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ─── FAQ ─── */}
+      <section className="border-t border-[#F0E8D8] bg-white">
+        <div className="mx-auto max-w-4xl px-6 py-16">
+          <div className="mb-10 text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">FAQ</p>
+            <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016] md:text-4xl">
+              Pertanyaan yang sering ditanya
+            </h2>
+          </div>
+
+          <div className="space-y-3">
+            {[
+              {
+                q: "Apa beda Foundation gratis dan Mastery Founding Members?",
+                a: "Foundation gratis: 2 modul intro pengenalan AI dasar — boleh siapa aja akses tanpa bayar. Mastery Founding Members: 5 modul lengkap + akses LIFETIME ke SEMUA course Kaalupi (sekarang & yang akan rilis: Network, Cyber, Designer, Data Science), AI Tutor 24/7, badge eksklusif, dan akses Discord khusus founding members. Slot terbatas 100 orang pertama.",
+              },
+              {
+                q: "Cara bayarnya gimana?",
+                a: "Manual via DANA / BCA / BSI. Klik 'Lanjut ke Pembayaran' → pilih metode → transfer manual → klik 'Saya Sudah Bayar' → otomatis di-redirect ke WhatsApp Admin dgn pesan udah ke-pre-fill. Tinggal kirim. Admin verifikasi (biasanya < 1 jam jam kerja) → akses course otomatis aktif.",
+              },
+              {
+                q: "Founding Members ke-100 udah penuh, masih bisa daftar?",
+                a: "Bisa, tapi harga balik ke regular Rp 299K dan akses cuma untuk course Mastery itu sendiri — bukan lifetime ke semua course. 100 orang pertama dapet privilege khusus yang ngga ke-buka lagi.",
+              },
+              {
+                q: "Apa ada garansi uang kembali?",
+                a: "Kami ngga kasih garansi 14 hari karena ini course digital — begitu lu udah akses materi, ngga bisa di-rollback. Tapi: kalo ada masalah teknis yg bikin lu ngga bisa akses sama sekali (deal-breaker dari sisi kami), kami refund 100%. Kontak admin via WhatsApp atau email kaalupicourses@gmail.com.",
+              },
+              {
+                q: "Belajar pake durasi berapa lama?",
+                a: "Self-paced — pace lu sendiri. Ngga ada deadline atau live class. Materi singkat-singkat, padet, banyak edit, biar lu ngga bosen. Bisa di-pause kapanpun, lanjut kapanpun. Akses lifetime jadi ngga bakal expired.",
+              },
+              {
+                q: "Sertifikatnya beneran?",
+                a: "Iya — PDF resmi Kaalupi yang auto-generate begitu lu selesain course. Bisa di-share ke LinkedIn (ada tombol khusus). Disain professional, bisa lu pajang di portofolio atau LinkedIn 'Licenses & Certifications'.",
+              },
+              {
+                q: "AI Tutor 24/7 itu beneran ada?",
+                a: "Real — pake Gemini AI. Tombol 'AI Tutor' muncul floating di setiap modul Mastery. Tanya apa aja seputar materi modul, AI bakal jawab sambil tau context course-nya. Cuma untuk Mastery (Founding Members).",
+              },
+              {
+                q: "Kalo ada masalah, kontak kemana?",
+                a: "WhatsApp admin di +62 812-9398-8757 (paling cepet) atau email kaalupicourses@gmail.com. Bisa juga gabung Discord komunitas — tanya di channel #help, ada tim Kaalupi standby.",
+              },
+            ].map((item, i) => (
+              <details
+                key={i}
+                className="group rounded-2xl border border-[#F0E8D8] bg-[#FEFBF5] open:border-[#F5A62A] open:bg-white open:shadow-sm"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4">
+                  <span className="text-base font-bold text-[#2D5016]">{item.q}</span>
+                  <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#FFF3D6] text-sm font-extrabold text-[#5C4813] transition group-open:rotate-45">
+                    +
+                  </span>
+                </summary>
+                <p className="px-6 pb-5 text-sm leading-7 text-[#444]">{item.a}</p>
+              </details>
+            ))}
+          </div>
+
+          <div className="mt-10 text-center">
+            <p className="text-sm text-[#5C4813]">
+              Pertanyaan lain?{" "}
+              <Link href="/contact" className="font-bold text-[#F5A62A] hover:underline">
+                Kontak kami →
+              </Link>
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* ─── FINAL CTA ─── */}
       <section className="border-t border-[#F0E8D8] bg-[#FEFBF5]">
         <div className="mx-auto max-w-7xl px-6 py-16">
@@ -806,7 +877,7 @@ export default async function HomePage() {
               </Link>
             </div>
             <p className="relative mt-6 text-xs text-white/70">
-              Tanpa kartu kredit • Langsung akses • Garansi 14 hari
+              Daftar gratis, ngga butuh data bayar • Bayar manual via DANA / BCA / BSI
             </p>
           </div>
         </div>

@@ -18,6 +18,11 @@ const navLinks = [
   { href: "/contact", label: "Kontak" },
 ];
 
+const legalLinks = [
+  { href: "/terms", label: "Syarat & Ketentuan" },
+  { href: "/privacy", label: "Kebijakan Privasi" },
+];
+
 export function SiteFooter() {
   const year = new Date().getFullYear();
   return (
@@ -63,19 +68,28 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs text-white/40">&copy; {year} Kaalupi. All rights reserved.</p>
-          <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-white/60">
-            {socialLinks.map((s) => (
-              <a
-                key={s.label}
-                href={s.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition hover:text-[#F5A62A]"
-              >
-                {s.label}
-              </a>
+        <div className="mt-12 space-y-4 border-t border-white/10 pt-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-xs text-white/40">&copy; {year} Kaalupi. All rights reserved.</p>
+            <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-white/60">
+              {socialLinks.map((s) => (
+                <a
+                  key={s.label}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition hover:text-[#F5A62A]"
+                >
+                  {s.label}
+                </a>
+              ))}
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/50">
+            {legalLinks.map((l) => (
+              <Link key={l.href} href={l.href} className="transition hover:text-white">
+                {l.label}
+              </Link>
             ))}
           </div>
         </div>
