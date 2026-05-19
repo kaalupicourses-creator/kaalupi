@@ -55,7 +55,9 @@ export default async function CourseAccessPage({
   } catch (err) {
     console.error("[access] getCourseMaterials failed:", err);
   }
-  const currentMaterial = materials.find((m) => m.module_index === validModuleIndex);
+  const moduleMaterials = materials
+    .filter((m) => m.module_index === validModuleIndex)
+    .sort((a, b) => a.order_index - b.order_index);
 
   let progress: Awaited<ReturnType<typeof getProgress>> = [];
   try {
@@ -103,24 +105,32 @@ export default async function CourseAccessPage({
 
         <div className="grid gap-8 lg:grid-cols-[1.5fr_1fr]">
           <div className="space-y-6">
-            {currentMaterial ? (
-              <div className="overflow-hidden rounded-2xl border border-[#F0E8D8] bg-white shadow-sm">
-                {currentMaterial.video_url ? (
-                  <VideoPlayer src={currentMaterial.video_url} title={currentMaterial.title} />
-                ) : currentMaterial.content ? (
-                  <div className="p-6">
-                    <h2 className="text-xl font-bold text-[#2D5016]">{currentMaterial.title}</h2>
-                    <div
-                      className="mt-4 prose prose-sm max-w-none text-[#444444]"
-                      dangerouslySetInnerHTML={{ __html: currentMaterial.content }}
-                    />
-                  </div>
-                ) : (
-                  <div className="p-10 text-center">
-                    <p className="text-sm text-[#444444]">Konten sedang dipersiapkan</p>
-                  </div>
-                )}
-              </div>
+            {moduleMaterials.length > 0 ? (
+              moduleMaterials.map((mat) => (
+                <div
+                  key={mat.id}
+                  className="overflow-hidden rounded-2xl border border-[#F0E8D8] bg-white shadow-sm"
+                >
+                  {mat.video_url ? (
+                    <VideoPlayer src={mat.video_url} title={mat.title} />
+                  ) : null}
+                  {mat.content ? (
+                    <div className="p-6">
+                      {!mat.video_url && (
+                        <h2 className="text-xl font-bold text-[#2D5016]">{mat.title}</h2>
+                      )}
+                      <div
+                        className={`${mat.video_url ? "" : "mt-4"} prose prose-sm max-w-none text-[#444444]`}
+                        dangerouslySetInnerHTML={{ __html: mat.content }}
+                      />
+                    </div>
+                  ) : !mat.video_url ? (
+                    <div className="p-10 text-center">
+                      <p className="text-sm text-[#444444]">Konten sedang dipersiapkan</p>
+                    </div>
+                  ) : null}
+                </div>
+              ))
             ) : (
               <div className="overflow-hidden rounded-2xl border border-[#F0E8D8] bg-white">
                 <CourseThumbnail title={course.title} category={course.category} large />

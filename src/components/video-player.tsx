@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
 
 interface VideoPlayerProps {
   src: string;
@@ -8,14 +8,67 @@ interface VideoPlayerProps {
   onProgress?: (progress: number) => void;
 }
 
+/**
+ * Convert various YouTube URL formats to a clean embed URL.
+ * Supports:
+ *   - https://www.youtube.com/watch?v=VIDEO_ID
+ *   - https://youtu.be/VIDEO_ID
+ *   - https://www.youtube.com/embed/VIDEO_ID
+ *   - https://www.youtube.com/shorts/VIDEO_ID
+ * Returns null if URL is not a YouTube link.
+ */
+function toYouTubeEmbed(url: string): string | null {
+  try {
+    const u = new URL(url);
+    const host = u.hostname.replace(/^www\./, "");
+    let id: string | null = null;
+
+    if (host === "youtu.be") {
+      id = u.pathname.slice(1).split("/")[0];
+    } else if (host === "youtube.com" || host === "m.youtube.com") {
+      if (u.pathname === "/watch") {
+        id = u.searchParams.get("v");
+      } else if (u.pathname.startsWith("/embed/")) {
+        id = u.pathname.split("/")[2];
+      } else if (u.pathname.startsWith("/shorts/")) {
+        id = u.pathname.split("/")[2];
+      } else if (u.pathname.startsWith("/v/")) {
+        id = u.pathname.split("/")[2];
+      }
+    }
+
+    if (!id) return null;
+    return `https://www.youtube.com/embed/${id}?modestbranding=1&rel=0`;
+  } catch {
+    return null;
+  }
+}
+
+function toVimeoEmbed(url: string): string | null {
+  try {
+    const u = new URL(url);
+    if (!u.hostname.includes("vimeo.com")) return null;
+    const id = u.pathname.split("/").filter(Boolean).pop();
+    if (!id) return null;
+    return `https://player.vimeo.com/video/${id}`;
+  } catch {
+    return null;
+  }
+}
+
 export function VideoPlayer({ src, title, onProgress }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [progress, setProgress] = useState(0);
 
+  const youtubeEmbed = src ? toYouTubeEmbed(src) : null;
+  const vimeoEmbed = src ? toVimeoEmbed(src) : null;
+  const embedUrl = youtubeEmbed ?? vimeoEmbed;
+
   const handleTimeUpdate = () => {
-    if (videoRef.current) {
+    if (videoRef.current && embedUrl == null) {
       const current = videoRef.current.currentTime;
       const duration = videoRef.current.duration;
+      if (!duration || !Number.isFinite(duration)) return;
       const pct = Math.round((current / duration) * 100);
       setProgress(pct);
       onProgress?.(pct);
@@ -23,7 +76,7 @@ export function VideoPlayer({ src, title, onProgress }: VideoPlayerProps) {
   };
 
   const skip = (seconds: number) => {
-    if (videoRef.current) {
+    if (videoRef.current && embedUrl == null) {
       videoRef.current.currentTime += seconds;
     }
   };
@@ -32,18 +85,34 @@ export function VideoPlayer({ src, title, onProgress }: VideoPlayerProps) {
     <div className="w-full rounded-2xl border border-[#F0E8D8] bg-white overflow-hidden shadow-sm">
       <div className="flex items-center justify-between border-b border-[#F0E8D8] px-4 py-3">
         <h3 className="text-sm font-bold text-[#2D5016]">{title}</h3>
-        <span className="text-xs font-semibold text-[#F5A62A]">{progress}% selesai</span>
+        {embedUrl == null && src && (
+          <span className="text-xs font-semibold text-[#F5A62A]">{progress}% selesai</span>
+        )}
+        {embedUrl != null && (
+          <span className="text-xs font-semibold text-[#F5A62A]">
+            {youtubeEmbed ? "YouTube" : "Vimeo"}
+          </span>
+        )}
       </div>
 
       <div className="relative aspect-video bg-[#1A2E0A]">
-        <video
-          ref={videoRef}
-          src={src}
-          className="w-full h-full"
-          controls
-          onTimeUpdate={handleTimeUpdate}
-        />
-        {!src && (
+        {embedUrl ? (
+          <iframe
+            src={embedUrl}
+            title={title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            className="absolute inset-0 h-full w-full"
+          />
+        ) : src ? (
+          <video
+            ref={videoRef}
+            src={src}
+            className="w-full h-full"
+            controls
+            onTimeUpdate={handleTimeUpdate}
+          />
+        ) : (
           <div className="absolute inset-0 flex items-center justify-center bg-[#2D5016]">
             <div className="text-center">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/10">
@@ -57,15 +126,18 @@ export function VideoPlayer({ src, title, onProgress }: VideoPlayerProps) {
         )}
       </div>
 
-      {src && (
+      {/* Native-video skip controls only useful for MP4/WebM */}
+      {!embedUrl && src && (
         <div className="flex items-center gap-2 border-t border-[#F0E8D8] bg-[#FEFBF5] px-4 py-3">
           <button
+            type="button"
             onClick={() => skip(-10)}
             className="rounded-lg border border-[#F0E8D8] bg-white px-3 py-1.5 text-xs font-semibold text-[#2D5016] transition hover:border-[#F5A62A] hover:bg-[#FFF3D6]"
           >
             -10s
           </button>
           <button
+            type="button"
             onClick={() => skip(10)}
             className="rounded-lg border border-[#F0E8D8] bg-white px-3 py-1.5 text-xs font-semibold text-[#2D5016] transition hover:border-[#F5A62A] hover:bg-[#FFF3D6]"
           >
