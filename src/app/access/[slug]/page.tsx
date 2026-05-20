@@ -120,7 +120,7 @@ export default async function CourseAccessPage({
                         <h2 className="text-xl font-bold text-[#2D5016]">{mat.title}</h2>
                       )}
                       <div
-                        className={`${mat.video_url ? "" : "mt-4"} prose prose-sm max-w-none text-[#444444]`}
+                        className={`${mat.video_url ? "" : "mt-4"} course-content`}
                         dangerouslySetInnerHTML={{ __html: mat.content }}
                       />
                     </div>
