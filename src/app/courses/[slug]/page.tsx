@@ -1,4 +1,6 @@
 import Link from "next/link";
+import Script from "next/script";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { FreeEnrollButton } from "@/components/free-enroll-button";
@@ -7,6 +9,33 @@ import { CourseEnrollPrompt } from "@/components/course-enroll-prompt";
 import { getCourseBySlug } from "@/lib/content";
 import { getEnrollments } from "@/lib/db";
 import { CourseThumbnail } from "@/components/course-thumbnail";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const course = await getCourseBySlug(slug);
+  if (!course) {
+    return { title: "Course tidak ditemukan" };
+  }
+  return {
+    title: course.title,
+    description: course.summary,
+    openGraph: {
+      title: course.title,
+      description: course.summary,
+      type: "website",
+      url: `https://kaalupi.vercel.app/courses/${course.slug}`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: course.title,
+      description: course.summary,
+    },
+  };
+}
 
 const formatter = new Intl.NumberFormat("id-ID", {
   style: "currency",
@@ -34,8 +63,41 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
     }
   }
 
+  const courseJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: course.title,
+    description: course.summary,
+    url: `https://kaalupi.vercel.app/courses/${course.slug}`,
+    provider: {
+      "@type": "Organization",
+      name: "Kaalupi",
+      url: "https://kaalupi.vercel.app",
+    },
+    educationalLevel: course.level,
+    inLanguage: "id",
+    isAccessibleForFree: course.is_free ?? false,
+    offers: {
+      "@type": "Offer",
+      price: course.price.toString(),
+      priceCurrency: "IDR",
+      category: course.is_free ? "free" : "paid",
+      availability: "https://schema.org/InStock",
+    },
+    hasCourseInstance: {
+      "@type": "CourseInstance",
+      courseMode: "online",
+      courseWorkload: "PT5H",
+    },
+  };
+
   return (
     <div className="bg-[#FEFBF5]">
+      <Script
+        id={`course-jsonld-${course.slug}`}
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(courseJsonLd) }}
+      />
       <section className="mx-auto max-w-7xl px-6 py-12">
         <nav className="mb-8 flex items-center gap-2 text-sm text-[#444444]">
           <Link href="/courses" className="hover:text-[#F5A62A] transition font-semibold text-[#2D5016]">

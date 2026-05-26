@@ -777,6 +777,52 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ─── TESTIMONIALS (placeholder honest, jadi spot buat Founding Members nanti) ─── */}
+      <section className="border-t border-[#F0E8D8] bg-[#FEFBF5]">
+        <div className="mx-auto max-w-5xl px-6 py-16">
+          <div className="mb-10 text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">
+              Suara Member
+            </p>
+            <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016] md:text-4xl">
+              Spot ini bakal diisi Founding Members
+            </h2>
+            <p className="mt-3 max-w-xl mx-auto text-sm leading-7 text-[#444]">
+              Kaalupi baru launch. Daripada palsuin testimoni, kami jujur — ini spot bakal diisi
+              real review dari 100 Founding Members pertama. Lu salah satunya?
+            </p>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-3">
+            {[
+              { tag: "Slot #1", desc: "Tempat testimoni real dari Founding Member pertama." },
+              { tag: "Slot #2", desc: "Tempat testimoni real dari Founding Member kedua." },
+              { tag: "Slot #3", desc: "Tempat testimoni real dari Founding Member ketiga." },
+            ].map((slot, i) => (
+              <div
+                key={i}
+                className="rounded-2xl border-2 border-dashed border-[#F0E8D8] bg-white p-6 text-center"
+              >
+                <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-[#FFF3D6] text-sm font-bold text-[#5C4813]">
+                  {i + 1}
+                </div>
+                <p className="text-xs font-bold uppercase tracking-wider text-[#5C4813]">
+                  {slot.tag}
+                </p>
+                <p className="mt-2 text-sm text-[#444]">{slot.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 rounded-2xl border border-[#F0E8D8] bg-white p-6 text-sm leading-7 text-[#444]">
+            <strong className="block mb-2 text-[#2D5016]">Komitmen Kaalupi soal review</strong>
+            Setiap testimoni yang muncul nanti ASLI dari member. Ada foto, nama beneran, dan
+            outcome yang diceritain user sendiri. Ngga ada paid testimonial, ngga ada fake review.
+            Kalau lu skeptis — gabung Discord, cek live ngobrol dengan Founding Members lain.
+          </div>
+        </div>
+      </section>
+
       {/* ─── FAQ ─── */}
       <section className="border-t border-[#F0E8D8] bg-white">
         <div className="mx-auto max-w-4xl px-6 py-16">

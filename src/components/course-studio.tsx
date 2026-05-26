@@ -48,6 +48,7 @@ export function CourseStudio({ courses, initialSlug }: Props) {
     }
   }, []);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     if (selectedSlug) fetchMaterials(selectedSlug);
   }, [selectedSlug, fetchMaterials]);

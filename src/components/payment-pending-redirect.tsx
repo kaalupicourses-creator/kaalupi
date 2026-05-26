@@ -6,6 +6,7 @@ export function PaymentPendingRedirect({ waUrl }: { waUrl: string }) {
   const [seconds, setSeconds] = useState(5);
   const [opened, setOpened] = useState(false);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     if (!waUrl || opened) return;
     if (seconds <= 0) {

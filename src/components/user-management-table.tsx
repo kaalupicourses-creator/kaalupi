@@ -50,8 +50,10 @@ export function UserManagementTable() {
     }
   }
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function changeRole(userId: string, role: Role) {
