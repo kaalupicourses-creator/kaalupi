@@ -1,11 +1,29 @@
 import Link from "next/link";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { CourseThumbnail } from "@/components/course-thumbnail";
 import { FoundingSlotCounter } from "@/components/founding-slot-counter";
 import { courses, comingSoonTracks } from "@/lib/data";
+import { getEnrollments } from "@/lib/db";
 
-export default function CoursesPage() {
+export default async function CoursesPage() {
   const foundation = courses.find((c) => c.slug === "ai-untuk-pemula");
   const mastery = courses.find((c) => c.slug === "ai-untuk-pemula-mastery");
+
+  // Cek enrollment status user (kalau login)
+  const { userId } = await auth();
+  let enrollments: string[] = [];
+  if (userId) {
+    try {
+      const clerk = await clerkClient();
+      const user = await clerk.users.getUser(userId);
+      const email = user.primaryEmailAddress?.emailAddress ?? "";
+      enrollments = await getEnrollments(email);
+    } catch (err) {
+      console.error("[/courses] enrollment check failed:", err);
+    }
+  }
+  const isFoundationEnrolled = foundation ? enrollments.includes(foundation.slug) : false;
+  const isMasteryEnrolled = mastery ? enrollments.includes(mastery.slug) : false;
 
   return (
     <div className="bg-[#FEFBF5]">
@@ -74,12 +92,21 @@ export default function CoursesPage() {
                   <div className="mt-6 flex items-center justify-between">
                     <span className="text-3xl font-black text-[#7AB648]">Gratis</span>
                   </div>
-                  <Link
-                    href={`/courses/${foundation.slug}`}
-                    className="mt-4 block w-full rounded-xl border-2 border-[#7AB648] bg-white px-6 py-3 text-center text-sm font-bold text-[#7AB648] hover:bg-[#7AB648] hover:text-white transition"
-                  >
-                    Mulai Belajar Gratis →
-                  </Link>
+                  {isFoundationEnrolled ? (
+                    <Link
+                      href={`/access/${foundation.slug}`}
+                      className="mt-4 block w-full rounded-xl bg-[#7AB648] px-6 py-3 text-center text-sm font-bold text-white hover:opacity-90 transition shadow-md"
+                    >
+                      Lanjutkan Belajar →
+                    </Link>
+                  ) : (
+                    <Link
+                      href={`/courses/${foundation.slug}`}
+                      className="mt-4 block w-full rounded-xl border-2 border-[#7AB648] bg-white px-6 py-3 text-center text-sm font-bold text-[#7AB648] hover:bg-[#7AB648] hover:text-white transition"
+                    >
+                      Mulai Belajar Gratis →
+                    </Link>
+                  )}
                 </div>
               </article>
             )}
@@ -143,12 +170,26 @@ export default function CoursesPage() {
                     <FoundingSlotCounter slug={mastery.slug} variant="inline" />
                   </div>
 
-                  <Link
-                    href={`/courses/${mastery.slug}`}
-                    className="mt-4 block w-full rounded-xl bg-[#F5A62A] px-6 py-3 text-center text-sm font-extrabold text-[#2D5016] hover:opacity-90 shadow-md transition"
-                  >
-                    Daftar Founding Members →
-                  </Link>
+                  {isMasteryEnrolled ? (
+                    <div className="mt-4 space-y-2">
+                      <Link
+                        href={`/access/${mastery.slug}`}
+                        className="block w-full rounded-xl bg-[#F5A62A] px-6 py-3 text-center text-sm font-extrabold text-[#2D5016] hover:opacity-90 shadow-md transition"
+                      >
+                        Lanjutkan Belajar →
+                      </Link>
+                      <p className="text-center text-xs font-bold text-[#7AB648]">
+                        ✓ Founding Member aktif
+                      </p>
+                    </div>
+                  ) : (
+                    <Link
+                      href={`/courses/${mastery.slug}`}
+                      className="mt-4 block w-full rounded-xl bg-[#F5A62A] px-6 py-3 text-center text-sm font-extrabold text-[#2D5016] hover:opacity-90 shadow-md transition"
+                    >
+                      Daftar Founding Members →
+                    </Link>
+                  )}
                 </div>
               </article>
             )}

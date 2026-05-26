@@ -26,7 +26,11 @@ export async function POST(request: Request) {
   const clerk = await clerkClient();
   const user = await clerk.users.getUser(userId);
   const userEmail = user.primaryEmailAddress?.emailAddress ?? "";
-  const userName = user.firstName ?? userEmail;
+  const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ").trim();
+  // Strip non-ASCII so pdf-lib Helvetica doesn't crash on em-dash/emoji
+  const userName = (fullName || user.username || userEmail.split("@")[0])
+    .replace(/[^\x20-\x7E]/g, "")
+    .slice(0, 60) || "Student";
 
   // Get course info
   const course = await getCourseBySlug(body.courseSlug);
@@ -48,17 +52,21 @@ export async function POST(request: Request) {
   if (!certificateUrl) {
     try {
       certificateUrl = await generateCertificate(userName, course.title, userId, userEmail);
-      
+
       // Save certificate record
-      await supabaseAdmin.from("certificates").insert({
+      const { error: insertErr } = await supabaseAdmin.from("certificates").insert({
         user_email: userEmail,
         course_slug: body.courseSlug,
         certificate_url: certificateUrl,
       });
+      if (insertErr) {
+        console.error("[certificates] insert row failed:", insertErr);
+      }
     } catch (genError) {
-      console.error("Certificate generation error:", genError);
+      const errMsg = genError instanceof Error ? genError.message : String(genError);
+      console.error("[certificates] generation error:", errMsg, genError);
       return NextResponse.json(
-        { error: "Failed to generate certificate" },
+        { error: `Failed to generate certificate: ${errMsg}` },
         { status: 500 }
       );
     }
@@ -79,10 +87,20 @@ export async function POST(request: Request) {
 
 async function generateCertificate(userName: string, courseTitle: string, userId: string, userEmail: string): Promise<string> {
   const supabaseAdmin = getSupabaseAdmin();
+
+  // Sanitize courseTitle: Helvetica standard font ngga support em-dash, smart quote, dll.
+  // Plus storage path ngga support special chars. Bersihin sekali, dipake buat draw + filename.
+  const safeCourseTitle = courseTitle
+    .replace(/[—–]/g, "-")          // em/en dash → hyphen
+    .replace(/[""'']/g, "'")         // smart quotes → straight
+    .replace(/[^\x20-\x7E]/g, "")    // remaining non-ASCII (emoji, dll) → strip
+    .trim()
+    .slice(0, 80) || "Kaalupi Course";
+
   const pdfDoc = await PDFDocument.create();
   const page = pdfDoc.addPage([842, 595]); // A4 landscape
   const { width, height } = page.getSize();
-  
+
   // Embed fonts
   const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
   const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
@@ -106,9 +124,13 @@ async function generateCertificate(userName: string, courseTitle: string, userId
     borderWidth: 3,
   });
 
+  const centerX = (text: string, f: typeof font, size: number) =>
+    width / 2 - f.widthOfTextAtSize(text, size) / 2;
+
   // Title
-  page.drawText("SERTIFIKAT PENYELESAIAN", {
-    x: width / 2 - 180,
+  const titleText = "SERTIFIKAT PENYELESAIAN";
+  page.drawText(titleText, {
+    x: centerX(titleText, font, 28),
     y: height - 120,
     size: 28,
     font,
@@ -116,8 +138,9 @@ async function generateCertificate(userName: string, courseTitle: string, userId
   });
 
   // Certificate text
-  page.drawText("Diberikan kepada:", {
-    x: width / 2 - 60,
+  const handedText = "Diberikan kepada:";
+  page.drawText(handedText, {
+    x: centerX(handedText, fontRegular, 14),
     y: height - 180,
     size: 14,
     font: fontRegular,
@@ -126,25 +149,26 @@ async function generateCertificate(userName: string, courseTitle: string, userId
 
   // User name
   page.drawText(userName, {
-    x: width / 2 - (userName.length * 8),
-    y: height - 220,
+    x: centerX(userName, font, 32),
+    y: height - 225,
     size: 32,
     font,
     color: rgb(0.96, 0.65, 0.16), // #F5A62A
   });
 
   // Course name
-  page.drawText(`Atas penyelesaian course:`, {
-    x: width / 2 - 90,
-    y: height - 270,
+  const overText = "Atas penyelesaian course:";
+  page.drawText(overText, {
+    x: centerX(overText, fontRegular, 14),
+    y: height - 275,
     size: 14,
     font: fontRegular,
     color: rgb(0.27, 0.27, 0.27),
   });
 
-  page.drawText(courseTitle, {
-    x: width / 2 - (courseTitle.length * 4),
-    y: height - 300,
+  page.drawText(safeCourseTitle, {
+    x: centerX(safeCourseTitle, font, 20),
+    y: height - 310,
     size: 20,
     font,
     color: rgb(0.18, 0.31, 0.09),
@@ -156,17 +180,19 @@ async function generateCertificate(userName: string, courseTitle: string, userId
     month: "long",
     day: "numeric",
   });
-  page.drawText(`Tanggal: ${date}`, {
-    x: width / 2 - 80,
-    y: height - 360,
+  const dateText = `Tanggal: ${date}`;
+  page.drawText(dateText, {
+    x: centerX(dateText, fontRegular, 12),
+    y: height - 370,
     size: 12,
     font: fontRegular,
     color: rgb(0.27, 0.27, 0.27),
   });
 
   // Kaalupi signature
-  page.drawText("Kaalupi — Platform Course IT Indonesia", {
-    x: width / 2 - 130,
+  const signature = "Kaalupi - AI-First Career Platform Indonesia";
+  page.drawText(signature, {
+    x: centerX(signature, fontRegular, 10),
     y: 60,
     size: 10,
     font: fontRegular,
@@ -185,20 +211,25 @@ async function generateCertificate(userName: string, courseTitle: string, userId
 
   // Save PDF
   const pdfBytes = await pdfDoc.save();
-  
-  // Sanitize email for filename
-  const safeEmail = userEmail.replace(/[^a-zA-Z0-9]/g, '_');
-  const fileName = `${safeEmail}/${courseTitle}-${Date.now()}.pdf`;
-  
+
+  // Sanitize email + course title for filename — Supabase storage path
+  // butuh ASCII safe, no spaces, no special chars.
+  const safeEmail = userEmail.replace(/[^a-zA-Z0-9]/g, "_");
+  const safeFileTitle = safeCourseTitle.replace(/[^a-zA-Z0-9]+/g, "_").replace(/^_|_$/g, "");
+  const fileName = `${safeEmail}/${safeFileTitle}-${Date.now()}.pdf`;
+
   // Upload to Supabase Storage
-  const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
-    .from('certificates')
+  const { error: uploadError } = await supabaseAdmin.storage
+    .from("certificates")
     .upload(fileName, pdfBytes, {
-      contentType: 'application/pdf',
-      upsert: false
+      contentType: "application/pdf",
+      upsert: true, // safe: each call has unique timestamp
     });
-  
-  if (uploadError) throw uploadError;
+
+  if (uploadError) {
+    console.error("[certificates] storage upload error:", uploadError);
+    throw new Error(`Storage upload failed: ${uploadError.message}`);
+  }
   
   // Get public URL
   const { data: { publicUrl } } = supabaseAdmin.storage

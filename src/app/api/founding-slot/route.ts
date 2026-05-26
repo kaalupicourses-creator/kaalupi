@@ -37,7 +37,9 @@ export async function GET(request: Request) {
     console.error("[founding-slot] supabase admin error:", err);
   }
 
-  const taken = Math.max(TEAM_BASELINE, actualEnrolled);
+  // Real founding members = baseline team (4) + actual paying enrollments.
+  // Additive: tiap user yg bayar Mastery, counter naik 1 dari baseline.
+  const taken = Math.min(FOUNDING_LIMIT, TEAM_BASELINE + actualEnrolled);
   const remaining = Math.max(0, FOUNDING_LIMIT - taken);
   const isSoldOut = taken >= FOUNDING_LIMIT;
 

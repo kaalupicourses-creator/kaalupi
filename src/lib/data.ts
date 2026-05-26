@@ -88,6 +88,16 @@ export const siteConfig = {
         instructions:
           "Transfer via BSI Mobile / internet banking / ATM BSI. Nominal harus sama persis.",
       },
+      {
+        id: "qris",
+        name: "QRIS (GoPay, ShopeePay, OVO, dll)",
+        type: "qris",
+        accountName: "Kaalupi",
+        accountNumber: "Scan QR di bawah",
+        instructions:
+          "Buka aplikasi e-wallet (GoPay/ShopeePay/OVO/DANA/LinkAja) -> pilih Scan QRIS -> arahkan kamera ke gambar di bawah -> bayar sesuai nominal.",
+        qrImage: "/payment/qris-kaalupi.jpeg",
+      },
     ] as PaymentMethod[],
   },
 };

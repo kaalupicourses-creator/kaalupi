@@ -1,5 +1,6 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import { getEnrollments, getProgress, updateProgress, getCourseMaterials } from "@/lib/db";
 import { getCourseBySlug } from "@/lib/content";
@@ -74,6 +75,10 @@ export default async function CourseAccessPage({
     "use server";
     try {
       await updateProgress(userEmail, courseSlug, moduleIndex, true);
+      // Force re-render of /access pages so checkmark + progress bar update
+      // immediately tanpa user harus refresh manual
+      revalidatePath(`/access/${courseSlug}`);
+      revalidatePath("/dashboard");
     } catch (err) {
       console.error("[access] updateProgress failed:", err);
     }
