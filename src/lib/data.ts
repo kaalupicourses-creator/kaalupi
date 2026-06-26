@@ -168,7 +168,7 @@ export const valueProps = [
   "Learning path per role: beginner sampai specialist.",
   "Blended delivery: video, artikel, lab, dan project review.",
   "Dashboard admin, instructor, dan student dengan privilege terpisah.",
-  "Payment flow siap dihubungkan ke Midtrans untuk pembelian real.",
+  "Founding Members: 100 slot pertama dapet lifetime access ke SEMUA course Kaalupi.",
 ];
 
 export const audienceTracks = [

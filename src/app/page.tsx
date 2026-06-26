@@ -20,7 +20,7 @@ const howItWorks = [
   {
     step: "02",
     title: "Checkout & Bayar",
-    description: "Proses pembayaran aman via Midtrans dengan berbagai metode bayar.",
+    description: "Transfer via DANA / BCA / BSI / QRIS, kirim bukti bayar, admin konfirmasi.",
   },
   {
     step: "03",

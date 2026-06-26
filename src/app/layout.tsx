@@ -4,7 +4,6 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { Analytics } from "@vercel/analytics/react";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeaderClient } from "@/components/site-header";
-import { MidtransProvider } from "@/components/midtrans-provider";
 import "./globals.css";
 
 const nunito = Nunito({
@@ -19,7 +18,7 @@ export const metadata: Metadata = {
     default: "Kaalupi | AI-First Career Platform Indonesia — Dari Nol ke AI Specialist",
     template: "%s | Kaalupi",
   },
-  description: "Platform course IT profesional dengan integrasi AI tools. Pelajari AI, Programming, Network, dan Cyber Security dalam bahasa Indonesia. Gratis untuk pemula, sertifikat resmi, garansi 14 hari.",
+  description: "Platform course IT profesional dengan integrasi AI tools. Pelajari AI, Programming, Network, dan Cyber Security dalam bahasa Indonesia. Gratis untuk pemula, sertifikat resmi, akses lifetime.",
   keywords: ["course IT", "belajar AI", "programming Indonesia", "cyber security", "network engineer", "AI tools", "career platform"],
   icons: {
     icon: "/favicon.png",
@@ -28,7 +27,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Kaalupi | AI-First Career Platform Indonesia",
-    description: "Dari nol jadi AI Specialist dalam 3 bulan. Course IT dengan integrasi AI tools, bahasa Indonesia, langsung praktik.",
+    description: "Manfaatin AI buat capai target hidup lu. Course IT dengan integrasi AI tools, bahasa Indonesia, langsung praktik.",
     url: "https://kaalupi.vercel.app",
     siteName: "Kaalupi",
     images: [
@@ -45,7 +44,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Kaalupi | AI-First Career Platform Indonesia",
-    description: "Dari nol jadi AI Specialist dalam 3 bulan. Course IT dengan integrasi AI tools.",
+    description: "Manfaatin AI buat capai target hidup lu. Course IT dengan integrasi AI tools.",
     images: ["/og"],
   },
 };
@@ -67,7 +66,6 @@ export default function RootLayout({
             <main className="flex-1">{children}</main>
             <SiteFooter />
           </div>
-          <MidtransProvider />
           <Analytics />
         </body>
       </html>
