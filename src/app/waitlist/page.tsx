@@ -102,12 +102,12 @@ export default function WaitlistPage() {
               </p>
               <div className="mt-4 rounded-xl bg-[#FFF3D6] px-4 py-3 text-xs text-[#5C4813] leading-5">
                 💡 Mau course AI? Dua course AI udah live:{" "}
-                <Link href="/courses/ai-untuk-pemula" className="font-bold underline">
+                <Link href="/courses/cyber-security-pemula" className="font-bold underline">
                   Foundation gratis
                 </Link>{" "}
                 atau{" "}
                 <Link
-                  href="/courses/ai-untuk-pemula-mastery"
+                  href="/courses/cyber-security-mastery"
                   className="font-bold underline"
                 >
                   Mastery Founding Members

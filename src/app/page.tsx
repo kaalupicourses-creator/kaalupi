@@ -48,7 +48,7 @@ function withUTM(path: string, content: string) {
 export default async function HomePage() {
   const allCourses = await getCourses();
   const spotlightCourse =
-    allCourses.find((c) => c.slug === "ai-untuk-pemula") ??
+    allCourses.find((c) => c.slug === "cyber-security-pemula") ??
     allCourses.find((c) => c.featured) ??
     allCourses[0];
   const { userId } = await auth();
@@ -71,12 +71,12 @@ export default async function HomePage() {
       "@type": "Offer",
       price: "0",
       priceCurrency: "IDR",
-      description: "Free AI untuk Pemula course",
+      description: "Free Cyber Security untuk Pemula course",
     },
     hasCourse: [
       {
         "@type": "Course",
-        name: "AI untuk Pemula — Dari Nol ke Produktif",
+        name: "Cyber Security untuk Pemula — Dari Nol ke Produktif",
         description: "Pelajari cara kerja AI, prompt engineering, dan cara pakai AI untuk produktivitas",
         provider: { "@type": "Organization", name: "Kaalupi" },
         courseMode: "online",
@@ -113,12 +113,12 @@ export default async function HomePage() {
           </div>
 
           <h1 className="text-4xl font-extrabold leading-tight text-[#2D5016] md:text-5xl lg:text-6xl">
-            Manfaatin <span className="text-[#F5A62A]">AI</span> buat capai target hidup lu
+            Kuasai <span className="text-[#F5A62A]">Cyber Security</span> dari nol
           </h1>
 
           <p className="mt-6 max-w-2xl mx-auto text-lg leading-8 text-[#444444]">
-            Belajar pakai AI buat hemat waktu kerja, bantu bisnis, naikin skill —
-            atau apapun yang lagi lu kejar. Bahasa Indonesia, langsung praktik, pace lu sendiri.
+            Pelajari cara berpikir seperti defender — pahami ancaman, proteksi sistem, dan
+            deteksi serangan. Bahasa Indonesia, langsung praktik, pace lu sendiri.
           </p>
 
           {/* SINGLE PRIMARY CTA — clear direction */}
@@ -133,7 +133,7 @@ export default async function HomePage() {
             {!isSignedIn && (
               <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-[#5C4813]">
                 <Link
-                  href={withUTM("/courses/ai-untuk-pemula", "hero_secondary_free")}
+                  href={withUTM("/courses/cyber-security-pemula", "hero_secondary_free")}
                   className="font-semibold underline-offset-4 transition hover:text-[#F5A62A] hover:underline"
                 >
                   Lihat course gratis →
@@ -151,7 +151,7 @@ export default async function HomePage() {
 
           {/* Founding slot counter — social proof */}
           <div className="mt-6 max-w-md mx-auto">
-            <FoundingSlotCounter slug="ai-untuk-pemula-mastery" variant="inline" />
+            <FoundingSlotCounter slug="cyber-security-mastery" variant="inline" />
           </div>
 
           {/* Trust Signals — honest & spesifik */}
@@ -447,7 +447,7 @@ export default async function HomePage() {
                 </div>
               </div>
               <h3 className="mt-4 text-xl font-extrabold text-[#2D5016]">
-                AI untuk Pemula — Foundation
+                Cyber Security untuk Pemula — Foundation
               </h3>
               <p className="mt-2 text-sm text-[#444444]">
                 Pahami AI dari nol — cara kerjanya, cara nge-prompt yang bener. Cocok buat warming up.
@@ -468,7 +468,7 @@ export default async function HomePage() {
                 ))}
               </ul>
               <Link
-                href={withUTM("/courses/ai-untuk-pemula", "comparison_free")}
+                href={withUTM("/courses/cyber-security-pemula", "comparison_free")}
                 className="mt-6 block rounded-xl border-2 border-[#7AB648] bg-white px-6 py-3 text-center text-sm font-bold text-[#7AB648] hover:bg-[#7AB648] hover:text-white transition"
               >
                 Mulai Gratis →
@@ -491,7 +491,7 @@ export default async function HomePage() {
                 </div>
               </div>
               <h3 className="mt-4 text-xl font-extrabold text-[#2D5016]">
-                AI untuk Pemula — Mastery
+                Cyber Security — Mastery
               </h3>
               <p className="mt-2 text-sm text-[#444444]">
                 Founding Members 100 orang pertama dapet lifetime access ke <strong>SEMUA course Kaalupi</strong> — sekarang & yang akan rilis.
@@ -514,9 +514,9 @@ export default async function HomePage() {
                   </li>
                 ))}
               </ul>
-              <FoundingSlotCounter slug="ai-untuk-pemula-mastery" variant="inline" />
+              <FoundingSlotCounter slug="cyber-security-mastery" variant="inline" />
               <Link
-                href={withUTM("/courses/ai-untuk-pemula-mastery", "comparison_paid")}
+                href={withUTM("/courses/cyber-security-mastery", "comparison_paid")}
                 className="mt-4 block rounded-xl bg-[#F5A62A] px-6 py-3 text-center text-sm font-extrabold text-[#2D5016] hover:opacity-90 shadow-md transition"
               >
                 Daftar Founding Members →
@@ -542,7 +542,7 @@ export default async function HomePage() {
                   Mulai Gratis,<br /><span className="text-[#F5A62A]">Upgrade Kapan Aja</span>
                 </h2>
                 <p className="mt-4 max-w-2xl text-base leading-7 text-[#444444]">
-                  Coba course <strong className="text-[#2D5016]">AI untuk Pemula</strong> gratis dulu — ngga ada catch.
+                  Coba course <strong className="text-[#2D5016]">Cyber Security untuk Pemula</strong> gratis dulu — ngga ada catch.
                   Pas udah ngerasa cocok, jadi Founding Member buat akses semua course.
                 </p>
               </div>
@@ -605,7 +605,7 @@ export default async function HomePage() {
                     Mulai Belajar Gratis →
                   </Link>
                   <Link
-                    href={withUTM("/courses/ai-untuk-pemula-mastery", "spotlight_upgrade_mastery")}
+                    href={withUTM("/courses/cyber-security-mastery", "spotlight_upgrade_mastery")}
                     className="rounded-xl border-2 border-[#2D5016] px-8 py-3.5 text-sm font-bold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-[#FEFBF5]"
                   >
                     Upgrade ke Mastery
@@ -906,17 +906,17 @@ export default async function HomePage() {
                Masih Ragu? Coba Gratis Dulu
              </h2>
             <p className="relative mt-4 max-w-xl mx-auto text-base leading-8" style={{color: 'white'}}>
-              Ngga ada catch. Coba course <strong>AI untuk Pemula</strong> gratis dulu, lihat materinya, baru naik ke Founding Members.
+              Ngga ada catch. Coba course <strong>Cyber Security untuk Pemula</strong> gratis dulu, lihat materinya, baru naik ke Founding Members.
             </p>
             <div className="relative mt-8 flex flex-wrap justify-center gap-4">
               <Link
-                href={withUTM("/courses/ai-untuk-pemula", "cta_start_free")}
+                href={withUTM("/courses/cyber-security-pemula", "cta_start_free")}
                 className="rounded-xl bg-[#F5A62A] px-8 py-3.5 text-sm font-bold text-[#2D5016] transition hover:opacity-90"
               >
                 Mulai Gratis Sekarang →
               </Link>
               <Link
-                href={withUTM("/courses/ai-untuk-pemula-mastery", "cta_upgrade_mastery")}
+                href={withUTM("/courses/cyber-security-mastery", "cta_upgrade_mastery")}
                 className="rounded-xl border-2 border-white/40 px-8 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10"
               >
                 Lihat Mastery

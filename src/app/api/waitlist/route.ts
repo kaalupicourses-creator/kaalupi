@@ -46,11 +46,11 @@ async function sendNotificationEmail(data: Required<WaitlistBody>) {
   await transporter.sendMail({
     from: `"Kaalupi Waitlist" <${user}>`,
     to: waitlistInbox,
-    subject: `Waitlist baru: ${data.nama} - AI untuk Pemula`,
+    subject: `Waitlist baru: ${data.nama} - Cyber Security untuk Pemula`,
     html: `
       <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto; padding: 24px; border: 1px solid #F0E8D8; border-radius: 16px;">
         <h2 style="color: #2D5016; margin-bottom: 4px;">Pendaftar Waitlist Baru!</h2>
-        <p style="color: #444444; font-size: 14px;">Course: <strong>AI untuk Pemula</strong></p>
+        <p style="color: #444444; font-size: 14px;">Course: <strong>Cyber Security untuk Pemula</strong></p>
         <hr style="border: none; border-top: 1px solid #F0E8D8; margin: 16px 0;" />
         <table style="width: 100%; font-size: 14px; color: #444444; border-collapse: collapse;">
           <tr><td style="padding: 6px 0; font-weight: bold; color: #2D5016; width: 100px;">Nama</td><td>${safeNama}</td></tr>

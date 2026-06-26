@@ -76,7 +76,7 @@ export default async function DashboardPage() {
     earnedBadgeIds = new Set(userBadgesData?.map((ub: { badge_id: string }) => ub.badge_id) ?? []);
   } catch {}
 
-  const isFoundingMember = enrollments.includes("ai-untuk-pemula-mastery");
+  const isFoundingMember = enrollments.includes("cyber-security-mastery");
   const inProgressCount = coursesWithProgress.filter((c) => c.progress > 0 && c.progress < 100).length;
   const completedCount = coursesWithProgress.filter((c) => c.progress === 100).length;
   const totalModulesEnrolled = coursesWithProgress.reduce((s, c) => s + c.modules.length, 0);

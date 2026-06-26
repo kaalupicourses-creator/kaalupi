@@ -195,26 +195,26 @@ export const audienceTracks = [
 ];
 
 export const courses: Course[] = [
-  // 🆓 FOUNDATION (FREE) - Top of funnel, lead magnet
+  // ─── CYBER SECURITY (Kamil) ───────────────────────────────────────────────
   {
-    slug: "ai-untuk-pemula",
-    title: "AI untuk Pemula — Foundation",
-    category: "Artificial Intelligence",
+    slug: "cyber-security-pemula",
+    title: "Cyber Security untuk Pemula — Foundation",
+    category: "Cyber Security",
     level: "Beginner",
     duration: "Self-paced",
     price: 0,
     summary:
-      "Mulai gratis: pahami cara kerja AI dan dasar prompt engineering. Cocok buat semua orang yang penasaran sama AI, tanpa background teknis.",
+      "Mulai gratis: pahami lanskap ancaman siber, cara kerja hacker, dan langkah konkret melindungi diri & bisnis. Tanpa background teknis.",
     hero:
-      "Foundation gratis: pahami AI dari nol — cara kerjanya, cara nge-prompt yang bener. Akses 2 modul pertama tanpa biaya, langsung praktik.",
+      "Foundation gratis: pahami dunia cyber security dari sudut pandang defender — ancaman nyata, tools dasar, dan kebiasaan aman di digital. 2 modul pertama gratis.",
     outcomes: [
-      "Memahami cara kerja AI dan model bahasa (LLM) secara konseptual",
-      "Membuat prompt yang efektif untuk berbagai kebutuhan dasar",
-      "Mencoba langsung AI tools populer (ChatGPT, Claude, Gemini)",
+      "Memahami jenis-jenis ancaman siber yang paling umum (phishing, malware, social engineering)",
+      "Menerapkan kebiasaan keamanan digital dasar yang efektif",
+      "Mengenal tools dan mindset seorang cyber security analyst",
     ],
     modules: [
-      "Cara kerja AI & Large Language Models",
-      "Prompt Engineering dasar",
+      "Landscape ancaman siber & mindset defender",
+      "Keamanan digital dasar: password, 2FA, dan phishing",
     ],
     format: "video",
     featured: true,
@@ -223,34 +223,33 @@ export const courses: Course[] = [
     is_published: true,
   },
 
-  // MASTERY (PAID) - Bottom of funnel, revenue
   {
-    slug: "ai-untuk-pemula-mastery",
-    title: "AI untuk Pemula — Mastery (Founding Members)",
-    category: "Artificial Intelligence",
+    slug: "cyber-security-mastery",
+    title: "Cyber Security — Mastery (Founding Members)",
+    category: "Cyber Security",
     level: "Beginner to Intermediate",
     duration: "Self-paced",
-    price: 149000, // active price (founding price selama quota belum habis)
-    original_price: 299000, // harga normal (untuk strikethrough)
+    price: 149000,
+    original_price: 299000,
     founding_members_limit: 100,
     founding_price: 149000,
     regular_price: 299000,
     summary:
-      "Founding Members — 100 orang pertama dapet akses lifetime ke semua course Kaalupi (termasuk yang akan rilis: Network, Cyber, Designer, Data Science). Harga balik normal 299K setelah slot habis.",
+      "Founding Members — 100 orang pertama dapet akses lifetime ke semua course Kaalupi (termasuk yang akan rilis). Kuasai cyber security dari zero sampai bisa kerja sebagai analyst.",
     hero:
-      "Bukan cuma course AI — Founding Members dapet lifetime access ke SEMUA course Kaalupi sekarang dan yang akan rilis. Slot terbatas 100 orang pertama, harga balik ke Rp 299K setelahnya.",
+      "Bukan cuma course Cyber Security — Founding Members dapet lifetime access ke SEMUA course Kaalupi sekarang dan yang akan rilis. 100 slot pertama, harga balik Rp 299K setelahnya.",
     outcomes: [
-      "Menguasai prompt engineering dari dasar sampai advanced (chain-of-thought, role prompting, few-shot)",
-      "Pakai AI buat hemat 2-3 jam kerja per hari (email, analisis, riset, dokumentasi)",
-      "Bangun workflow AI di pekerjaan dan bisnis lu sendiri",
-      "Punya portfolio project AI yang siap dipajang di LinkedIn",
+      "Memahami web security dan OWASP Top 10 secara praktis",
+      "Bisa melakukan basic network monitoring dan log analysis",
+      "Mengenal incident response workflow seperti SOC analyst sungguhan",
+      "Punya portofolio lab cyber security yang bisa dipajang di LinkedIn",
     ],
     modules: [
-      "Cara kerja AI & Large Language Models",
-      "Prompt Engineering dasar hingga lanjut",
-      "AI untuk produktivitas dan pekerjaan",
-      "AI untuk bisnis dan karier",
-      "Tools AI 2026 + Final Project Portfolio",
+      "Landscape ancaman siber & mindset defender",
+      "Web Security & OWASP Top 10",
+      "Network Security & Traffic Monitoring",
+      "Incident Response & Log Analysis",
+      "Tools, Career Path & Final Lab Portfolio",
     ],
     format: "blended",
     featured: true,
@@ -264,7 +263,81 @@ export const courses: Course[] = [
       "Akses Discord komunitas Founding Members",
       "Badge Founding Member eksklusif & permanen",
       "Update materi gratis selamanya",
-      "Final Project: Portfolio AI yang bisa dipajang",
+      "Final Project: Lab portfolio cyber security",
+    ],
+  },
+
+  // ─── PROGRAMMING (Fairus) ─────────────────────────────────────────────────
+  {
+    slug: "programming-pemula",
+    title: "Programming untuk Pemula — Foundation",
+    category: "Programming",
+    level: "Beginner",
+    duration: "Self-paced",
+    price: 0,
+    summary:
+      "Mulai gratis: pelajari logika programming dan dasar-dasar web development. Cocok buat siapa aja yang mau mulai bisa coding dari nol.",
+    hero:
+      "Foundation gratis: pahami cara berpikir programmer — logika, problem solving, dan kode pertama lu. 2 modul intro tanpa biaya.",
+    outcomes: [
+      "Memahami logika dan pola pikir programming",
+      "Menulis kode dasar menggunakan JavaScript/Python",
+      "Mengenal struktur project web sederhana",
+    ],
+    modules: [
+      "Logika programming & computational thinking",
+      "Kode pertama lu: JavaScript/Python dasar",
+    ],
+    format: "video",
+    featured: false,
+    comingSoon: true,
+    is_free: true,
+    is_lifetime_access: true,
+    is_published: false,
+  },
+
+  {
+    slug: "programming-mastery",
+    title: "Programming — Mastery (Founding Members)",
+    category: "Programming",
+    level: "Beginner to Intermediate",
+    duration: "Self-paced",
+    price: 149000,
+    original_price: 299000,
+    founding_members_limit: 100,
+    founding_price: 149000,
+    regular_price: 299000,
+    summary:
+      "Kuasai web development dari dasar sampai deploy — Founding Members dapet lifetime access ke semua course Kaalupi.",
+    hero:
+      "Dari logika sampai web app yang beneran jalan di internet. Founding Members dapet lifetime access ke SEMUA course Kaalupi.",
+    outcomes: [
+      "Membangun web application dengan HTML, CSS, dan JavaScript",
+      "Mengerti konsep backend: API, database, dan autentikasi",
+      "Bisa deploy project ke internet sendiri",
+      "Punya portofolio project nyata di GitHub",
+    ],
+    modules: [
+      "Logika programming & computational thinking",
+      "Web Frontend: HTML, CSS, JavaScript",
+      "Backend Dasar: API & Database",
+      "Version Control & Deployment",
+      "Final Project: Web App Portfolio",
+    ],
+    format: "blended",
+    featured: false,
+    comingSoon: true,
+    is_free: false,
+    is_lifetime_access: true,
+    is_published: false,
+    perks: [
+      "Lifetime access ke SEMUA course Kaalupi (sekarang & yang akan rilis)",
+      "Sertifikat resmi Kaalupi (PDF + LinkedIn share)",
+      "AI Tutor 24/7 — tanya apa aja per modul",
+      "Akses Discord komunitas Founding Members",
+      "Badge Founding Member eksklusif & permanen",
+      "Update materi gratis selamanya",
+      "Final Project: Web App yang bisa dipakai beneran",
     ],
   },
 ];

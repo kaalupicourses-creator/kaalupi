@@ -40,7 +40,7 @@ export function DashboardOnboarding({ userName, enrollmentsCount }: DashboardOnb
                 Mantap, {userName}! Lu udah resmi gabung.
               </p>
               <p className="text-xs text-[#5C4813]">
-                Course &quot;AI untuk Pemula&quot; otomatis ke-enroll. Mulai modul pertama bareng kami.
+                Course &quot;Cyber Security untuk Pemula&quot; otomatis ke-enroll. Mulai modul pertama bareng kami.
               </p>
             </div>
           </div>
@@ -73,7 +73,7 @@ export function DashboardOnboarding({ userName, enrollmentsCount }: DashboardOnb
 
               <div className="mt-6 space-y-3">
                 <Link
-                  href="/courses/ai-untuk-pemula"
+                  href="/courses/cyber-security-pemula"
                   className="flex items-start gap-4 rounded-xl border border-[#F5A62A]/40 bg-white/70 p-4 transition hover:border-[#F5A62A] hover:bg-white"
                 >
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#F5A62A] text-xs font-bold text-[#2D5016]">
@@ -82,7 +82,7 @@ export function DashboardOnboarding({ userName, enrollmentsCount }: DashboardOnb
                   <div className="flex-1">
                     <p className="font-bold text-[#2D5016]">Mulai Course Gratis</p>
                     <p className="mt-0.5 text-sm text-[#5C4813]">
-                      &quot;AI untuk Pemula&quot; — 2 modul singkat. Foundation buat semua track.
+                      &quot;Cyber Security untuk Pemula&quot; — 2 modul singkat. Foundation buat semua track.
                     </p>
                   </div>
                   <span className="text-sm font-bold text-[#F5A62A]">→</span>
@@ -107,7 +107,7 @@ export function DashboardOnboarding({ userName, enrollmentsCount }: DashboardOnb
                 </a>
 
                 <Link
-                  href="/courses/ai-untuk-pemula-mastery"
+                  href="/courses/cyber-security-mastery"
                   className="flex items-start gap-4 rounded-xl border border-[#F5A62A]/40 bg-white/70 p-4 transition hover:border-[#F5A62A] hover:bg-white"
                 >
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#F5A62A] text-xs font-bold text-[#2D5016]">

@@ -52,11 +52,11 @@ export async function POST(request: Request) {
 
   // Auto-assign Founding Member badge for first 100 buyers of mastery
   let foundingBadgeAwarded = false;
-  if (order.course_slug === "ai-untuk-pemula-mastery") {
+  if (order.course_slug === "cyber-security-mastery") {
     const { count: enrolledCount } = await supabaseAdmin
       .from("enrollments")
       .select("id", { count: "exact", head: true })
-      .eq("course_slug", "ai-untuk-pemula-mastery")
+      .eq("course_slug", "cyber-security-mastery")
       .eq("status", "active");
 
     if ((enrolledCount ?? 0) <= 100) {

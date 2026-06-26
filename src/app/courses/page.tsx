@@ -6,8 +6,8 @@ import { courses, comingSoonTracks } from "@/lib/data";
 import { getEnrollments } from "@/lib/db";
 
 export default async function CoursesPage() {
-  const foundation = courses.find((c) => c.slug === "ai-untuk-pemula");
-  const mastery = courses.find((c) => c.slug === "ai-untuk-pemula-mastery");
+  const foundation = courses.find((c) => c.slug === "cyber-security-pemula");
+  const mastery = courses.find((c) => c.slug === "cyber-security-mastery");
 
   // Cek enrollment status user (kalau login)
   const { userId } = await auth();

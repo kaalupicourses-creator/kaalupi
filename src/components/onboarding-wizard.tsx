@@ -362,7 +362,7 @@ export function OnboardingWizard() {
             <div className="mt-6 rounded-xl bg-[#E8F5E9] p-4 text-center">
               <p className="text-xs text-[#2D5016]">
                 <strong>♾️ Bonus:</strong> Begitu setup selesai, kami otomatis enroll kamu ke course{" "}
-                <strong>AI untuk Pemula</strong> (gratis · lifetime).
+                <strong>Cyber Security untuk Pemula</strong> (gratis · lifetime).
               </p>
             </div>
 
@@ -400,7 +400,7 @@ export function OnboardingWizard() {
               <div className="rounded-2xl border border-[#F0E8D8] bg-white p-5 text-left">
                 <span className="text-2xl">📚</span>
                 <p className="mt-2 text-sm font-bold text-[#2D5016]">Course Aktif</p>
-                <p className="mt-1 text-xs text-[#444]">AI untuk Pemula auto-enrolled</p>
+                <p className="mt-1 text-xs text-[#444]">Cyber Security untuk Pemula auto-enrolled</p>
               </div>
               <div className="rounded-2xl border border-[#F0E8D8] bg-white p-5 text-left">
                 <span className="text-2xl">🎯</span>

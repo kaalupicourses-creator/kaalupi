@@ -3,7 +3,7 @@
 import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import { createEnrollment } from "@/lib/db";
 
-const FREE_COURSE_SLUG = "ai-untuk-pemula";
+const FREE_COURSE_SLUG = "cyber-security-pemula";
 
 async function autoEnrollFreeCourse(): Promise<void> {
   const user = await currentUser();

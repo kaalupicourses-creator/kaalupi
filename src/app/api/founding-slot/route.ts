@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 /**
- * GET /api/founding-slot?slug=ai-untuk-pemula-mastery
+ * GET /api/founding-slot?slug=cyber-security-mastery
  * Returns realtime founding members slot info.
  *
  * Note: 4 slots are reserved for the founding team (Kamil, Akbar, Fadhel, Lutfi),

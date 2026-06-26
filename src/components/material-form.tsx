@@ -63,7 +63,7 @@ export function MaterialForm() {
           <input
             name="title"
             required
-            placeholder="e.g. AI untuk Pemula"
+            placeholder="e.g. Cyber Security untuk Pemula"
             className={inputClass}
           />
         </div>
