@@ -1,4 +1,4 @@
-export type UserRole = "admin" | "instructor" | "student";
+export type UserRole = "super_admin" | "admin" | "instructor" | "student";
 
 export type Course = {
   slug: string;

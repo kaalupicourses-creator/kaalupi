@@ -161,5 +161,12 @@ export async function saveCustomCourse(course: {
 }
 
 export function canManageContent(role?: UserRole | null) {
-  return role === "admin" || role === "instructor";
+  return role === "super_admin" || role === "admin" || role === "instructor";
+}
+
+// Super admin — owner only, identified by email (not Clerk metadata)
+const SUPER_ADMIN_EMAIL = "kamilalfaris@gmail.com";
+
+export function isSuperAdmin(email?: string | null): boolean {
+  return !!email && email.toLowerCase() === SUPER_ADMIN_EMAIL;
 }

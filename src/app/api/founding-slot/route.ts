@@ -8,7 +8,6 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
  * Note: 4 slots are reserved for the founding team (Kamil, Akbar, Fadhel, Lutfi),
  * so the public counter starts from 4 to reflect that the team itself is committed.
  */
-const TEAM_BASELINE = 4;
 const FOUNDING_LIMIT = 100;
 const FOUNDING_PRICE = 149_000;
 const REGULAR_PRICE = 299_000;
@@ -37,9 +36,7 @@ export async function GET(request: Request) {
     console.error("[founding-slot] supabase admin error:", err);
   }
 
-  // Real founding members = baseline team (4) + actual paying enrollments.
-  // Additive: tiap user yg bayar Mastery, counter naik 1 dari baseline.
-  const taken = Math.min(FOUNDING_LIMIT, TEAM_BASELINE + actualEnrolled);
+  const taken = Math.min(FOUNDING_LIMIT, actualEnrolled);
   const remaining = Math.max(0, FOUNDING_LIMIT - taken);
   const isSoldOut = taken >= FOUNDING_LIMIT;
 
