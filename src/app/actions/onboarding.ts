@@ -1,20 +1,6 @@
 "use server";
 
-import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
-import { createEnrollment } from "@/lib/db";
-
-const FREE_COURSE_SLUG = "cyber-security-pemula";
-
-async function autoEnrollFreeCourse(): Promise<void> {
-  const user = await currentUser();
-  const email = user?.primaryEmailAddress?.emailAddress;
-  if (!email) return;
-  try {
-    await createEnrollment(email, FREE_COURSE_SLUG);
-  } catch (err) {
-    console.error("auto-enroll failed", err);
-  }
-}
+import { auth, clerkClient } from "@clerk/nextjs/server";
 
 export async function completeOnboarding(formData: FormData) {
   const { userId } = await auth();
@@ -39,7 +25,6 @@ export async function completeOnboarding(formData: FormData) {
         intent_join_whatsapp: joinWhatsapp,
       },
     });
-    await autoEnrollFreeCourse();
     return { success: true };
   } catch {
     return { success: false, error: "Failed to save onboarding data" };
@@ -61,7 +46,6 @@ export async function skipOnboarding() {
         onboarding_skipped: true,
       },
     });
-    await autoEnrollFreeCourse();
     return { success: true };
   } catch {
     return { success: false, error: "Failed to skip onboarding" };

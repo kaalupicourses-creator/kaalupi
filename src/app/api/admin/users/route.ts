@@ -118,7 +118,7 @@ export async function PATCH(request: Request) {
     if (action === "grant_founding") {
       // Also enroll into mastery course
       await supabase.from("enrollments").upsert(
-        { user_email: targetEmail, course_slug: "cyber-security-mastery", status: "active" },
+        { user_email: targetEmail, course_slug: "cyber-security-pemula", status: "active" },
         { onConflict: "user_email,course_slug" },
       );
       await supabase.from("user_badges").upsert(
@@ -135,7 +135,7 @@ export async function PATCH(request: Request) {
       await supabase.from("enrollments")
         .delete()
         .eq("user_email", targetEmail)
-        .eq("course_slug", "cyber-security-mastery");
+        .eq("course_slug", "cyber-security-pemula");
       return NextResponse.json({ success: true, action: "revoked", email: targetEmail });
     }
   }

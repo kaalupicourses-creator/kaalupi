@@ -178,18 +178,41 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
               </div>
               <div>
                 <h2 className="text-2xl font-extrabold text-[#2D5016]">Modul Course</h2>
-                <div className="mt-6 space-y-3">
-                  {course.modules.map((item, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center gap-4 rounded-xl border border-[#F0E8D8] bg-white px-5 py-4 transition hover:border-[#F5A62A]"
-                    >
-                      <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-[#FFF3D6] text-xs font-bold text-[#F5A62A]">
-                        {index + 1}
+                {course.free_modules_count ? (
+                  <p className="mt-2 text-sm text-[#5C4813]">
+                    {course.free_modules_count} modul pertama gratis · {course.modules.length - course.free_modules_count} modul berikutnya untuk Founding Members
+                  </p>
+                ) : null}
+                <div className="mt-4 space-y-3">
+                  {course.modules.map((item, index) => {
+                    const isFree = course.free_modules_count ? index < course.free_modules_count : false;
+                    return (
+                      <div
+                        key={index}
+                        className={`flex items-center gap-4 rounded-xl border px-5 py-4 transition ${
+                          isFree ? "border-green-200 bg-white hover:border-[#7AB648]" : "border-[#F0E8D8] bg-[#FAFAFA]"
+                        }`}
+                      >
+                        <div className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-xs font-bold ${
+                          isFree ? "bg-[#FFF3D6] text-[#F5A62A]" : "bg-[#F0E8D8] text-[#999]"
+                        }`}>
+                          {isFree ? (
+                            index + 1
+                          ) : (
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                          )}
+                        </div>
+                        <p className={`flex-1 text-sm ${isFree ? "text-[#444444]" : "text-[#999]"}`}>{item}</p>
+                        {isFree ? (
+                          <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-bold text-green-700">Gratis</span>
+                        ) : (
+                          <span className="rounded-full bg-[#FFF3D6] px-2 py-0.5 text-xs font-semibold text-[#5C4813]">Founding</span>
+                        )}
                       </div>
-                      <p className="text-sm text-[#444444]">{item}</p>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -226,18 +249,38 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
                   </div>
                 )}
 
-                <div className="mt-6">
+                <div className="mt-6 space-y-3">
                   {hasAccess ? (
                     <Link
                       href={`/access/${course.slug}`}
                       className="block rounded-xl bg-[#F5A62A] px-5 py-3.5 text-center text-sm font-bold text-[#2D5016] hover:opacity-90 transition"
                     >
-                      Mulai Belajar
+                      Lanjut Belajar →
                     </Link>
                   ) : !userId ? (
-                    <CourseEnrollPrompt slug={course.slug} isFree={course.is_free} />
-                  ) : course.is_free ? (
-                    <FreeEnrollButton slug={course.slug} />
+                    <>
+                      <CourseEnrollPrompt slug={course.slug} isFree={!!course.free_modules_count} />
+                      {course.free_modules_count ? (
+                        <p className="text-center text-xs text-[#5C4813]">
+                          Daftar gratis → akses {course.free_modules_count} modul pertama langsung
+                        </p>
+                      ) : null}
+                    </>
+                  ) : course.free_modules_count ? (
+                    <>
+                      <Link
+                        href={`/access/${course.slug}?module=0`}
+                        className="block rounded-xl bg-[#F5A62A] px-5 py-3.5 text-center text-sm font-bold text-[#2D5016] hover:opacity-90 transition shadow-md"
+                      >
+                        Mulai {course.free_modules_count} Modul Gratis →
+                      </Link>
+                      <Link
+                        href={`/checkout/${course.slug}`}
+                        className="block rounded-xl border-2 border-[#2D5016] px-5 py-3 text-center text-sm font-bold text-[#2D5016] hover:bg-[#2D5016] hover:text-white transition"
+                      >
+                        Akses Semua {course.modules.length} Modul — Founding Member
+                      </Link>
+                    </>
                   ) : (
                     <Link
                       href={`/checkout/${course.slug}`}

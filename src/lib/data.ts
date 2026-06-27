@@ -22,6 +22,7 @@ export type Course = {
   founding_members_limit?: number; // total slot early bird (e.g., 100)
   founding_price?: number; // harga early bird
   regular_price?: number; // harga setelah quota habis
+  free_modules_count?: number; // first N modules free, rest need paid enrollment
   perks?: string[]; // bullet point perks (Discord, AI Tutor, dll)
 };
 
@@ -198,48 +199,23 @@ export const courses: Course[] = [
   // ─── CYBER SECURITY (Kamil) ───────────────────────────────────────────────
   {
     slug: "cyber-security-pemula",
-    title: "Cyber Security untuk Pemula — Foundation",
-    category: "Cyber Security",
-    level: "Beginner",
-    duration: "Self-paced",
-    price: 0,
-    summary:
-      "Mulai gratis: 3 modul pertama terbuka untuk semua. Pahami ancaman siber, kebiasaan keamanan digital, dan tools dasar — tanpa background teknis. Lanjut ke 5 modul berikutnya dengan jadi Founding Member.",
-    hero:
-      "3 modul pertama gratis — langsung mulai tanpa kartu kredit. Pahami dunia cyber security dari sudut pandang defender: ancaman nyata, cara kerja hacker, dan kebiasaan aman yang langsung bisa diterapkan.",
-    outcomes: [
-      "Memahami jenis ancaman siber yang paling umum: phishing, malware, social engineering",
-      "Menerapkan kebiasaan keamanan digital yang efektif mulai hari ini",
-      "Mengenal tools dan mindset seorang cyber security analyst",
-    ],
-    modules: [
-      "Modul 1 — Landscape ancaman siber & mindset defender",
-      "Modul 2 — Keamanan digital dasar: password, 2FA, dan phishing",
-      "Modul 3 — Mengenal tools keamanan: VPN, antivirus, dan firewall",
-    ],
-    format: "video",
-    featured: true,
-    is_free: true,
-    is_lifetime_access: true,
-    is_published: true,
-  },
-
-  {
-    slug: "cyber-security-mastery",
-    title: "Cyber Security — Mastery (Founding Members)",
+    title: "Cyber Security untuk Pemula",
     category: "Cyber Security",
     level: "Beginner to Intermediate",
     duration: "Self-paced",
     price: 149000,
     original_price: 299000,
+    free_modules_count: 3,
     founding_members_limit: 100,
     founding_price: 149000,
     regular_price: 299000,
     summary:
-      "Lanjutan dari Foundation — 5 modul advanced: web security, network monitoring, incident response, pentest basics, dan final lab portfolio. 100 Founding Members pertama dapet lifetime access ke SEMUA course Kaalupi.",
+      "3 modul pertama gratis, tanpa kartu kredit. Selesaikan modul gratis, lanjut ke 5 modul advanced dengan jadi Founding Member (100 slot pertama, Rp 149K — naik ke Rp 299K setelahnya).",
     hero:
-      "Udah selesai 3 modul gratis? Lanjut ke 5 modul berikutnya — web security, pentest, SOC workflow, dan final lab. Founding Members (100 slot) dapet lifetime access ke SEMUA course Kaalupi, sekarang dan yang akan rilis.",
+      "Mulai gratis — 3 modul pertama terbuka untuk semua. Pahami ancaman siber, cara kerja hacker, dan langkah konkret melindungi diri. Selesaikan modul gratis, lanjut ke web security, pentest, SOC, dan final lab sebagai Founding Member.",
     outcomes: [
+      "Memahami jenis ancaman siber: phishing, malware, social engineering",
+      "Menerapkan kebiasaan keamanan digital yang efektif mulai hari ini",
       "Memahami Web Security & OWASP Top 10 secara praktis",
       "Bisa melakukan basic network monitoring dan traffic analysis",
       "Mengenal incident response workflow seperti SOC analyst sungguhan",
@@ -247,11 +223,14 @@ export const courses: Course[] = [
       "Punya final lab portfolio cyber security yang bisa dipajang di LinkedIn",
     ],
     modules: [
-      "Modul 4 — Web Security & OWASP Top 10",
-      "Modul 5 — Network Security & Traffic Monitoring",
-      "Modul 6 — Incident Response & Log Analysis",
-      "Modul 7 — Pentest Basics & Ethical Hacking Lab",
-      "Modul 8 — Career Path, Tools, & Final Lab Portfolio",
+      "Landscape ancaman siber & mindset defender",
+      "Keamanan digital dasar: password, 2FA, dan phishing",
+      "Mengenal tools keamanan: VPN, antivirus, dan firewall",
+      "Web Security & OWASP Top 10",
+      "Network Security & Traffic Monitoring",
+      "Incident Response & Log Analysis",
+      "Pentest Basics & Ethical Hacking Lab",
+      "Career Path, Tools, & Final Lab Portfolio",
     ],
     format: "blended",
     featured: true,
@@ -259,6 +238,7 @@ export const courses: Course[] = [
     is_lifetime_access: true,
     is_published: true,
     perks: [
+      "3 modul pertama gratis — langsung mulai tanpa bayar",
       "5 modul advanced: web security, pentest, SOC, & final lab",
       "Lifetime access ke SEMUA course Kaalupi (sekarang & yang akan rilis)",
       "Sertifikat resmi Kaalupi (PDF + LinkedIn share)",
@@ -266,7 +246,6 @@ export const courses: Course[] = [
       "Akses Discord komunitas Founding Members",
       "Badge Founding Member eksklusif & permanen di profil",
       "Update materi gratis selamanya",
-      "Final Project: Lab portfolio cyber security siap pajang",
     ],
   },
 
