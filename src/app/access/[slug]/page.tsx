@@ -5,19 +5,16 @@ import Link from "next/link";
 import { getEnrollments, getProgress, updateProgress, getCourseMaterials } from "@/lib/db";
 import { getCourseBySlug } from "@/lib/content";
 import { ProgressTracker } from "@/components/progress-tracker";
-import { CourseThumbnail } from "@/components/course-thumbnail";
 import { VideoPlayer } from "@/components/video-player";
 import { CertificateButton } from "@/components/certificate-button";
 import { AiTutorChat } from "@/components/ai-tutor-chat";
-
-const formatter = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 });
 
 export default async function CourseAccessPage({
   params,
   searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ module?: string }>;
+  searchParams: Promise<{ module?: string; mat?: string }>;
 }) {
   const { userId } = await auth();
   if (!userId) redirect("/login?redirect=/access");
@@ -30,326 +27,277 @@ export default async function CourseAccessPage({
   if (!course) redirect("/access");
 
   let enrollments: string[] = [];
-  try {
-    enrollments = await getEnrollments(userEmail);
-  } catch (err) {
-    console.error("[access] getEnrollments failed:", err);
-  }
-
-  const freeCount = course.free_modules_count ?? 0;
+  try { enrollments = await getEnrollments(userEmail); } catch {}
   const hasPaidAccess = enrollments.includes(course.slug);
+  const freeCount = course.free_modules_count ?? 0;
 
-  // If course has no free modules and user has no access → go checkout
-  if (freeCount === 0 && !hasPaidAccess) {
-    redirect(`/checkout/${course.slug}`);
-  }
+  if (freeCount === 0 && !hasPaidAccess) redirect(`/checkout/${course.slug}`);
 
-  const { module: moduleParam } = await searchParams;
-  const currentModuleIndex = moduleParam ? parseInt(moduleParam, 10) : 0;
-  const validModuleIndex = Math.max(
-    0,
-    Math.min(Number.isFinite(currentModuleIndex) ? currentModuleIndex : 0, course.modules.length - 1),
-  );
-
-  const isModuleFree = validModuleIndex < freeCount;
-  const canAccessModule = isModuleFree || hasPaidAccess;
-
-  let materials: Awaited<ReturnType<typeof getCourseMaterials>> = [];
-  try {
-    materials = await getCourseMaterials(course.slug);
-  } catch (err) {
-    console.error("[access] getCourseMaterials failed:", err);
-  }
-  const moduleMaterials = materials
-    .filter((m) => m.module_index === validModuleIndex)
-    .sort((a, b) => a.order_index - b.order_index);
+  let allMaterials: Awaited<ReturnType<typeof getCourseMaterials>> = [];
+  try { allMaterials = await getCourseMaterials(course.slug); } catch {}
+  allMaterials.sort((a, b) => a.module_index - b.module_index || a.order_index - b.order_index);
 
   let progress: Awaited<ReturnType<typeof getProgress>> = [];
-  try {
-    progress = await getProgress(userEmail, course.slug);
-  } catch (err) {
-    console.error("[access] getProgress failed:", err);
-  }
+  try { progress = await getProgress(userEmail, course.slug); } catch {}
   const completedModules = progress.filter((p) => p.completed).map((p) => p.module_index);
 
-  const courseSlug = course.slug;
-  const totalModules = course.modules.length;
+  // Resolve active material from ?mat=ID or ?module=X, fallback to first material
+  const sp = await searchParams;
+  let activeMat = allMaterials.find((m) => m.id === sp.mat) ?? null;
+  if (!activeMat && sp.module !== undefined) {
+    const modIdx = parseInt(sp.module, 10);
+    activeMat = allMaterials.find((m) => m.module_index === modIdx) ?? null;
+  }
+  if (!activeMat) activeMat = allMaterials[0] ?? null;
 
+  const activeModuleIndex = activeMat?.module_index ?? 0;
+  const isModuleFree = activeModuleIndex < freeCount;
+  const canAccess = isModuleFree || hasPaidAccess;
+
+  // Prev / Next material in full list
+  const activeIdx = activeMat ? allMaterials.findIndex((m) => m.id === activeMat!.id) : -1;
+  const prevMat = activeIdx > 0 ? allMaterials[activeIdx - 1] : null;
+  const nextMat = activeIdx >= 0 && activeIdx < allMaterials.length - 1 ? allMaterials[activeIdx + 1] : null;
+
+  const totalModules = course.modules.length;
+  const completedCount = completedModules.length;
+  const progressPercent = totalModules > 0 ? Math.round((completedCount / totalModules) * 100) : 0;
+  const courseFinished = hasPaidAccess && completedCount === totalModules && totalModules > 0;
+
+  const courseSlug = course.slug;
   async function markModuleComplete(moduleIndex: number) {
     "use server";
     try {
       await updateProgress(userEmail, courseSlug, moduleIndex, true);
       revalidatePath(`/access/${courseSlug}`);
       revalidatePath("/dashboard");
-    } catch (err) {
-      console.error("[access] updateProgress failed:", err);
-    }
+    } catch {}
   }
 
-  const completedCount = completedModules.length;
-  // Progress only counts free modules until paid, full 8 after
-  const progressPercent = totalModules > 0 ? Math.round((completedCount / totalModules) * 100) : 0;
-  const courseFinished = hasPaidAccess && completedCount === totalModules && totalModules > 0;
+  // Group materials by module for sidebar
+  const byModule = course.modules.map((modName, idx) => ({
+    name: modName,
+    idx,
+    materials: allMaterials.filter((m) => m.module_index === idx),
+    isLocked: idx >= freeCount && !hasPaidAccess,
+    isCompleted: completedModules.includes(idx),
+  }));
 
   return (
-    <div className="bg-[#FEFBF5] min-h-screen">
-      <div className="mx-auto max-w-7xl px-6 py-12">
-        <div className="mb-8 flex flex-wrap items-center gap-4">
+    <div className="flex h-screen flex-col overflow-hidden bg-[#111]">
+      {/* Top bar */}
+      <header className="flex h-12 flex-shrink-0 items-center justify-between border-b border-white/10 bg-[#1A1A1A] px-4">
+        <div className="flex items-center gap-3 min-w-0">
           <Link
             href="/dashboard"
-            className="flex items-center gap-2 rounded-xl border-2 border-[#2D5016] px-4 py-2 text-sm font-semibold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-white"
+            className="flex-shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-white/60 hover:bg-white/10 hover:text-white transition"
           >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-            Dashboard
+            ← Dashboard
           </Link>
-          <div className="h-6 w-px bg-[#F0E8D8]" />
-          <div>
-            <span className="rounded-full bg-[#F0E8D8] px-2 py-0.5 text-xs font-semibold text-[#2D5016]">{course.category}</span>
-            <h1 className="mt-1 text-2xl font-extrabold text-[#2D5016]">{course.title}</h1>
-          </div>
+          <span className="text-white/20">|</span>
+          <span className="truncate text-sm font-semibold text-white/80">{course.title}</span>
         </div>
-
-        <div className="grid gap-8 lg:grid-cols-[1.5fr_1fr]">
-          <div className="space-y-6">
-            {canAccessModule ? (
-              moduleMaterials.length > 0 ? (
-                moduleMaterials.map((mat) => (
-                  <div
-                    key={mat.id}
-                    className="overflow-hidden rounded-2xl border border-[#F0E8D8] bg-white shadow-sm"
-                  >
-                    {mat.video_url ? <VideoPlayer src={mat.video_url} title={mat.title} /> : null}
-                    {mat.content ? (
-                      <div className="p-6">
-                        {!mat.video_url && <h2 className="text-xl font-bold text-[#2D5016]">{mat.title}</h2>}
-                        <div
-                          className={`${mat.video_url ? "" : "mt-4"} course-content`}
-                          dangerouslySetInnerHTML={{ __html: mat.content }}
-                        />
-                      </div>
-                    ) : !mat.video_url ? (
-                      <div className="p-10 text-center">
-                        <p className="text-sm text-[#444444]">Konten sedang dipersiapkan</p>
-                      </div>
-                    ) : null}
-                  </div>
-                ))
-              ) : (
-                <div className="overflow-hidden rounded-2xl border border-[#F0E8D8] bg-white">
-                  <CourseThumbnail title={course.title} category={course.category} large />
-                  <div className="p-6 text-center">
-                    <p className="text-sm font-semibold text-[#2D5016]">Materi modul ini belum tersedia</p>
-                    <p className="mt-2 text-xs text-[#5C4813]">
-                      Tim Kaalupi sedang siapin video & materi. Pantau dashboard untuk update.
-                    </p>
-                  </div>
-                </div>
-              )
-            ) : (
-              /* Paywall card for locked modules */
-              <div className="overflow-hidden rounded-2xl border-2 border-[#F5A62A] bg-white shadow-md">
-                <div className="bg-[#FFF3D6] px-6 py-4 flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F5A62A]/20">
-                    <svg className="h-5 w-5 text-[#F5A62A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="font-extrabold text-[#2D5016]">Modul {validModuleIndex + 1} — Konten Berbayar</p>
-                    <p className="text-xs text-[#5C4813]">Selesaikan 3 modul gratis dulu, lalu lanjut ke sini</p>
-                  </div>
-                </div>
-                <div className="p-8 text-center">
-                  <p className="text-2xl font-extrabold text-[#2D5016]">Jadi Founding Member</p>
-                  <p className="mt-2 text-sm text-[#444]">
-                    Akses modul 4–8 + lifetime access ke SEMUA course Kaalupi yang akan rilis.
-                    <br />100 slot pertama — harga naik ke Rp 299K setelahnya.
-                  </p>
-                  <div className="mt-4 flex items-baseline justify-center gap-2">
-                    <span className="text-3xl font-extrabold text-[#F5A62A]">
-                      {formatter.format(course.founding_price ?? course.price)}
-                    </span>
-                    <span className="text-sm text-[#999] line-through">
-                      {formatter.format(course.regular_price ?? course.original_price ?? 0)}
-                    </span>
-                  </div>
-                  <Link
-                    href={`/checkout/${course.slug}`}
-                    className="mt-6 inline-block rounded-xl bg-[#F5A62A] px-8 py-3.5 text-sm font-bold text-[#2D5016] shadow-md transition hover:opacity-90"
-                  >
-                    Lanjut ke Pembayaran →
-                  </Link>
-                  {course.perks && (
-                    <div className="mt-6 space-y-2 text-left">
-                      {course.perks.map((perk) => (
-                        <div key={perk} className="flex items-start gap-2 text-sm text-[#444]">
-                          <svg className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#7AB648]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                          {perk}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            <div className="rounded-2xl border border-[#F0E8D8] bg-white p-6 shadow-sm">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-extrabold text-[#2D5016]">Modul Course</h2>
-                <span className="text-sm text-[#444444]">
-                  {completedCount}/{totalModules} selesai
-                </span>
-              </div>
-              <div className="mt-4 space-y-2">
-                {course.modules.map((module, index) => {
-                  const isCompleted = completedModules.includes(index);
-                  const isActive = index === validModuleIndex;
-                  const isFree = index < freeCount;
-                  const isLocked = !isFree && !hasPaidAccess;
-                  return (
-                    <Link
-                      key={index}
-                      href={`/access/${course.slug}?module=${index}`}
-                      className={`flex items-center gap-3 rounded-xl border px-4 py-3 transition ${
-                        isActive
-                          ? "border-[#F5A62A] bg-[#FFF3D6]"
-                          : isCompleted
-                          ? "border-[#7AB648]/30 bg-[#E8F5E9]"
-                          : isLocked
-                          ? "border-[#F0E8D8] bg-[#FAFAFA] opacity-70"
-                          : "border-[#F0E8D8] bg-[#FEFBF5] hover:border-[#F5A62A]"
-                      }`}
-                    >
-                      {isLocked ? (
-                        <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#F0E8D8]">
-                          <svg className="h-3.5 w-3.5 text-[#999]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                          </svg>
-                        </div>
-                      ) : isCompleted ? (
-                        <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#7AB648]/20">
-                          <svg className="h-4 w-4 text-[#7AB648]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                      ) : (
-                        <div className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold ${isActive ? "bg-[#F5A62A] text-white" : "bg-[#FFF3D6] text-[#F5A62A]"}`}>
-                          {index + 1}
-                        </div>
-                      )}
-                      <span className={`flex-1 text-sm ${isLocked ? "text-[#999]" : isCompleted ? "text-[#2D5016] font-medium" : "text-[#444444]"}`}>
-                        {module}
-                      </span>
-                      {isFree && !hasPaidAccess && (
-                        <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-bold text-green-700">Gratis</span>
-                      )}
-                      {isLocked && (
-                        <span className="rounded-full bg-[#FFF3D6] px-2 py-0.5 text-xs font-semibold text-[#5C4813]">Founding</span>
-                      )}
-                      {isCompleted && <span className="text-xs font-semibold text-[#7AB648]">Selesai</span>}
-                      {isActive && !isCompleted && !isLocked && <span className="text-xs font-semibold text-[#F5A62A]">Sedang dibuka</span>}
-                    </Link>
-                  );
-                })}
-              </div>
-
-              <div className="mt-4 flex justify-between">
-                <Link
-                  href={`/access/${course.slug}${validModuleIndex > 0 ? `?module=${validModuleIndex - 1}` : ""}`}
-                  className={`rounded-lg border px-4 py-2 text-sm font-semibold transition ${
-                    validModuleIndex > 0
-                      ? "border-[#2D5016] text-[#2D5016] hover:bg-[#2D5016] hover:text-white"
-                      : "border-[#F0E8D8] text-[#CCC] cursor-not-allowed pointer-events-none"
-                  }`}
-                >
-                  ← Sebelumnya
-                </Link>
-                <Link
-                  href={`/access/${course.slug}${validModuleIndex < totalModules - 1 ? `?module=${validModuleIndex + 1}` : ""}`}
-                  className={`rounded-lg border px-4 py-2 text-sm font-semibold transition ${
-                    validModuleIndex < totalModules - 1
-                      ? "border-[#2D5016] text-[#2D5016] hover:bg-[#2D5016] hover:text-white"
-                      : "border-[#F0E8D8] text-[#CCC] cursor-not-allowed pointer-events-none"
-                  }`}
-                >
-                  Selanjutnya →
-                </Link>
-              </div>
+        <div className="flex items-center gap-3">
+          <div className="hidden sm:flex items-center gap-2">
+            <div className="h-1.5 w-24 overflow-hidden rounded-full bg-white/10">
+              <div className="h-full rounded-full bg-[#F5A62A] transition-all" style={{ width: `${progressPercent}%` }} />
             </div>
+            <span className="text-xs text-white/50">{progressPercent}%</span>
+          </div>
+          <span className="rounded-full bg-[#2D5016] px-2.5 py-1 text-[10px] font-bold text-[#7AB648]">
+            Kaalupi
+          </span>
+        </div>
+      </header>
+
+      <div className="flex flex-1 overflow-hidden">
+        {/* ── SIDEBAR ── */}
+        <aside className="w-72 flex-shrink-0 overflow-y-auto border-r border-white/10 bg-[#1A1A1A]">
+          <div className="p-3">
+            <p className="px-2 pb-2 text-[10px] font-bold uppercase tracking-widest text-white/30">
+              Kurikulum · {allMaterials.length} materi
+            </p>
+
+            {byModule.map((mod) => (
+              <div key={mod.idx} className="mb-1">
+                {/* Section header */}
+                <div className={`flex items-center gap-2 rounded-lg px-2 py-2 ${activeModuleIndex === mod.idx ? "bg-white/5" : ""}`}>
+                  <span className={`flex h-5 w-5 flex-shrink-0 items-center justify-center rounded text-[9px] font-bold ${
+                    mod.isCompleted ? "bg-[#7AB648] text-white" : mod.isLocked ? "bg-white/10 text-white/30" : "bg-[#2D5016] text-[#7AB648]"
+                  }`}>
+                    {mod.isCompleted ? "✓" : mod.isLocked ? "🔒" : mod.idx + 1}
+                  </span>
+                  <span className={`text-xs font-semibold leading-tight ${mod.isLocked ? "text-white/30" : "text-white/70"}`}>
+                    {mod.name}
+                  </span>
+                </div>
+
+                {/* Materials list */}
+                {mod.materials.length > 0 ? (
+                  <div className="ml-2 border-l border-white/5 pl-2">
+                    {mod.materials.map((mat) => {
+                      const isActive = activeMat?.id === mat.id;
+                      return (
+                        <Link
+                          key={mat.id}
+                          href={mod.isLocked ? `/checkout/${course.slug}` : `/access/${course.slug}?mat=${mat.id}`}
+                          className={`flex items-center gap-2 rounded-lg px-2 py-2 text-xs transition ${
+                            isActive
+                              ? "bg-[#F5A62A]/15 text-[#F5A62A] font-semibold"
+                              : mod.isLocked
+                              ? "text-white/20 cursor-pointer hover:bg-white/5"
+                              : "text-white/50 hover:bg-white/5 hover:text-white/80"
+                          }`}
+                        >
+                          {isActive ? (
+                            <span className="flex-shrink-0 text-[#F5A62A]">▶</span>
+                          ) : mod.isLocked ? (
+                            <span className="flex-shrink-0 text-white/20">🔒</span>
+                          ) : (
+                            <span className="flex-shrink-0 h-1.5 w-1.5 rounded-full bg-white/20" />
+                          )}
+                          <span className="leading-tight">{mat.title}</span>
+                          {mat.video_url && !mod.isLocked && (
+                            <span className="ml-auto flex-shrink-0 text-[9px] text-white/20">▶</span>
+                          )}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="ml-6 py-1 text-[10px] text-white/20 italic">
+                    {mod.isLocked ? "" : "Belum ada materi"}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
 
-          <div className="space-y-6">
-            <div className="rounded-2xl border border-[#F0E8D8] bg-white p-6 shadow-sm">
-              <h3 className="text-lg font-extrabold text-[#2D5016]">Progress Kamu</h3>
-              <div className="mt-4">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-[#444444]">Penyelesaian</span>
-                  <span className="font-bold text-[#2D5016]">{progressPercent}%</span>
-                </div>
-                <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-[#F0E8D8]">
-                  <div className="h-full rounded-full bg-[#F5A62A] transition-all" style={{ width: `${progressPercent}%` }} />
-                </div>
+          {/* Sidebar footer: progress tracker */}
+          <div className="sticky bottom-0 border-t border-white/10 bg-[#1A1A1A] p-3">
+            {courseFinished ? (
+              <div className="rounded-xl bg-[#2D5016]/40 p-3 text-center">
+                <p className="text-xs font-bold text-[#7AB648]">🎉 Course selesai!</p>
+                <CertificateButton courseSlug={course.slug} />
               </div>
+            ) : (
               <ProgressTracker
                 totalModules={course.modules.length}
                 completedModules={completedModules}
                 onModuleComplete={markModuleComplete}
               />
-              {courseFinished && (
-                <div className="mt-6 rounded-xl bg-[#FFF3D6] p-4">
-                  <p className="text-sm font-bold text-[#5C4813]">Selamat — course selesai!</p>
-                  <p className="mt-1 text-xs text-[#444444]">Klaim sertifikat & share ke LinkedIn</p>
-                  <CertificateButton courseSlug={course.slug} />
+            )}
+            {!hasPaidAccess && (
+              <Link
+                href={`/checkout/${course.slug}`}
+                className="mt-2 block rounded-xl bg-[#F5A62A] py-2 text-center text-xs font-bold text-[#2D5016] hover:opacity-90 transition"
+              >
+                🔓 Buka Semua Modul →
+              </Link>
+            )}
+          </div>
+        </aside>
+
+        {/* ── MAIN CONTENT ── */}
+        <main className="flex flex-1 flex-col overflow-y-auto bg-[#0F0F0F]">
+          {canAccess && activeMat ? (
+            <>
+              {/* Video */}
+              {activeMat.video_url && (
+                <div className="w-full bg-black">
+                  <VideoPlayer src={activeMat.video_url} title={activeMat.title} />
                 </div>
               )}
-            </div>
 
-            {!hasPaidAccess && (
-              <div className="rounded-2xl border-2 border-[#F5A62A] bg-[#FFF3D6] p-5 shadow-sm">
-                <p className="text-xs font-bold uppercase tracking-wider text-[#7AB648]">Founding Members</p>
-                <p className="mt-1 text-lg font-extrabold text-[#2D5016]">Lanjut ke 5 Modul Advanced</p>
-                <p className="mt-1 text-xs text-[#5C4813]">
-                  Web security, pentest, SOC, & final lab. Lifetime access ke semua course Kaalupi.
+              {/* Material title + nav */}
+              <div className="border-b border-white/10 bg-[#141414] px-6 py-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">
+                      Modul {activeModuleIndex + 1} — {course.modules[activeModuleIndex]}
+                    </p>
+                    <h1 className="mt-1 text-lg font-extrabold text-white">{activeMat.title}</h1>
+                  </div>
+                  <div className="flex flex-shrink-0 items-center gap-2">
+                    {prevMat && (
+                      <Link
+                        href={`/access/${course.slug}?mat=${prevMat.id}`}
+                        className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-semibold text-white/60 hover:border-white/30 hover:text-white transition"
+                      >
+                        ← Sebelumnya
+                      </Link>
+                    )}
+                    {nextMat && (
+                      <Link
+                        href={`/access/${course.slug}?mat=${nextMat.id}`}
+                        className="rounded-lg bg-[#F5A62A] px-3 py-1.5 text-xs font-extrabold text-[#2D5016] hover:opacity-90 transition"
+                      >
+                        Selanjutnya →
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Article content */}
+              {activeMat.content && (
+                <div className="flex-1 px-6 py-8 md:px-10">
+                  <div className="mx-auto max-w-3xl">
+                    <div
+                      className="course-content prose prose-invert prose-sm max-w-none"
+                      dangerouslySetInnerHTML={{ __html: activeMat.content }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {!activeMat.video_url && !activeMat.content && (
+                <div className="flex flex-1 items-center justify-center">
+                  <div className="text-center">
+                    <p className="text-2xl">🎬</p>
+                    <p className="mt-2 text-sm font-semibold text-white/50">Konten sedang dipersiapkan</p>
+                    <p className="mt-1 text-xs text-white/30">Tim Kaalupi lagi upload materi ini.</p>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : activeMat ? (
+            /* Paywall */
+            <div className="flex flex-1 items-center justify-center p-8">
+              <div className="max-w-md rounded-2xl border border-[#F5A62A]/30 bg-[#1A1A1A] p-8 text-center">
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#F5A62A]/10 text-2xl">
+                  🔒
+                </div>
+                <h2 className="text-xl font-extrabold text-white">Modul Berbayar</h2>
+                <p className="mt-2 text-sm text-white/50">
+                  Jadi Founding Member untuk akses semua {totalModules} modul + lifetime access ke SEMUA course Kaalupi.
                 </p>
-                <div className="mt-3 flex items-baseline gap-2">
-                  <span className="text-2xl font-extrabold text-[#F5A62A]">{formatter.format(course.founding_price ?? course.price)}</span>
-                  <span className="text-sm text-[#999] line-through">{formatter.format(course.regular_price ?? 299000)}</span>
+                <div className="mt-4 flex items-baseline justify-center gap-2">
+                  <span className="text-3xl font-extrabold text-[#F5A62A]">
+                    Rp {(course.founding_price ?? course.price).toLocaleString("id-ID")}
+                  </span>
+                  <span className="text-sm text-white/30 line-through">
+                    Rp {(course.regular_price ?? course.original_price ?? 0).toLocaleString("id-ID")}
+                  </span>
                 </div>
                 <Link
                   href={`/checkout/${course.slug}`}
-                  className="mt-3 block rounded-xl bg-[#2D5016] py-3 text-center text-sm font-bold text-white transition hover:opacity-90"
+                  className="mt-5 block rounded-xl bg-[#F5A62A] px-8 py-3 text-sm font-extrabold text-[#2D5016] hover:opacity-90 transition"
                 >
-                  Akses Semua 8 Modul →
+                  Daftar Founding Member →
                 </Link>
               </div>
-            )}
-
-            <div className="rounded-2xl border border-[#F0E8D8] bg-white p-6 shadow-sm">
-              <h3 className="text-lg font-extrabold text-[#2D5016]">Info Course</h3>
-              <div className="mt-4 space-y-3 text-sm">
-                {[
-                  { label: "Level", value: course.level },
-                  { label: "Format", value: course.format, capitalize: true },
-                  { label: "Modul Gratis", value: `${freeCount} modul` },
-                  { label: "Total Modul", value: course.modules.length },
-                ].map((item) => (
-                  <div key={item.label} className="flex items-center justify-between">
-                    <span className="text-[#444444]">{item.label}</span>
-                    <span className={`font-semibold text-[#2D5016] ${item.capitalize ? "capitalize" : ""}`}>{item.value}</span>
-                  </div>
-                ))}
-              </div>
             </div>
-          </div>
-        </div>
+          ) : (
+            <div className="flex flex-1 items-center justify-center">
+              <p className="text-sm text-white/30">Pilih materi di sidebar kiri untuk mulai belajar.</p>
+            </div>
+          )}
+        </main>
       </div>
 
-      {canAccessModule && (
-        <AiTutorChat courseSlug={course.slug} courseTitle={course.title} moduleIndex={validModuleIndex} />
+      {canAccess && activeMat && (
+        <AiTutorChat courseSlug={course.slug} courseTitle={course.title} moduleIndex={activeModuleIndex} />
       )}
     </div>
   );

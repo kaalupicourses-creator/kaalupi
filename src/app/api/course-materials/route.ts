@@ -111,24 +111,26 @@ export async function GET(request: Request) {
   }
 
   const { userId } = await auth();
-  if (userId) {
-    const clerk = await clerkClient();
-    const user = await clerk.users.getUser(userId);
-    const userEmail = user.primaryEmailAddress?.emailAddress ?? "";
-    const role = (user.publicMetadata as { role?: string })?.role;
-    const isStaff = role === "admin" || role === "instructor";
+  if (!userId) {
+    return NextResponse.json({ error: "Login diperlukan." }, { status: 401 });
+  }
 
-    if (isStaffMode && !isStaff) {
-      return NextResponse.json({ error: "Akses staff dibutuhkan." }, { status: 403 });
-    }
-    if (!isStaff && !isStaffMode) {
-      const enrollments = await getEnrollments(userEmail);
-      if (!enrollments.includes(courseSlug)) {
-        return NextResponse.json(
-          { error: "Anda belum memiliki akses ke course ini." },
-          { status: 403 }
-        );
-      }
+  const clerk = await clerkClient();
+  const user = await clerk.users.getUser(userId);
+  const userEmail = user.primaryEmailAddress?.emailAddress ?? "";
+  const role = (user.publicMetadata as { role?: string })?.role;
+  const isStaff = role === "admin" || role === "instructor";
+
+  if (isStaffMode && !isStaff) {
+    return NextResponse.json({ error: "Akses staff dibutuhkan." }, { status: 403 });
+  }
+  if (!isStaff) {
+    const enrollments = await getEnrollments(userEmail);
+    if (!enrollments.includes(courseSlug)) {
+      return NextResponse.json(
+        { error: "Anda belum memiliki akses ke course ini." },
+        { status: 403 }
+      );
     }
   }
 

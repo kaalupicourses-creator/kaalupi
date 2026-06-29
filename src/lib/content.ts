@@ -1,18 +1,37 @@
 import { getCourses as getCoursesFromDb, getCourseBySlug as getCourseBySlugFromDb, getEnrollments as getEnrollmentsFromDb } from "@/lib/db";
 import type { Course } from "@/lib/data";
 import { courses } from "@/lib/data";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
+
+/** Merge price/modules overrides stored in Supabase courses table into the local course object. */
+async function applyDbOverrides(local: Course): Promise<Course> {
+  try {
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from("courses")
+      .select("price, modules")
+      .eq("slug", local.slug)
+      .single();
+    if (error || !data) return local;
+    return {
+      ...local,
+      price: typeof data.price === "number" ? data.price : local.price,
+      modules: Array.isArray(data.modules) && data.modules.length > 0 ? data.modules as string[] : local.modules,
+    };
+  } catch {
+    return local;
+  }
+}
 
 export async function getCourses(): Promise<Course[]> {
-  // ONLY return local courses from data.ts - ignore DB for now since we're in first launch
-  return courses.filter((c) => c.is_published !== false);
+  const published = courses.filter((c) => c.is_published !== false);
+  return Promise.all(published.map(applyDbOverrides));
 }
 
 export async function getCourseBySlug(slug: string): Promise<Course | null> {
-  // First check published courses from data.ts
-  const localCourse = courses.find((c) => c.slug === slug && c.is_published);
-  if (localCourse) return localCourse as Course;
-  
-  // Fallback to DB
+  const local = courses.find((c) => c.slug === slug && c.is_published);
+  if (local) return applyDbOverrides(local as Course);
+
   const course = await getCourseBySlugFromDb(slug);
   return course as Course | null;
 }

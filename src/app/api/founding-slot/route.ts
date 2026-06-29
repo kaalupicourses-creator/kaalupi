@@ -9,8 +9,8 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
  * so the public counter starts from 4 to reflect that the team itself is committed.
  */
 const FOUNDING_LIMIT = 100;
-const FOUNDING_PRICE = 149_000;
-const REGULAR_PRICE = 299_000;
+const FOUNDING_PRICE = 199_000;
+const REGULAR_PRICE = 499_000;
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

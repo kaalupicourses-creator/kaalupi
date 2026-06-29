@@ -67,7 +67,7 @@ export default async function StudioPage({
           </p>
         </div>
 
-        <CourseStudio courses={allCourses} initialSlug={selectedSlug} />
+        <CourseStudio courses={allCourses} initialSlug={selectedSlug} role={role} />
       </div>
     </div>
   );

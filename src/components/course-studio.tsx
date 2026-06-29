@@ -18,16 +18,24 @@ type Material = {
 type Props = {
   courses: Course[];
   initialSlug: string;
+  role?: string;
 };
 
-export function CourseStudio({ courses, initialSlug }: Props) {
+export function CourseStudio({ courses, initialSlug, role }: Props) {
   const router = useRouter();
+  const isAdmin = role === "admin" || role === "super_admin";
   const [selectedSlug, setSelectedSlug] = useState(initialSlug);
   const [materials, setMaterials] = useState<Material[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeModule, setActiveModule] = useState(0);
   const [editing, setEditing] = useState<Partial<Material> | null>(null);
   const [toast, setToast] = useState<{ kind: "ok" | "err"; msg: string } | null>(null);
+  // Section rename state
+  const [renamingModule, setRenamingModule] = useState<number | null>(null);
+  const [renameValue, setRenameValue] = useState("");
+  // Price editing state (admin only)
+  const [editingPrice, setEditingPrice] = useState(false);
+  const [priceValue, setPriceValue] = useState("");
 
   const course = courses.find((c) => c.slug === selectedSlug);
 
@@ -163,6 +171,55 @@ export function CourseStudio({ courses, initialSlug }: Props) {
     }
   }
 
+  async function saveRenameModule() {
+    if (!course || renamingModule === null) return;
+    const trimmed = renameValue.trim();
+    if (!trimmed) { setToast({ kind: "err", msg: "Nama section tidak boleh kosong" }); return; }
+    const newModules = course.modules.map((m, i) => i === renamingModule ? trimmed : m);
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/courses/${selectedSlug}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ modules: newModules }),
+      });
+      const data = (await res.json()) as { success?: boolean; error?: string };
+      if (!res.ok || !data.success) throw new Error(data.error ?? "Gagal rename");
+      setToast({ kind: "ok", msg: "Nama section diupdate" });
+      setRenamingModule(null);
+      router.refresh();
+    } catch (e) {
+      setToast({ kind: "err", msg: e instanceof Error ? e.message : "Gagal rename" });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function savePrice() {
+    const price = parseInt(priceValue.replace(/\D/g, ""), 10);
+    if (!Number.isFinite(price) || price < 0) {
+      setToast({ kind: "err", msg: "Harga tidak valid" });
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/courses/${selectedSlug}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ price }),
+      });
+      const data = (await res.json()) as { success?: boolean; error?: string };
+      if (!res.ok || !data.success) throw new Error(data.error ?? "Gagal simpan harga");
+      setToast({ kind: "ok", msg: `Harga diupdate ke Rp ${price.toLocaleString("id-ID")}` });
+      setEditingPrice(false);
+      router.refresh();
+    } catch (e) {
+      setToast({ kind: "err", msg: e instanceof Error ? e.message : "Gagal simpan harga" });
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const moduleMaterials = materials.filter((m) => m.module_index === activeModule);
 
   return (
@@ -206,19 +263,40 @@ export function CourseStudio({ courses, initialSlug }: Props) {
           <div className="space-y-1">
             {course?.modules.map((mod, idx) => {
               const count = materials.filter((m) => m.module_index === idx).length;
+              const isRenaming = renamingModule === idx;
               return (
-                <button
-                  key={idx}
-                  onClick={() => { setActiveModule(idx); setEditing(null); }}
-                  className={`w-full text-left rounded-lg px-3 py-2 text-sm transition ${
-                    activeModule === idx
-                      ? "bg-[#F5A62A] text-[#2D5016] font-bold"
-                      : "text-[#444444] hover:bg-[#FEFBF5]"
-                  }`}
-                >
-                  <span className="font-semibold">{idx + 1}.</span> {mod}
-                  <span className="ml-1.5 text-xs opacity-60">({count})</span>
-                </button>
+                <div key={idx}>
+                  {isRenaming ? (
+                    <div className="rounded-lg border border-[#F5A62A] bg-[#FFF3D6] p-2 space-y-1.5">
+                      <input
+                        autoFocus
+                        value={renameValue}
+                        onChange={(e) => setRenameValue(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter") saveRenameModule(); if (e.key === "Escape") setRenamingModule(null); }}
+                        className="w-full rounded-lg border border-[#F0E8D8] px-2 py-1 text-xs"
+                      />
+                      <div className="flex gap-1">
+                        <button onClick={saveRenameModule} disabled={loading} className="flex-1 rounded bg-[#F5A62A] py-1 text-[10px] font-bold text-[#2D5016]">Simpan</button>
+                        <button onClick={() => setRenamingModule(null)} className="flex-1 rounded border border-[#F0E8D8] py-1 text-[10px] text-[#444]">Batal</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className={`group flex items-center gap-1 rounded-lg transition ${activeModule === idx ? "bg-[#F5A62A]" : "hover:bg-[#FEFBF5]"}`}>
+                      <button
+                        onClick={() => { setActiveModule(idx); setEditing(null); }}
+                        className={`flex-1 text-left px-3 py-2 text-sm ${activeModule === idx ? "text-[#2D5016] font-bold" : "text-[#444444]"}`}
+                      >
+                        <span className="font-semibold">{idx + 1}.</span> {mod}
+                        <span className="ml-1.5 text-xs opacity-60">({count})</span>
+                      </button>
+                      <button
+                        onClick={() => { setRenamingModule(idx); setRenameValue(mod); }}
+                        className="mr-1 rounded px-1.5 py-1 text-[10px] opacity-0 group-hover:opacity-60 hover:!opacity-100 transition"
+                        title="Rename section"
+                      >✏️</button>
+                    </div>
+                  )}
+                </div>
               );
             })}
           </div>
@@ -241,6 +319,47 @@ export function CourseStudio({ courses, initialSlug }: Props) {
             👁 Preview Tampilan Student
           </a>
         </div>
+
+        {/* Price editor — admin only */}
+        {isAdmin && course && (
+          <div className="rounded-2xl border border-[#F0E8D8] bg-white p-4">
+            <p className="text-xs font-bold uppercase tracking-wider text-[#2D5016] mb-3">
+              Harga Course
+            </p>
+            {editingPrice ? (
+              <div className="space-y-2">
+                <div className="flex items-center gap-1 text-xs text-[#444]">
+                  <span>Rp</span>
+                  <input
+                    autoFocus
+                    type="text"
+                    value={priceValue}
+                    onChange={(e) => setPriceValue(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") savePrice(); if (e.key === "Escape") setEditingPrice(false); }}
+                    placeholder="199000"
+                    className="flex-1 rounded-lg border border-[#F0E8D8] px-2 py-1 text-sm"
+                  />
+                </div>
+                <div className="flex gap-1">
+                  <button onClick={savePrice} disabled={loading} className="flex-1 rounded-lg bg-[#F5A62A] py-1.5 text-xs font-bold text-[#2D5016]">Simpan</button>
+                  <button onClick={() => setEditingPrice(false)} className="flex-1 rounded-lg border border-[#F0E8D8] py-1.5 text-xs text-[#444]">Batal</button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-bold text-[#2D5016]">
+                  Rp {course.price.toLocaleString("id-ID")}
+                </span>
+                <button
+                  onClick={() => { setEditingPrice(true); setPriceValue(String(course.price)); }}
+                  className="rounded-lg border border-[#F0E8D8] px-3 py-1 text-xs font-semibold text-[#444] hover:border-[#F5A62A] hover:text-[#2D5016] transition"
+                >
+                  Ubah
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </aside>
 
       {/* MAIN */}
