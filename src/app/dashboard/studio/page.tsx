@@ -41,101 +41,31 @@ export default async function StudioPage({
           </Link>
         </div>
 
-        {/* Quick Start Guide */}
-        <details className="mb-6 rounded-2xl border-2 border-[#F5A62A] bg-[#FFF3D6] open:shadow-md">
-          <summary className="cursor-pointer list-none px-6 py-4">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F5A62A] text-lg">
-                  ⚡
-                </div>
-                <div>
-                  <p className="text-sm font-extrabold text-[#2D5016]">Cara pakai Studio (3 menit)</p>
-                  <p className="text-xs text-[#5C4813]">Klik untuk lihat panduan lengkap</p>
-                </div>
-              </div>
-              <span className="text-[#5C4813] text-sm">▾</span>
-            </div>
-          </summary>
-          <div className="border-t border-[#F5A62A]/30 px-6 py-5 text-sm leading-7 text-[#444]">
-            <ol className="space-y-4">
-              <li className="flex gap-3">
-                <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#F5A62A] text-xs font-bold text-[#2D5016]">
-                  1
-                </span>
-                <div>
-                  <strong className="text-[#2D5016]">Pilih Course di sidebar kiri.</strong> Setiap
-                  course punya beberapa modul (terpisah jadi outline). Pilih course yang mau diisi.
-                </div>
-              </li>
-              <li className="flex gap-3">
-                <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#F5A62A] text-xs font-bold text-[#2D5016]">
-                  2
-                </span>
-                <div>
-                  <strong className="text-[#2D5016]">Klik modul</strong> yang mau diisi (di bawah
-                  daftar course). Materi yang masuk akan otomatis di-tag ke modul itu.
-                </div>
-              </li>
-              <li className="flex gap-3">
-                <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#F5A62A] text-xs font-bold text-[#2D5016]">
-                  3
-                </span>
-                <div>
-                  <strong className="text-[#2D5016]">Pilih cara input materi:</strong>
-                  <ul className="mt-2 ml-4 space-y-1.5 list-disc text-xs">
-                    <li>
-                      <strong>+ Tambah Materi</strong> — input manual (judul + video URL +
-                      konten HTML).
-                    </li>
-                    <li>
-                      <strong>AI Generate (1 materi)</strong> — kasih topik singkat, AI nulis
-                      draft HTML otomatis pake Gemini.
-                    </li>
-                    <li>
-                      <strong>Bulk Import (JSON)</strong> — paste JSON array kalau lu udah punya
-                      draft di Notion/Google Doc.
-                    </li>
-                    <li>
-                      <strong>Auto-Fill Semua Modul</strong> — sekali klik, AI bikin materi
-                      pembuka untuk semua modul yang masih kosong.
-                    </li>
-                  </ul>
-                </div>
-              </li>
-              <li className="flex gap-3">
-                <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#F5A62A] text-xs font-bold text-[#2D5016]">
-                  4
-                </span>
-                <div>
-                  <strong className="text-[#2D5016]">Edit / hapus / atur urutan.</strong>
-                  Klik Edit di card materi untuk ubah, atau panah ↑↓ untuk reorder. Hover materi
-                  buat liat tombolnya.
-                </div>
-              </li>
-              <li className="flex gap-3">
-                <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#F5A62A] text-xs font-bold text-[#2D5016]">
-                  5
-                </span>
-                <div>
-                  <strong className="text-[#2D5016]">Test sebagai student</strong> — buka{" "}
-                  <code className="rounded bg-white px-1 py-0.5 text-xs">/access/[slug-course]</code>
-                  {" "}di tab baru. Kalau materi udah ada, tampil di situ.
-                </div>
-              </li>
-            </ol>
-
-            <div className="mt-5 rounded-xl bg-white p-4 border border-[#F5A62A]/30">
-              <p className="text-xs font-bold text-[#2D5016] mb-2">💡 Tips kerja efisien</p>
-              <ul className="space-y-1 text-xs text-[#444]">
-                <li>• <strong>Mulai dari Auto-Fill</strong> dulu untuk dapet draft semua modul, baru polish satu-satu.</li>
-                <li>• <strong>Video URL boleh kosong</strong> — modul bisa cuma artikel HTML.</li>
-                <li>• <strong>Pakai unlisted YouTube link</strong> kalau video sensitive (boleh diakses tapi ngga muncul di search).</li>
-                <li>• <strong>HTML simple aja</strong>: h2, p, ul, code, strong. Hindari script/iframe.</li>
-              </ul>
-            </div>
-          </div>
-        </details>
+        {/* Quick tips */}
+        <div className="mb-6 rounded-2xl border border-[#F0E8D8] bg-white p-5">
+          <p className="text-xs font-bold uppercase tracking-wider text-[#2D5016] mb-3">Cara kerja</p>
+          <ol className="space-y-2 text-sm text-[#444]">
+            <li className="flex gap-3">
+              <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#F5A62A] text-xs font-bold text-[#2D5016]">1</span>
+              <span>Pilih course → pilih section di sidebar kiri.</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#F5A62A] text-xs font-bold text-[#2D5016]">2</span>
+              <span>Klik <strong>+ Tambah Materi</strong> → isi judul, URL video, dan artikel (boleh salah satu).</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#F5A62A] text-xs font-bold text-[#2D5016]">3</span>
+              <span>Klik <strong>👁 Preview Tampilan Student</strong> untuk lihat tampilan persis yang dilihat student.</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#F5A62A] text-xs font-bold text-[#2D5016]">4</span>
+              <span>Hover card materi → ↑↓ untuk reorder. Klik Edit untuk ubah isi.</span>
+            </li>
+          </ol>
+          <p className="mt-3 text-xs text-[#999]">
+            Tips: pakai <strong>YouTube unlisted</strong> supaya video bisa diakses tapi ngga muncul di search.
+          </p>
+        </div>
 
         <CourseStudio courses={allCourses} initialSlug={selectedSlug} />
       </div>
