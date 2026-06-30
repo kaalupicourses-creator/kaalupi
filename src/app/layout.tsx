@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Analytics } from "@vercel/analytics/react";
-import { SiteFooter } from "@/components/site-footer";
 import { SiteHeaderClient } from "@/components/site-header";
+import { ConditionalFooter } from "@/components/conditional-footer";
 import "./globals.css";
 
 const nunito = Nunito({
@@ -30,14 +30,7 @@ export const metadata: Metadata = {
     description: "Manfaatin AI buat capai target hidup lu. Course IT dengan integrasi AI tools, bahasa Indonesia, langsung praktik.",
     url: "https://kaalupi.vercel.app",
     siteName: "Kaalupi",
-    images: [
-      {
-        url: "/og",
-        width: 1200,
-        height: 630,
-        alt: "Kaalupi - AI-First Career Platform Indonesia",
-      },
-    ],
+    images: [{ url: "/og", width: 1200, height: 630, alt: "Kaalupi - AI-First Career Platform Indonesia" }],
     locale: "id_ID",
     type: "website",
   },
@@ -49,11 +42,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <ClerkProvider>
       <html lang="id" className={`${nunito.variable} h-full antialiased`}>
@@ -64,7 +53,7 @@ export default function RootLayout({
           <div className="relative min-h-screen flex flex-col">
             <SiteHeaderClient />
             <main className="flex-1">{children}</main>
-            <SiteFooter />
+            <ConditionalFooter />
           </div>
           <Analytics />
         </body>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { UserButton, useAuth } from "@clerk/nextjs";
+import { usePathname } from "next/navigation";
 
 const links = [
   { href: "/courses", label: "Courses" },
@@ -14,6 +15,8 @@ const links = [
 export function SiteHeaderClient() {
   const { isSignedIn } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
+  if (pathname.startsWith("/access/")) return null;
 
   return (
     <header className="sticky top-0 z-40 border-b border-[#F0E8D8] bg-[#FEFBF5]/95 backdrop-blur-sm">
