@@ -20,7 +20,7 @@ const howItWorks = [
   {
     step: "02",
     title: "Checkout & Bayar",
-    description: "Transfer via DANA / BCA / BSI / QRIS, kirim bukti bayar, admin konfirmasi.",
+    description: "Transfer via DANA / BCA / BSI, kirim bukti bayar, admin konfirmasi dalam 1 jam.",
   },
   {
     step: "03",
@@ -108,7 +108,7 @@ export default async function HomePage() {
               <span className="relative inline-flex h-2 w-2 rounded-full bg-[#F5A62A]" />
             </span>
             <p className="text-xs font-bold tracking-[0.2em] text-[#5C4813]">
-              AI-FIRST CAREER PLATFORM · INDONESIA
+              CYBER SECURITY · BAHASA INDONESIA
             </p>
           </div>
 
@@ -133,10 +133,10 @@ export default async function HomePage() {
             {!isSignedIn && (
               <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-[#5C4813]">
                 <Link
-                  href={withUTM("/courses/cyber-security-pemula", "hero_secondary_free")}
+                  href={withUTM("/courses/cyber-security-mastery", "hero_secondary_mastery")}
                   className="font-semibold underline-offset-4 transition hover:text-[#F5A62A] hover:underline"
                 >
-                  Lihat course gratis →
+                  Lihat kursus Founding Members →
                 </Link>
                 <span className="text-[#F0E8D8]">·</span>
                 <Link
@@ -488,52 +488,45 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ─── SPOTLIGHT: AI UNTUK PEMULA (FREE) ─── */}
+      {/* ─── COURSE SPOTLIGHT ─── */}
       {spotlightCourse && (
         <section className="border-t border-[#F0E8D8] bg-[#FEFBF5] relative overflow-hidden">
-          {/* Decorative elements */}
           <div className="absolute -right-20 top-20 h-80 w-80 rounded-full bg-[#F5A62A]/10" />
           <div className="absolute -left-20 bottom-20 h-96 w-96 rounded-full bg-[#7AB648]/10" />
 
           <div className="mx-auto max-w-7xl px-6 py-16 relative">
-             <div className="mx-auto mb-10 max-w-2xl text-center animate-fade-in-up">
-                <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-[#F5A62A] px-4 py-1.5">
-                  <span className="text-xs font-black uppercase tracking-[0.2em] text-[#2D5016]">Free Anchor Course</span>
-                </div>
-                <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016] md:text-4xl lg:text-5xl">
-                  Mulai Gratis,<br /><span className="text-[#F5A62A]">Upgrade Kapan Aja</span>
-                </h2>
-                <p className="mt-4 max-w-2xl text-base leading-7 text-[#444444]">
-                  Coba course <strong className="text-[#2D5016]">Cyber Security untuk Pemula</strong> gratis dulu — ngga ada catch.
-                  Pas udah ngerasa cocok, jadi Founding Member buat akses semua course.
-                </p>
+            <div className="mx-auto mb-10 max-w-2xl text-center animate-fade-in-up">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-[#2D5016] px-4 py-1.5">
+                <span className="text-xs font-black uppercase tracking-[0.2em] text-[#F5A62A]">Kursus Unggulan</span>
               </div>
+              <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016] md:text-4xl lg:text-5xl">
+                Dari Nol,<br /><span className="text-[#F5A62A]">Sampai Bisa Kerja</span>
+              </h2>
+              <p className="mt-4 max-w-2xl text-base leading-7 text-[#444444]">
+                Kursus cyber security paling lengkap dalam Bahasa Indonesia — 8 modul, langsung praktik, dengan akses lifetime.
+              </p>
+            </div>
 
             <div className="overflow-hidden rounded-3xl border-2 border-[#F5A62A]/20 bg-white shadow-xl lg:grid lg:grid-cols-2 hover-lift">
-              {/* Thumbnail */}
-               <div className="relative min-h-[300px] md:min-h-[400px]">
-                 <CourseThumbnail
-                   title={spotlightCourse.title}
-                   category={spotlightCourse.category}
-                   className="h-full w-full object-cover"
-                   large={true}
-                 />
-               </div>
+              <div className="relative min-h-[300px] md:min-h-[400px]">
+                <CourseThumbnail
+                  title={spotlightCourse.title}
+                  category={spotlightCourse.category}
+                  className="h-full w-full object-cover"
+                  large={true}
+                />
+              </div>
 
-              {/* Content */}
               <div className="flex flex-col justify-center p-8 md:p-12">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="rounded-full bg-[#7AB648] px-4 py-1.5 text-xs font-bold text-white">
-                    GRATIS
+                  <span className="rounded-full bg-[#F5A62A] px-4 py-1.5 text-xs font-bold text-[#2D5016]">
+                    FOUNDING MEMBERS
                   </span>
                   <span className="rounded-full bg-[#FFF3D6] px-3 py-1 text-xs font-semibold text-[#5C4813]">
                     {spotlightCourse.category}
                   </span>
                   <span className="rounded-full bg-[#FFF3D6] px-3 py-1 text-xs font-semibold text-[#5C4813]">
-                    {spotlightCourse.level}
-                  </span>
-                  <span className="rounded-full bg-[#FFF3D6] px-3 py-1 text-xs font-semibold text-[#5C4813]">
-                    {spotlightCourse.modules.length} modul
+                    8 modul
                   </span>
                 </div>
 
@@ -561,17 +554,15 @@ export default async function HomePage() {
 
                 <div className="mt-8 flex flex-wrap items-center gap-4">
                   <Link
-                    href={withUTM(`/courses/${spotlightCourse.slug}`, "spotlight_start_free")}
+                    href={withUTM("/courses/cyber-security-mastery", "spotlight_mastery")}
                     className="rounded-xl bg-[#F5A62A] px-8 py-3.5 text-sm font-bold text-[#2D5016] shadow-md transition hover:opacity-90 hover:shadow-lg"
                   >
-                    Mulai Belajar Gratis →
+                    Daftar Founding Members →
                   </Link>
-                  <Link
-                    href={withUTM("/courses/cyber-security-mastery", "spotlight_upgrade_mastery")}
-                    className="rounded-xl border-2 border-[#2D5016] px-8 py-3.5 text-sm font-bold text-[#2D5016] transition hover:bg-[#2D5016] hover:text-[#FEFBF5]"
-                  >
-                    Upgrade ke Mastery
-                  </Link>
+                  <div className="text-sm text-[#5C4813]">
+                    <span className="line-through text-xs">Rp 499.000</span>
+                    <span className="ml-2 font-extrabold text-[#F5A62A]">Rp 199.000</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -798,8 +789,8 @@ export default async function HomePage() {
           <div className="space-y-3">
             {[
               {
-                q: "Apa beda Foundation gratis dan Mastery Founding Members?",
-                a: "Foundation gratis: 2 modul intro pengenalan AI dasar — boleh siapa aja akses tanpa bayar. Mastery Founding Members: 5 modul lengkap + akses LIFETIME ke SEMUA course Kaalupi (sekarang & yang akan rilis: Network, Cyber, Designer, Data Science), AI Tutor 24/7, badge eksklusif, dan akses Discord khusus founding members. Slot terbatas 100 orang pertama.",
+                q: "Apa yang didapat Founding Members?",
+                a: "Founding Members (100 orang pertama) dapet: 8 modul lengkap Ethical Hacking & Cyber Security + akses LIFETIME ke SEMUA course Kaalupi (sekarang & yang akan rilis), AI Tutor 24/7, badge eksklusif, Discord khusus founding members, sertifikat resmi, dan update materi gratis selamanya. Harga Rp 199.000 — setelah 100 slot habis, harga balik ke Rp 499.000.",
               },
               {
                 q: "Cara bayarnya gimana?",
@@ -807,7 +798,7 @@ export default async function HomePage() {
               },
               {
                 q: "Founding Members ke-100 udah penuh, masih bisa daftar?",
-                a: "Bisa, tapi harga balik ke regular Rp 299K dan akses cuma untuk course Mastery itu sendiri — bukan lifetime ke semua course. 100 orang pertama dapet privilege khusus yang ngga ke-buka lagi.",
+                a: "Bisa, tapi harga balik ke regular Rp 499.000 dan akses cuma untuk course Mastery itu sendiri — bukan lifetime ke semua course. 100 orang pertama dapet privilege khusus yang ngga ke-buka lagi.",
               },
               {
                 q: "Apa ada garansi uang kembali?",
@@ -865,27 +856,21 @@ export default async function HomePage() {
             <div className="absolute -left-16 -bottom-16 h-48 w-48 rounded-full bg-[#7AB648]/10" />
 
             <h2 className="relative text-3xl font-extrabold md:text-4xl" style={{ color: "#F5A62A" }}>
-               Masih Ragu? Coba Gratis Dulu
-             </h2>
+              Slot Terbatas — 100 Orang Pertama
+            </h2>
             <p className="relative mt-4 max-w-xl mx-auto text-base leading-8" style={{color: 'white'}}>
-              Ngga ada catch. Coba course <strong>Cyber Security untuk Pemula</strong> gratis dulu, lihat materinya, baru naik ke Founding Members.
+              Setelah 100 slot habis, harga balik ke <strong>Rp 499.000</strong> dan privilege lifetime access hilang. Daftar sekarang sebelum penuh.
             </p>
             <div className="relative mt-8 flex flex-wrap justify-center gap-4">
               <Link
-                href={withUTM("/courses/cyber-security-pemula", "cta_start_free")}
+                href={withUTM("/courses/cyber-security-mastery", "cta_founding")}
                 className="rounded-xl bg-[#F5A62A] px-8 py-3.5 text-sm font-bold text-[#2D5016] transition hover:opacity-90"
               >
-                Mulai Gratis Sekarang →
-              </Link>
-              <Link
-                href={withUTM("/courses/cyber-security-mastery", "cta_upgrade_mastery")}
-                className="rounded-xl border-2 border-white/40 px-8 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10"
-              >
-                Lihat Mastery
+                Daftar Founding Members — Rp 199K →
               </Link>
             </div>
             <p className="relative mt-6 text-xs text-white/70">
-              Daftar gratis, ngga butuh data bayar • Bayar manual via DANA / BCA / BSI
+              Bayar manual via DANA / BCA / BSI • Akses aktif dalam 1 jam
             </p>
           </div>
         </div>
