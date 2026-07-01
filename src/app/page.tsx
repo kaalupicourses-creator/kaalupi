@@ -133,7 +133,7 @@ export default async function HomePage() {
             {!isSignedIn && (
               <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-[#5C4813]">
                 <Link
-                  href={withUTM("/courses/cyber-security-mastery", "hero_secondary_mastery")}
+                  href={withUTM("/checkout/cyber-security-mastery", "hero_secondary_mastery")}
                   className="font-semibold underline-offset-4 transition hover:text-[#F5A62A] hover:underline"
                 >
                   Lihat kursus Founding Members →
@@ -478,7 +478,7 @@ export default async function HomePage() {
                 <FoundingSlotCounter slug="cyber-security-mastery" variant="inline" />
               </div>
               <Link
-                href={withUTM("/courses/cyber-security-mastery", "comparison_paid")}
+                href={withUTM("/checkout/cyber-security-mastery", "comparison_paid")}
                 className="mt-4 block rounded-xl bg-[#F5A62A] px-6 py-3 text-center text-sm font-extrabold text-[#2D5016] hover:opacity-90 shadow-md transition"
               >
                 Daftar Founding Members →
@@ -554,7 +554,7 @@ export default async function HomePage() {
 
                 <div className="mt-8 flex flex-wrap items-center gap-4">
                   <Link
-                    href={withUTM("/courses/cyber-security-mastery", "spotlight_mastery")}
+                    href={withUTM("/checkout/cyber-security-mastery", "spotlight_mastery")}
                     className="rounded-xl bg-[#F5A62A] px-8 py-3.5 text-sm font-bold text-[#2D5016] shadow-md transition hover:opacity-90 hover:shadow-lg"
                   >
                     Daftar Founding Members →
@@ -863,7 +863,7 @@ export default async function HomePage() {
             </p>
             <div className="relative mt-8 flex flex-wrap justify-center gap-4">
               <Link
-                href={withUTM("/courses/cyber-security-mastery", "cta_founding")}
+                href={withUTM("/checkout/cyber-security-mastery", "cta_founding")}
                 className="rounded-xl bg-[#F5A62A] px-8 py-3.5 text-sm font-bold text-[#2D5016] transition hover:opacity-90"
               >
                 Daftar Founding Members — Rp 199K →
