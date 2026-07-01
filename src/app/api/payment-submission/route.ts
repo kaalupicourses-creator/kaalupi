@@ -8,11 +8,11 @@ export const runtime = "nodejs";
 
 type Body = {
   course_slug?: string;
-  payment_method?: "dana" | "bca" | "bsi" | "qris";
+  payment_method?: "dana" | "bca" | "bsi";
   sender_account?: string;
 };
 
-const VALID_METHODS = new Set(["dana", "bca", "bsi", "qris"]);
+const VALID_METHODS = new Set(["dana", "bca", "bsi"]);
 
 export async function POST(request: Request) {
   const { userId } = await auth();
@@ -120,7 +120,6 @@ export async function POST(request: Request) {
     dana: "DANA",
     bca: "BCA",
     bsi: "BSI",
-    qris: "QRIS (e-wallet)",
   }[payment_method];
 
   const message = [
