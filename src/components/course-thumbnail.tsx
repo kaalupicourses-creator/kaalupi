@@ -37,55 +37,92 @@ const icons: Record<string, ReactNode> = {
   ),
 };
 
+const categoryConfig: Record<string, { bg: string; accent: string; label: string }> = {
+  "cyber security": {
+    bg: "from-[#1a0a2e] via-[#2d1155] to-[#1a0a2e]",
+    accent: "#a855f7",
+    label: "Cyber Security",
+  },
+  programming: {
+    bg: "from-[#0a1628] via-[#0f2d55] to-[#0a1628]",
+    accent: "#3b82f6",
+    label: "Programming",
+  },
+  "network engineer": {
+    bg: "from-[#0a1a2e] via-[#0f3355] to-[#0a1a2e]",
+    accent: "#6366f1",
+    label: "Networking",
+  },
+  designer: {
+    bg: "from-[#2e0a1a] via-[#551133] to-[#2e0a1a]",
+    accent: "#ec4899",
+    label: "Design",
+  },
+  "artificial intelligence": {
+    bg: "from-[#0a2e1a] via-[#0f4d2d] to-[#0a2e1a]",
+    accent: "#22c55e",
+    label: "AI",
+  },
+  default: {
+    bg: "from-[#1a2e0a] via-[#2d4a15] to-[#1a2e0a]",
+    accent: "#7AB648",
+    label: "Course",
+  },
+};
+
 export function CourseThumbnail({ title, category, className = "", large = false }: { title: string; category: string; className?: string; large?: boolean }) {
   const lowerCategory = category.toLowerCase();
-  const gradientKey = Object.keys(gradients).find((key) => lowerCategory.includes(key)) ?? "default";
-  const gradient = gradients[gradientKey];
-  const Icon = icons[gradientKey] ?? icons.default;
-  const isAI = gradientKey === "artificial intelligence";
+  const configKey = Object.keys(categoryConfig).find((key) => lowerCategory.includes(key)) ?? "default";
+  const config = categoryConfig[configKey];
 
-  const initials = title
-    .split(" ")
-    .map((word) => word.charAt(0))
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+  const words = title.split(" ").filter(Boolean);
+  const line1 = words.slice(0, Math.ceil(words.length / 2)).join(" ");
+  const line2 = words.slice(Math.ceil(words.length / 2)).join(" ");
 
   return (
-    <div className={`relative overflow-hidden ${isAI ? '' : (gradient.includes("from-") ? `bg-gradient-to-br ${gradient}` : gradient)} ${large ? "aspect-[16/9]" : "aspect-[4/3]"} ${className}`}>
-      {/* Image for AI course */}
-      {isAI && (
-        <img
-          src="/gambar-1.jpg"
-          alt={title}
-          className="absolute inset-0 w-full h-full object-cover"
-          loading="lazy"
-        />
-      )}
+    <div className={`relative overflow-hidden bg-gradient-to-br ${config.bg} ${large ? "aspect-[16/9]" : "aspect-[4/3]"} ${className}`}>
+      {/* Grid pattern */}
+      <div className="absolute inset-0 opacity-[0.07]"
+        style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)", backgroundSize: "32px 32px" }}
+      />
 
-      {/* Pattern overlay */}
-      {!isAI && (
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{ backgroundImage: "radial-gradient(circle at 25% 25%, white 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
-        </div>
-      )}
+      {/* Glow orb */}
+      <div className="absolute -top-8 -right-8 h-32 w-32 rounded-full opacity-20 blur-2xl"
+        style={{ backgroundColor: config.accent }}
+      />
+      <div className="absolute -bottom-8 -left-8 h-24 w-24 rounded-full opacity-10 blur-2xl"
+        style={{ backgroundColor: config.accent }}
+      />
 
-      {/* Icon */}
-      {!isAI && (
-        <div className="absolute inset-0 flex items-center justify-center text-white/30">
-          {Icon}
-        </div>
-      )}
-
-      {/* Title overlay */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-        <p className="text-sm font-semibold text-white truncate">{title}</p>
+      {/* Category badge */}
+      <div className="absolute top-3 left-3">
+        <span className="rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest"
+          style={{ backgroundColor: `${config.accent}22`, color: config.accent, border: `1px solid ${config.accent}44` }}>
+          {config.label}
+        </span>
       </div>
 
-      {/* Initials watermark */}
-      <div className="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-xs font-bold text-white/60">
-        {initials}
+      {/* Kaalupi logo */}
+      <div className="absolute top-3 right-3 text-[9px] font-bold tracking-widest text-white/30 uppercase">
+        Kaalupi
       </div>
+
+      {/* Title */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
+        <p className="text-base font-extrabold leading-tight text-white drop-shadow-lg" style={{ textShadow: "0 2px 8px rgba(0,0,0,0.5)" }}>
+          {line1}
+        </p>
+        {line2 && (
+          <p className="text-base font-extrabold leading-tight text-white drop-shadow-lg" style={{ textShadow: "0 2px 8px rgba(0,0,0,0.5)", color: config.accent }}>
+            {line2}
+          </p>
+        )}
+      </div>
+
+      {/* Bottom bar */}
+      <div className="absolute bottom-0 left-0 right-0 h-0.5 opacity-60"
+        style={{ background: `linear-gradient(90deg, transparent, ${config.accent}, transparent)` }}
+      />
     </div>
   );
 }
