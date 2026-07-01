@@ -193,10 +193,10 @@ export const courses: Course[] = [
     category: "Cyber Security",
     level: "Beginner to Intermediate",
     duration: "Self-paced",
-    price: 100000,
+    price: 199000,
     original_price: 499000,
     founding_members_limit: 10,
-    founding_price: 100000,
+    founding_price: 199000,
     regular_price: 499000,
     summary:
       "Course cyber security paling lengkap dalam bahasa Indonesia. Dari mindset hacker, setup lab, tools profesional, sampai praktek langsung di PortSwigger — semua ada di sini. 10 Early Tester pertama dapat harga spesial 100K + lifetime access ke semua course Kaalupi.",
