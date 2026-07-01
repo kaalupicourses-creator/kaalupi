@@ -14,19 +14,26 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "slug required" }, { status: 400 });
   }
 
-  // Count only paid enrollments (orders with status "paid") — not admin-granted ones
+  // Count total founding members (badge grants + paid orders) from user_badges table
   let taken = 0;
   try {
     const supabase = getSupabaseAdmin();
-    const { count, error } = await supabase
-      .from("orders")
-      .select("id", { count: "exact", head: true })
-      .eq("course_slug", slug)
-      .eq("status", "paid");
-    if (error) {
-      console.error("[founding-slot] db error:", error.message);
-    } else {
-      taken = Math.min(FOUNDING_LIMIT, count ?? 0);
+    const { data: badge } = await supabase
+      .from("badges")
+      .select("id")
+      .eq("name", "Founding Member")
+      .single();
+
+    if (badge) {
+      const { count, error } = await supabase
+        .from("user_badges")
+        .select("id", { count: "exact", head: true })
+        .eq("badge_id", badge.id);
+      if (error) {
+        console.error("[founding-slot] db error:", error.message);
+      } else {
+        taken = Math.min(FOUNDING_LIMIT, count ?? 0);
+      }
     }
   } catch (err) {
     console.error("[founding-slot] supabase admin error:", err);
