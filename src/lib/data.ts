@@ -89,24 +89,14 @@ export const siteConfig = {
         instructions:
           "Transfer via BSI Mobile / internet banking / ATM BSI. Nominal harus sama persis.",
       },
-      {
-        id: "qris",
-        name: "QRIS (GoPay, ShopeePay, OVO, dll)",
-        type: "qris",
-        accountName: "Kaalupi",
-        accountNumber: "Scan QR di bawah",
-        instructions:
-          "Buka aplikasi e-wallet (GoPay/ShopeePay/OVO/DANA/LinkAja) -> pilih Scan QRIS -> arahkan kamera ke gambar di bawah -> bayar sesuai nominal.",
-        qrImage: "/payment/qris-kaalupi.jpeg",
-      },
     ] as PaymentMethod[],
   },
 };
 
 export type PaymentMethod = {
-  id: "dana" | "bca" | "bsi" | "qris";
+  id: "dana" | "bca" | "bsi";
   name: string;
-  type: "ewallet" | "bank" | "qris";
+  type: "ewallet" | "bank";
   accountName: string;
   accountNumber: string;
   instructions: string;
@@ -203,13 +193,13 @@ export const courses: Course[] = [
     category: "Cyber Security",
     level: "Beginner to Intermediate",
     duration: "Self-paced",
-    price: 199000,
+    price: 100000,
     original_price: 499000,
-    founding_members_limit: 100,
-    founding_price: 199000,
+    founding_members_limit: 10,
+    founding_price: 100000,
     regular_price: 499000,
     summary:
-      "Course cyber security paling lengkap dalam bahasa Indonesia. Dari mindset hacker, setup lab, tools profesional, sampai praktek langsung di PortSwigger — semua ada di sini. 100 Founding Members pertama dapat lifetime access ke semua course Kaalupi.",
+      "Course cyber security paling lengkap dalam bahasa Indonesia. Dari mindset hacker, setup lab, tools profesional, sampai praktek langsung di PortSwigger — semua ada di sini. 10 Early Tester pertama dapat harga spesial 100K + lifetime access ke semua course Kaalupi.",
     hero:
       "Bukan cuma teori — lu bakal setup lab sendiri, pakai tools yang dipakai pentester beneran, dan solve lab hacking real di PortSwigger. Dari nol sampai bisa ngehack secara ethical dan ngerti cara ngejagain sistem.",
     outcomes: [

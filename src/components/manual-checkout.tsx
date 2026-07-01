@@ -120,14 +120,6 @@ export function ManualCheckout({
                 )}
                 {m.id === "bca" && <span className="text-xs font-extrabold text-[#0050AE]">BCA</span>}
                 {m.id === "bsi" && <span className="text-[10px] font-extrabold text-[#00A754]">BSI</span>}
-                {m.id === "qris" && (
-                  <svg className="h-5 w-5 text-[#2D5016]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                    <rect x="3" y="3" width="7" height="7" rx="1" />
-                    <rect x="14" y="3" width="7" height="7" rx="1" />
-                    <rect x="3" y="14" width="7" height="7" rx="1" />
-                    <path d="M14 14h3v3M21 14v7M14 21h3" />
-                  </svg>
-                )}
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-bold text-[#2D5016] truncate">{m.name}</p>
@@ -156,8 +148,7 @@ export function ManualCheckout({
               <p className="mt-1 text-base font-bold text-[#2D5016]">{activeMethod.accountName}</p>
             </div>
 
-            {activeMethod.type !== "qris" && (
-              <div className="rounded-xl border border-[#F5A62A]/40 bg-white p-4">
+            <div className="rounded-xl border border-[#F5A62A]/40 bg-white p-4">
                 <p className="text-xs text-[#5C4813]">
                   {activeMethod.type === "ewallet" ? "Nomor DANA" : "Nomor rekening"}
                 </p>
@@ -174,7 +165,6 @@ export function ManualCheckout({
                   </button>
                 </div>
               </div>
-            )}
 
             <div className="rounded-xl border border-[#F5A62A]/40 bg-white p-4">
               <p className="text-xs text-[#5C4813]">Jumlah transfer</p>
@@ -195,20 +185,6 @@ export function ManualCheckout({
               </p>
             </div>
 
-            {activeMethod.type === "qris" && activeMethod.qrImage && (
-              <div className="rounded-xl border border-[#F5A62A]/40 bg-white p-4 text-center">
-                <p className="text-xs text-[#5C4813] mb-3">Scan QR di bawah pakai e-wallet apa aja:</p>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={activeMethod.qrImage}
-                  alt="QRIS Kaalupi"
-                  className="mx-auto max-w-[280px] w-full rounded-lg border border-[#F0E8D8]"
-                />
-                <p className="mt-3 text-xs text-[#5C4813]">
-                  Compatible dengan GoPay, ShopeePay, OVO, DANA, LinkAja, Mobile Banking apa aja.
-                </p>
-              </div>
-            )}
 
             <div className="rounded-xl bg-white/50 p-4 text-xs leading-6 text-[#5C4813]">
               <strong className="block text-[#2D5016] mb-1">Cara bayar:</strong>
