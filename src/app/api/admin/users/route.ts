@@ -116,26 +116,57 @@ export async function PATCH(request: Request) {
     if (!badge) return NextResponse.json({ error: "Founding Member badge not found" }, { status: 404 });
 
     if (action === "grant_founding") {
-      // Also enroll into mastery course
-      await supabase.from("enrollments").upsert(
-        { user_email: targetEmail, course_slug: "cyber-security-pemula", status: "active" },
-        { onConflict: "user_email,course_slug" },
+      // Enroll into ALL published courses (founding = lifetime access everywhere)
+      const { data: allCourses } = await supabase
+        .from("courses")
+        .select("slug")
+        .eq("is_published", true);
+
+      const enrollUpserts = (allCourses ?? []).map((c: { slug: string }) =>
+        supabase.from("enrollments").upsert(
+          { user_email: targetEmail, course_slug: c.slug, status: "active" },
+          { onConflict: "user_email,course_slug" },
+        )
       );
+      await Promise.all(enrollUpserts);
+
+      // Grant badge
       await supabase.from("user_badges").upsert(
         { user_email: targetEmail, badge_id: badge.id },
         { onConflict: "user_email,badge_id" },
       );
+
+      // Set Clerk metadata so access checks work without extra DB queries
+      const clerk = await clerkClient();
+      const userList = await clerk.users.getUserList({ emailAddress: [targetEmail], limit: 1 });
+      const targetUser = userList.data[0];
+      if (targetUser) {
+        await clerk.users.updateUserMetadata(targetUser.id, {
+          publicMetadata: {
+            ...(targetUser.publicMetadata ?? {}),
+            is_founding_member: true,
+          },
+        });
+      }
+
       return NextResponse.json({ success: true, action: "granted", email: targetEmail });
     } else {
-      // Revoke: remove badge + enrollment
+      // Revoke badge
       await supabase.from("user_badges")
         .delete()
         .eq("user_email", targetEmail)
         .eq("badge_id", badge.id);
-      await supabase.from("enrollments")
-        .delete()
-        .eq("user_email", targetEmail)
-        .eq("course_slug", "cyber-security-pemula");
+
+      // Clear Clerk metadata
+      const clerk = await clerkClient();
+      const userList = await clerk.users.getUserList({ emailAddress: [targetEmail], limit: 1 });
+      const targetUser = userList.data[0];
+      if (targetUser) {
+        const meta = (targetUser.publicMetadata ?? {}) as Record<string, unknown>;
+        delete meta.is_founding_member;
+        await clerk.users.updateUserMetadata(targetUser.id, { publicMetadata: meta });
+      }
+
       return NextResponse.json({ success: true, action: "revoked", email: targetEmail });
     }
   }

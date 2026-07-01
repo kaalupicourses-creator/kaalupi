@@ -22,7 +22,7 @@ export function FoundingSlotCounter({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`/api/founding-slot?slug=${slug}`)
+    fetch(`/api/founding-slot?slug=${slug}`, { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => {
         if (d.error) return;
