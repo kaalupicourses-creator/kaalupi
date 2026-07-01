@@ -419,79 +419,39 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ─── 2-TIER COURSE COMPARISON ─── */}
+      {/* ─── FOUNDING MEMBERS OFFER ─── */}
       <section className="border-t border-[#F0E8D8] bg-[#FEFBF5]">
         <div className="mx-auto max-w-7xl px-6 py-16">
           <div className="mx-auto mb-10 max-w-2xl text-center">
             <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">
-              Pilih Path Lu
+              Penawaran Terbatas
             </p>
             <h2 className="mt-3 text-3xl font-extrabold text-[#2D5016] md:text-4xl">
-              Mulai Gratis. <span className="text-[#F5A62A]">Naik Level Saat Lu Siap.</span>
+              Jadi yang <span className="text-[#F5A62A]">Pertama Masuk.</span>
             </h2>
             <p className="mt-4 text-base leading-7 text-[#444444]">
-              Cobain Foundation gratis dulu. Pas siap, jadi Founding Member — 100 orang pertama
-              dapet lifetime access ke <strong className="text-[#2D5016]">SEMUA course</strong> Kaalupi.
+              100 orang pertama dapet harga Founding Members — lifetime access ke <strong className="text-[#2D5016]">SEMUA course</strong> Kaalupi sekarang & yang akan rilis.
             </p>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-2 max-w-5xl mx-auto">
-            {/* Foundation - Free */}
-            <div className="rounded-3xl border-2 border-[#7AB648]/30 bg-white p-8 flex flex-col">
-              <div className="flex items-center justify-between">
-                <span className="rounded-full bg-[#7AB648] px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-white">
-                  Foundation
-                </span>
-                <div className="text-right">
-                  <p className="text-3xl font-black text-[#7AB648]">Gratis</p>
-                </div>
-              </div>
-              <h3 className="mt-4 text-xl font-extrabold text-[#2D5016]">
-                Cyber Security untuk Pemula — Foundation
-              </h3>
-              <p className="mt-2 text-sm text-[#444444]">
-                Pahami AI dari nol — cara kerjanya, cara nge-prompt yang bener. Cocok buat warming up.
-              </p>
-              <ul className="mt-5 space-y-2.5 text-sm text-[#444] flex-1">
-                {[
-                  "2 modul singkat — pace lu sendiri",
-                  "Akses langsung tanpa daftar tunggu",
-                  "Materi video + artikel",
-                  "Komunitas Discord terbuka",
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-2">
-                    <svg className="h-4 w-4 flex-shrink-0 text-[#7AB648] mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href={withUTM("/courses/cyber-security-pemula", "comparison_free")}
-                className="mt-6 block rounded-xl border-2 border-[#7AB648] bg-white px-6 py-3 text-center text-sm font-bold text-[#7AB648] hover:bg-[#7AB648] hover:text-white transition"
-              >
-                Mulai Gratis →
-              </Link>
-            </div>
-
-            {/* Mastery - Paid */}
-            <div className="relative rounded-3xl border-2 border-[#F5A62A] bg-gradient-to-br from-[#FFF3D6] to-white p-8 flex flex-col shadow-xl mt-3">
+          <div className="max-w-lg mx-auto">
+            {/* Mastery - Founding Members */}
+            <div className="relative rounded-3xl border-2 border-[#F5A62A] bg-gradient-to-br from-[#FFF3D6] to-white p-8 flex flex-col shadow-xl">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 rounded-full bg-[#2D5016] px-4 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-[#F5A62A] shadow-md">
-                Most Recommended
+                Founding Members Only
               </div>
               <div className="flex items-center justify-between">
                 <span className="rounded-full bg-[#F5A62A] px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-[#2D5016]">
                   Mastery
                 </span>
                 <div className="text-right">
-                  <p className="text-xs text-[#444] line-through">Rp 299.000</p>
-                  <p className="text-3xl font-black text-[#F5A62A]">Rp 149K</p>
+                  <p className="text-xs text-[#444] line-through">Rp 499.000</p>
+                  <p className="text-3xl font-black text-[#F5A62A]">Rp 199K</p>
                   <p className="text-[10px] font-bold text-[#7AB648]">Founding Members</p>
                 </div>
               </div>
               <h3 className="mt-4 text-xl font-extrabold text-[#2D5016]">
-                Cyber Security — Mastery
+                Ethical Hacking & Cyber Security — Dari Nol ke Pro
               </h3>
               <p className="mt-2 text-sm text-[#444444]">
                 Founding Members 100 orang pertama dapet lifetime access ke <strong>SEMUA course Kaalupi</strong> — sekarang & yang akan rilis.
@@ -499,7 +459,7 @@ export default async function HomePage() {
               <ul className="mt-5 space-y-2.5 text-sm text-[#444] flex-1">
                 {[
                   "Lifetime access ke SEMUA course Kaalupi",
-                  "5 modul lengkap — pace lu sendiri",
+                  "8 modul lengkap — pace lu sendiri",
                   "AI Tutor 24/7 (tanya bebas per modul)",
                   "Discord eksklusif Founding Members",
                   "Sertifikat resmi + LinkedIn share",
@@ -514,7 +474,9 @@ export default async function HomePage() {
                   </li>
                 ))}
               </ul>
-              <FoundingSlotCounter slug="cyber-security-mastery" variant="inline" />
+              <div className="mt-5">
+                <FoundingSlotCounter slug="cyber-security-mastery" variant="inline" />
+              </div>
               <Link
                 href={withUTM("/courses/cyber-security-mastery", "comparison_paid")}
                 className="mt-4 block rounded-xl bg-[#F5A62A] px-6 py-3 text-center text-sm font-extrabold text-[#2D5016] hover:opacity-90 shadow-md transition"
