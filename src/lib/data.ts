@@ -279,10 +279,10 @@ export const courses: Course[] = [
     is_published: true,
   },
 
-  // ─── DESIGN ───────────────────────────────────────────────────────────────
+  // ─── DESIGN (Akbar) ───────────────────────────────────────────────────────
   {
     slug: "product-ui-design",
-    title: "Product UI/UX Design — Dari Nol ke Portfolio",
+    title: "UI Design for Beginners — Dari Nol ke Portfolio",
     category: "Design",
     level: "Beginner",
     duration: "Self-paced",
@@ -292,24 +292,26 @@ export const courses: Course[] = [
     founding_price: 199000,
     regular_price: 499000,
     summary:
-      "Belajar desain produk digital dari nol: cara berpikir desainer, UI fundamentals, wireframe & prototype di Figma, design system, sampai handoff ke developer.",
+      "Belajar UI design dari benar-benar nol. Dari prinsip dasar desain, warna & tipografi, Figma, wireframe, sampai bikin prototype + portofolio pertama lu. Cocok buat yang belum pernah pegang design tools sama sekali.",
     hero:
-      "Bukan cuma bikin cantik — lu bakal ngerti kenapa sebuah desain works. Dari wireframe sampai prototype yang siap masuk portofolio.",
+      "Ga perlu bakat gambar. Belajar UI design step by step dari nol — ngerti kenapa sebuah desain works, dan bikin karya pertama yang layak masuk portofolio.",
     outcomes: [
-      "Cara berpikir desainer: problem solving, bukan cuma estetika",
-      "UI fundamentals: layout, tipografi, warna, hierarki visual",
-      "Bikin wireframe & prototype interaktif di Figma",
-      "Bangun design system yang konsisten & reusable",
-      "Handoff desain ke developer dengan rapi",
-      "Punya portofolio desain yang siap dipamerin",
+      "Ngerti dasar UI design & cara berpikir desainer",
+      "Kuasai prinsip desain: layout, alignment, spacing, hierarki",
+      "Paham cara milih warna & tipografi yang enak dilihat",
+      "Lancar pakai Figma dari nol",
+      "Bikin wireframe sampai high-fidelity design",
+      "Bikin prototype interaktif + portofolio pertama lu",
     ],
     modules: [
-      "Design Thinking & Mindset Desainer",
-      "UI Fundamentals: Layout, Warna, Tipografi",
-      "Wireframe & Prototype di Figma",
-      "Design System & Component",
-      "Handoff ke Developer",
-      "Final Project: Portfolio Desain",
+      "Pengenalan UI Design & Mindset Desainer",
+      "Prinsip Dasar Desain: Layout, Alignment & Spacing",
+      "Warna & Tipografi",
+      "Kenalan sama Figma",
+      "Wireframing (Low-Fidelity)",
+      "High-Fidelity Design & Komponen",
+      "Prototyping & Interaksi",
+      "Final Project & Portfolio",
     ],
     format: "blended",
     featured: false,
