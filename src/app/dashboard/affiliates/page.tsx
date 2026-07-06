@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { AffiliatesView } from "@/components/affiliates-view";
 import { isSuperAdmin } from "@/lib/auth";
+import { getCourses } from "@/lib/content";
 
 export default async function AffiliatesAdminPage() {
   const { userId } = await auth();
@@ -11,6 +12,12 @@ export default async function AffiliatesAdminPage() {
   const user = await currentUser();
   const email = user?.primaryEmailAddress?.emailAddress ?? "";
   if (!isSuperAdmin(email)) redirect("/dashboard");
+
+  // Course yang bisa dibeli (published, bukan coming soon, ada harga) — buat link referral
+  const allCourses = await getCourses();
+  const buyableCourses = allCourses
+    .filter((c) => c.is_published !== false && !c.comingSoon && c.price > 0)
+    .map((c) => ({ slug: c.slug, title: c.title }));
 
   return (
     <div className="bg-[#FEFBF5] min-h-screen">
@@ -46,7 +53,7 @@ export default async function AffiliatesAdminPage() {
           </ol>
         </div>
 
-        <AffiliatesView />
+        <AffiliatesView courses={buyableCourses} />
       </div>
     </div>
   );

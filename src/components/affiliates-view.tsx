@@ -14,15 +14,17 @@ type Affiliate = {
   commission_owed: number;
 };
 
+type CourseOption = { slug: string; title: string };
+
 const rp = (n: number) => "Rp " + n.toLocaleString("id-ID");
 const SITE = "https://kaalupi.vercel.app";
-const DEFAULT_COURSE = "cyber-security-pemula";
 
-export function AffiliatesView() {
+export function AffiliatesView({ courses }: { courses: CourseOption[] }) {
   const [affiliates, setAffiliates] = useState<Affiliate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState<string | null>(null);
+  const [linkCourse, setLinkCourse] = useState(courses[0]?.slug ?? "");
 
   // Form state
   const [code, setCode] = useState("");
@@ -92,7 +94,8 @@ export function AffiliatesView() {
   }
 
   function copyLink(codeVal: string) {
-    const link = `${SITE}/checkout/${DEFAULT_COURSE}?ref=${codeVal}`;
+    const course = linkCourse || courses[0]?.slug || "";
+    const link = `${SITE}/checkout/${course}?ref=${codeVal}`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(link).then(() => {
         setCopied(codeVal);
@@ -171,6 +174,27 @@ export function AffiliatesView() {
           Dari {affiliates.length} afiliasi. Ini yang perlu lu bayar ke mereka (dari penjualan yang udah di-approve).
         </p>
       </div>
+
+      {/* Pilih course buat link referral */}
+      {courses.length > 0 && (
+        <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-[#F0E8D8] bg-white p-4">
+          <span className="text-sm font-semibold text-[#2D5016]">Link referral buat course:</span>
+          <select
+            value={linkCourse}
+            onChange={(e) => setLinkCourse(e.target.value)}
+            className="rounded-xl border border-[#F0E8D8] bg-[#FEFBF5] px-3 py-2 text-sm font-semibold text-[#2D5016] focus:border-[#F5A62A] focus:outline-none"
+          >
+            {courses.map((c) => (
+              <option key={c.slug} value={c.slug}>
+                {c.title}
+              </option>
+            ))}
+          </select>
+          <span className="text-xs text-[#5C4813]">
+            Tombol &quot;Salin Link&quot; di bawah bakal ngarah ke course ini. Ganti course kalau mau link yang beda.
+          </span>
+        </div>
+      )}
 
       {/* Table */}
       {loading ? (
