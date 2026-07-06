@@ -15,7 +15,7 @@ export default async function LoginPage() {
               Selamat datang di Kaalupi
             </h1>
             <p className="mt-4 text-base leading-7 text-[#444444]">
-              Platform kursus IT terlengkap untuk meningkatkan skill teknologi kamu. Dari programming hingga cyber security.
+              Platform belajar skill digital dalam Bahasa Indonesia. Dari web development, network, sampai design.
             </p>
 
             <div className="mt-8 space-y-4">

@@ -19,9 +19,9 @@ export default async function RegisterPage() {
 
             <div className="mt-8 space-y-4">
               {[
-                { title: "Gratis Selamanya", desc: "Course foundation gratis, akses langsung tanpa bayar" },
+                { title: "Lifetime Access", desc: "Founding Member: akses selamanya ke SEMUA course Kaalupi" },
                 { title: "Belajar Langsung Praktik", desc: "Setiap modul ada project nyata yang bisa masuk portofolio" },
-                { title: "AI Terintegrasi", desc: "Pakai AI tools di setiap project, sesuai standar industri" },
+                { title: "Belajar Bareng AI", desc: "Kuasai cara pakai AI tools yang bener, sesuai standar industri" },
               ].map((item) => (
                 <div key={item.title} className="flex items-start gap-3">
                   <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-[#E8F5E9]">
@@ -76,10 +76,10 @@ export default async function RegisterPage() {
                   💡 Kenapa daftar di Kaalupi?
                 </p>
                 <ul className="space-y-1.5 text-xs leading-6 text-[#444444]">
-                  <li>✅ Course gratis untuk pemula — langsung akses</li>
+                  <li>✅ Founding Member — lifetime access ke semua course</li>
                   <li>✅ Sertifikat resmi + badge pencapaian</li>
                   <li>✅ Belajar pakai AI tools dari hari pertama</li>
-                  <li>✅ Garansi 14 hari uang kembali untuk course premium</li>
+                  <li>✅ Refund 100% kalau ada kendala teknis akses</li>
                 </ul>
               </div>
             </div>

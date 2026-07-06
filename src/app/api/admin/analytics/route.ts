@@ -38,7 +38,7 @@ export async function GET() {
     supabase.from("enrollments").select("id", { count: "exact", head: true }).eq("status", "active"),
     supabase.from("enrollments").select("id", { count: "exact", head: true }).eq("status", "active").gte("created_at", since7d),
     supabase.from("enrollments").select("id", { count: "exact", head: true }).eq("status", "active").gte("created_at", since30d),
-    supabase.from("enrollments").select("id", { count: "exact", head: true }).eq("status", "active").eq("course_slug", "cyber-security-mastery"),
+    supabase.from("enrollments").select("id", { count: "exact", head: true }).eq("status", "active").eq("course_slug", "cyber-security-pemula"),
     supabase.from("orders").select("amount").eq("status", "paid"),
     supabase.from("progress").select("user_email").eq("completed", true).gte("completed_at", since30d),
     supabase.from("waitlist").select("id", { count: "exact", head: true }),

@@ -98,21 +98,14 @@ export default function WaitlistPage() {
                 Notifikasi Course Berikutnya
               </h1>
               <p className="mt-2 text-sm text-[#5C4813] leading-6">
-                Dapet notifikasi pertama saat track <strong>Network Engineer, Cyber Security, Designer, atau Data Science</strong> rilis.
+                Dapet notifikasi pertama saat track <strong>App Developer, Data Science, atau AI Specialist</strong> rilis.
               </p>
               <div className="mt-4 rounded-xl bg-[#FFF3D6] px-4 py-3 text-xs text-[#5C4813] leading-5">
-                💡 Mau course AI? Dua course AI udah live:{" "}
+                💡 Course pertama udah live:{" "}
                 <Link href="/courses/cyber-security-pemula" className="font-bold underline">
-                  Foundation gratis
+                  The Smart Vibe Coder (Web Dev bareng AI)
                 </Link>{" "}
-                atau{" "}
-                <Link
-                  href="/courses/cyber-security-mastery"
-                  className="font-bold underline"
-                >
-                  Mastery Founding Members
-                </Link>
-                .
+                — daftar sebagai Founding Member buat akses semua course.
               </div>
             </div>
 

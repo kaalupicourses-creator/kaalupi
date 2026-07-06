@@ -3,25 +3,31 @@ import { auth, clerkClient } from "@clerk/nextjs/server";
 import { CourseThumbnail } from "@/components/course-thumbnail";
 import { FoundingSlotCounter } from "@/components/founding-slot-counter";
 import { comingSoonTracks } from "@/lib/data";
-import { getCourseBySlug, getEnrollments } from "@/lib/content";
+import { getCourses, getEnrollments } from "@/lib/content";
 
 export default async function CoursesPage() {
-  const course = await getCourseBySlug("cyber-security-pemula");
-  if (!course) return null;
+  const allCourses = await getCourses();
+  const flagship =
+    allCourses.find((c) => c.featured && !c.comingSoon) ??
+    allCourses.find((c) => !c.comingSoon) ??
+    allCourses[0];
+  if (!flagship) return null;
+
+  const otherCourses = allCourses.filter((c) => c.slug !== flagship.slug);
 
   const { userId } = await auth();
-  let isEnrolled = false;
+  let enrollments: string[] = [];
   if (userId) {
     try {
       const clerk = await clerkClient();
       const user = await clerk.users.getUser(userId);
       const email = user.primaryEmailAddress?.emailAddress ?? "";
-      const enrollments = await getEnrollments(email);
-      isEnrolled = enrollments.includes(course.slug);
+      enrollments = await getEnrollments(email);
     } catch (err) {
       console.error("[/courses] enrollment check failed:", err);
     }
   }
+  const isEnrolled = enrollments.includes(flagship.slug);
 
   return (
     <div className="bg-[#FEFBF5]">
@@ -32,18 +38,18 @@ export default async function CoursesPage() {
             Course Catalog
           </p>
           <h1 className="mt-4 text-4xl font-extrabold text-[#2D5016] md:text-5xl">
-            Kuasai Cyber Security{" "}
+            Belajar Skill Digital{" "}
             <span className="text-[#F5A62A]">dari Nol ke Pro</span>
           </h1>
           <p className="mt-6 text-base leading-8 text-[#444444]">
-            Satu course lengkap — dari fondasi sampai exploitasi. Daftar sekarang sebagai{" "}
+            Bahasa Indonesia, langsung praktik. Daftar sekarang sebagai{" "}
             <strong className="text-[#2D5016]">Founding Member</strong> dan dapatkan lifetime access
             ke <strong className="text-[#2D5016]">SEMUA course</strong> Kaalupi (sekarang & yang akan rilis).
           </p>
         </div>
       </section>
 
-      {/* Course Card */}
+      {/* Flagship Course Card */}
       <section className="border-t border-[#F0E8D8]">
         <div className="mx-auto max-w-4xl px-6 py-12">
           <article className="relative overflow-hidden rounded-3xl border-2 border-[#F5A62A] bg-gradient-to-br from-[#FFF3D6] to-white shadow-xl">
@@ -53,26 +59,26 @@ export default async function CoursesPage() {
             </div>
 
             <div className="relative overflow-hidden">
-              <CourseThumbnail title={course.title} category={course.category} large />
+              <CourseThumbnail title={flagship.title} category={flagship.category} large />
             </div>
 
             <div className="p-8 lg:p-10">
               <div className="flex flex-wrap items-center gap-2 text-xs">
                 <span className="rounded-full bg-[#FFF3D6] px-3 py-1 font-semibold text-[#5C4813]">
-                  {course.level}
+                  {flagship.level}
                 </span>
                 <span className="rounded-full bg-[#FFF3D6] px-3 py-1 font-semibold text-[#5C4813]">
-                  {course.modules.length} modul
+                  {flagship.modules.length} modul
                 </span>
                 <span className="rounded-full bg-[#2D5016]/10 px-3 py-1 font-semibold text-[#2D5016]">
-                  Cyber Security
+                  {flagship.category}
                 </span>
               </div>
 
               <h2 className="mt-4 text-2xl font-extrabold text-[#2D5016] lg:text-3xl">
-                {course.title}
+                {flagship.title}
               </h2>
-              <p className="mt-3 text-sm leading-7 text-[#444444]">{course.summary}</p>
+              <p className="mt-3 text-sm leading-7 text-[#444444]">{flagship.summary}</p>
 
               {/* Two columns: outcomes + modules */}
               <div className="mt-8 grid gap-8 lg:grid-cols-2">
@@ -82,7 +88,7 @@ export default async function CoursesPage() {
                     Yang akan kamu kuasai
                   </p>
                   <ul className="space-y-2">
-                    {course.outcomes.map((o, i) => (
+                    {flagship.outcomes.map((o, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm">
                         <svg className="h-4 w-4 flex-shrink-0 text-[#7AB648] mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -96,10 +102,10 @@ export default async function CoursesPage() {
                 {/* Modules */}
                 <div>
                   <p className="text-xs font-bold uppercase tracking-wider text-[#2D5016] mb-3">
-                    8 Modul Lengkap
+                    {flagship.modules.length} Modul Lengkap
                   </p>
                   <ul className="space-y-1.5">
-                    {course.modules.map((mod, i) => (
+                    {flagship.modules.map((mod, i) => (
                       <li key={i} className="flex items-start gap-2.5 text-sm">
                         <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#F5A62A] text-[10px] font-bold text-[#2D5016]">
                           {i + 1}
@@ -116,11 +122,11 @@ export default async function CoursesPage() {
                 <div className="flex flex-wrap items-end justify-between gap-6">
                   <div>
                     <p className="text-xs text-[#444] line-through">
-                      Harga normal: Rp {(course.original_price ?? 499000).toLocaleString("id-ID")}
+                      Harga normal: Rp {(flagship.original_price ?? 499000).toLocaleString("id-ID")}
                     </p>
                     <div className="flex items-baseline gap-2 mt-1">
                       <span className="text-4xl font-black text-[#F5A62A]">
-                        Rp {course.price.toLocaleString("id-ID")}
+                        Rp {flagship.price.toLocaleString("id-ID")}
                       </span>
                       <span className="text-sm font-bold text-[#7AB648]">Founding Price</span>
                     </div>
@@ -129,7 +135,7 @@ export default async function CoursesPage() {
                     </p>
                   </div>
                   <div className="w-full lg:w-auto">
-                    <FoundingSlotCounter slug={course.slug} variant="inline" />
+                    <FoundingSlotCounter slug={flagship.slug} variant="inline" />
                   </div>
                 </div>
 
@@ -137,7 +143,7 @@ export default async function CoursesPage() {
                   {isEnrolled ? (
                     <div className="space-y-2">
                       <Link
-                        href={`/access/${course.slug}`}
+                        href={`/access/${flagship.slug}`}
                         className="block w-full rounded-xl bg-[#F5A62A] px-6 py-3.5 text-center text-sm font-extrabold text-[#2D5016] hover:opacity-90 shadow-md transition"
                       >
                         Lanjutkan Belajar →
@@ -148,10 +154,10 @@ export default async function CoursesPage() {
                     </div>
                   ) : (
                     <Link
-                      href={`/courses/${course.slug}`}
+                      href={`/checkout/${flagship.slug}`}
                       className="block w-full rounded-xl bg-[#F5A62A] px-6 py-3.5 text-center text-sm font-extrabold text-[#2D5016] hover:opacity-90 shadow-md transition"
                     >
-                      Daftar Founding Members — Rp {course.price.toLocaleString("id-ID")} →
+                      Daftar Founding Members — Rp {flagship.price.toLocaleString("id-ID")} →
                     </Link>
                   )}
                 </div>
@@ -161,26 +167,75 @@ export default async function CoursesPage() {
         </div>
       </section>
 
-      {/* Coming Soon Tracks */}
-      <section className="border-t border-[#F0E8D8] bg-white">
+      {/* Other Courses — coming soon, termasuk di Founding Member */}
+      {otherCourses.length > 0 && (
+        <section className="border-t border-[#F0E8D8] bg-white">
+          <div className="mx-auto max-w-7xl px-6 py-14">
+            <div className="mx-auto mb-8 max-w-2xl text-center">
+              <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">
+                Course Lainnya
+              </p>
+              <h2 className="mt-3 text-2xl font-extrabold text-[#2D5016] md:text-3xl">
+                Segera Rilis — Founding Member Dapat Semua
+              </h2>
+              <p className="mt-3 text-sm text-[#444444]">
+                Materi lagi disiapin instructor. Jadi Founding Member sekarang, otomatis dapat akses ke semua course ini pas rilis.
+              </p>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {otherCourses.map((c) => (
+                <article
+                  key={c.slug}
+                  className="group overflow-hidden rounded-2xl border-2 border-[#F0E8D8] bg-white transition hover:border-[#F5A62A] hover:shadow-lg"
+                >
+                  <div className="relative">
+                    <CourseThumbnail title={c.title} category={c.category} />
+                    {c.comingSoon && (
+                      <div className="absolute right-3 top-3 rounded-full bg-[#2D5016] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#F5A62A] shadow">
+                        Coming Soon
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-5">
+                    <span className="rounded-full bg-[#FFF3D6] px-2.5 py-0.5 text-[10px] font-bold text-[#5C4813]">
+                      {c.category}
+                    </span>
+                    <h3 className="mt-3 text-base font-extrabold text-[#2D5016] group-hover:text-[#F5A62A] transition">
+                      {c.title}
+                    </h3>
+                    <p className="mt-2 text-xs leading-6 text-[#444]">{c.summary}</p>
+                    <p className="mt-3 text-[11px] font-bold text-[#7AB648]">
+                      ✓ Termasuk di paket Founding Member
+                    </p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Coming Soon Tracks — future roadmap */}
+      <section className="border-t border-[#F0E8D8] bg-[#FEFBF5]">
         <div className="mx-auto max-w-7xl px-6 py-12">
           <div className="mx-auto mb-8 max-w-2xl text-center">
             <p className="text-xs font-bold uppercase tracking-[0.35em] text-[#7AB648]">
-              Coming Soon
+              Roadmap
             </p>
             <h2 className="mt-3 text-2xl font-extrabold text-[#2D5016]">
-              Track Berikutnya — Founding Member Dapat Semua
+              Track Berikutnya di Kaalupi
             </h2>
             <p className="mt-3 text-sm text-[#444444]">
-              Daftar sekarang — Founding Member otomatis dapat akses ke semua track yang rilis.
+              Ini yang bakal kita bangun selanjutnya. Founding Member otomatis dapat akses semua.
             </p>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-3">
             {comingSoonTracks.map((track) => (
               <div
                 key={track.title}
-                className="rounded-2xl border border-[#F0E8D8] bg-[#FEFBF5] p-5"
+                className="rounded-2xl border border-[#F0E8D8] bg-white p-5"
               >
                 <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-[#F0E8D8] px-2.5 py-0.5">
                   <span className="relative flex h-2 w-2">

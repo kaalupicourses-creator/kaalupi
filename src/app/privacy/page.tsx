@@ -35,7 +35,7 @@ export default function PrivacyPage() {
                 <strong>Pembelajaran</strong> — progress per modul, sertifikat yang di-generate, poin &amp; badge.
               </li>
               <li>
-                <strong>Pembayaran</strong> — nominal, metode (DANA / BCA / BSI / QRIS), nama pengirim, dan jam transaksi. Kami <strong>nggak menyimpan</strong> nomor rekening / nomor kartu kamu.
+                <strong>Pembayaran</strong> — nominal, metode (DANA / BCA / BSI), nama pengirim, dan jam transaksi. Kami <strong>nggak menyimpan</strong> nomor rekening / nomor kartu kamu.
               </li>
               <li>
                 <strong>Komunikasi</strong> — pesan ke admin via WhatsApp / email (untuk verifikasi pembayaran &amp; support).

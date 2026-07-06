@@ -40,7 +40,7 @@ export function DashboardOnboarding({ userName, enrollmentsCount }: DashboardOnb
                 Mantap, {userName}! Lu udah resmi gabung.
               </p>
               <p className="text-xs text-[#5C4813]">
-                Course &quot;Cyber Security untuk Pemula&quot; otomatis ke-enroll. Mulai modul pertama bareng kami.
+                Yuk mulai dari langkah pertama di bawah — daftar course & gabung komunitas.
               </p>
             </div>
           </div>
@@ -73,16 +73,16 @@ export function DashboardOnboarding({ userName, enrollmentsCount }: DashboardOnb
 
               <div className="mt-6 space-y-3">
                 <Link
-                  href="/courses/cyber-security-pemula"
+                  href="/checkout/cyber-security-pemula"
                   className="flex items-start gap-4 rounded-xl border border-[#F5A62A]/40 bg-white/70 p-4 transition hover:border-[#F5A62A] hover:bg-white"
                 >
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#F5A62A] text-xs font-bold text-[#2D5016]">
                     1
                   </div>
                   <div className="flex-1">
-                    <p className="font-bold text-[#2D5016]">Mulai Course Gratis</p>
+                    <p className="font-bold text-[#2D5016]">Daftar Founding Member</p>
                     <p className="mt-0.5 text-sm text-[#5C4813]">
-                      &quot;Cyber Security untuk Pemula&quot; — 2 modul singkat. Foundation buat semua track.
+                      &quot;The Smart Vibe Coder&quot; — Web Dev bareng AI. Lifetime access ke SEMUA course Kaalupi.
                     </p>
                   </div>
                   <span className="text-sm font-bold text-[#F5A62A]">→</span>
@@ -107,16 +107,16 @@ export function DashboardOnboarding({ userName, enrollmentsCount }: DashboardOnb
                 </a>
 
                 <Link
-                  href="/courses/cyber-security-mastery"
+                  href="/courses"
                   className="flex items-start gap-4 rounded-xl border border-[#F5A62A]/40 bg-white/70 p-4 transition hover:border-[#F5A62A] hover:bg-white"
                 >
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#F5A62A] text-xs font-bold text-[#2D5016]">
                     3
                   </div>
                   <div className="flex-1">
-                    <p className="font-bold text-[#2D5016]">Cek Mastery (Opsional)</p>
+                    <p className="font-bold text-[#2D5016]">Lihat Semua Course</p>
                     <p className="mt-0.5 text-sm text-[#5C4813]">
-                      Slot Founding Members 149K — sertifikat, AI Tutor 24/7, badge eksklusif.
+                      Cek roadmap course yang bakal rilis — Network, Design, dan lainnya.
                     </p>
                   </div>
                   <span className="text-sm font-bold text-[#F5A62A]">→</span>

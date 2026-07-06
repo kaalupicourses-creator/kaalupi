@@ -85,13 +85,13 @@ export function PaymentSubmissionsView() {
     const founding = submissions.filter(
       (s) =>
         s.status === "approved" &&
-        s.course_slug === "cyber-security-mastery" &&
+        s.course_slug === "cyber-security-pemula" &&
         !isTeam(s),
     ).length;
     const regular = submissions.filter(
       (s) =>
         s.status === "approved" &&
-        s.course_slug !== "cyber-security-mastery" &&
+        s.course_slug !== "cyber-security-pemula" &&
         !isTeam(s),
     ).length;
     const rejected = submissions.filter((s) => s.status === "rejected").length;
@@ -108,7 +108,7 @@ export function PaymentSubmissionsView() {
         list = list.filter(
           (s) =>
             s.status === "approved" &&
-            s.course_slug === "cyber-security-mastery" &&
+            s.course_slug === "cyber-security-pemula" &&
             !isTeam(s),
         );
         break;
@@ -116,7 +116,7 @@ export function PaymentSubmissionsView() {
         list = list.filter(
           (s) =>
             s.status === "approved" &&
-            s.course_slug !== "cyber-security-mastery" &&
+            s.course_slug !== "cyber-security-pemula" &&
             !isTeam(s),
         );
         break;
@@ -254,7 +254,7 @@ export function PaymentSubmissionsView() {
                     <span className="rounded-full bg-[#FFF3D6] px-2.5 py-0.5 text-[10px] font-bold text-[#5C4813]">
                       {METHOD_LABEL[s.payment_method] ?? s.payment_method}
                     </span>
-                    {s.course_slug === "cyber-security-mastery" && (
+                    {s.course_slug === "cyber-security-pemula" && (
                       <span className="rounded-full bg-[#F5A62A] px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-[#2D5016]">
                         Mastery / Founding
                       </span>

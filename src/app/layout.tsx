@@ -15,29 +15,29 @@ const nunito = Nunito({
 export const metadata: Metadata = {
   metadataBase: new URL("https://kaalupi.vercel.app"),
   title: {
-    default: "Kaalupi | AI-First Career Platform Indonesia — Dari Nol ke AI Specialist",
+    default: "Kaalupi | Platform Belajar Skill Digital Indonesia — Dari Nol ke Pro",
     template: "%s | Kaalupi",
   },
-  description: "Platform course IT profesional dengan integrasi AI tools. Pelajari AI, Programming, Network, dan Cyber Security dalam bahasa Indonesia. Gratis untuk pemula, sertifikat resmi, akses lifetime.",
-  keywords: ["course IT", "belajar AI", "programming Indonesia", "cyber security", "network engineer", "AI tools", "career platform"],
+  description: "Platform belajar skill digital dalam bahasa Indonesia. Web Development, Network Engineering, Design, dan pelajaran akademik — langsung praktik, sertifikat resmi, akses lifetime.",
+  keywords: ["belajar web development", "kursus IT Indonesia", "web dev bareng AI", "network engineer", "belajar design", "kursus online Indonesia", "sertifikat"],
   icons: {
     icon: "/favicon.png",
     shortcut: "/favicon.png",
     apple: "/favicon.png",
   },
   openGraph: {
-    title: "Kaalupi | AI-First Career Platform Indonesia",
-    description: "Manfaatin AI buat capai target hidup lu. Course IT dengan integrasi AI tools, bahasa Indonesia, langsung praktik.",
+    title: "Kaalupi | Platform Belajar Skill Digital Indonesia",
+    description: "Belajar Web Dev, Network, Design, dan lainnya — bahasa Indonesia, langsung praktik, akses lifetime.",
     url: "https://kaalupi.vercel.app",
     siteName: "Kaalupi",
-    images: [{ url: "/og", width: 1200, height: 630, alt: "Kaalupi - AI-First Career Platform Indonesia" }],
+    images: [{ url: "/og", width: 1200, height: 630, alt: "Kaalupi - Platform Belajar Skill Digital Indonesia" }],
     locale: "id_ID",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Kaalupi | AI-First Career Platform Indonesia",
-    description: "Manfaatin AI buat capai target hidup lu. Course IT dengan integrasi AI tools.",
+    title: "Kaalupi | Platform Belajar Skill Digital Indonesia",
+    description: "Belajar Web Dev, Network, Design, dan lainnya — bahasa Indonesia, langsung praktik.",
     images: ["/og"],
   },
 };

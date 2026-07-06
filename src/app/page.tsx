@@ -69,18 +69,18 @@ export default async function HomePage() {
     ],
     offers: {
       "@type": "Offer",
-      price: "0",
+      price: "199000",
       priceCurrency: "IDR",
-      description: "Free Cyber Security untuk Pemula course",
+      description: "The Smart Vibe Coder — Web Development bareng AI (Founding Members)",
     },
     hasCourse: [
       {
         "@type": "Course",
-        name: "Cyber Security untuk Pemula — Dari Nol ke Produktif",
-        description: "Pelajari cara kerja AI, prompt engineering, dan cara pakai AI untuk produktivitas",
+        name: "The Smart Vibe Coder — Kuasai Web Dev Bareng AI",
+        description: "Belajar web development dari nol di era AI: fondasi HTML/CSS/JS, prompt engineering, sampai bangun web pertama.",
         provider: { "@type": "Organization", name: "Kaalupi" },
         courseMode: "online",
-        isAccessibleForFree: true,
+        isAccessibleForFree: false,
       },
     ],
   };
@@ -108,17 +108,17 @@ export default async function HomePage() {
               <span className="relative inline-flex h-2 w-2 rounded-full bg-[#F5A62A]" />
             </span>
             <p className="text-xs font-bold tracking-[0.2em] text-[#5C4813]">
-              CYBER SECURITY · BAHASA INDONESIA
+              PLATFORM BELAJAR SKILL DIGITAL · INDONESIA
             </p>
           </div>
 
           <h1 className="text-4xl font-extrabold leading-tight text-[#2D5016] md:text-5xl lg:text-6xl">
-            Kuasai <span className="text-[#F5A62A]">Cyber Security</span> dari nol
+            Kuasai <span className="text-[#F5A62A]">Web Dev Bareng AI</span> dari nol
           </h1>
 
           <p className="mt-6 max-w-2xl mx-auto text-lg leading-8 text-[#444444]">
-            Pelajari cara berpikir seperti defender — pahami ancaman, proteksi sistem, dan
-            deteksi serangan. Bahasa Indonesia, langsung praktik, pace lu sendiri.
+            Belajar bikin website dari nol di era AI — ngerti fondasinya, bukan cuma modal prompting.
+            Plus lifetime access ke semua course Kaalupi yang bakal rilis. Bahasa Indonesia, pace lu sendiri.
           </p>
 
           {/* SINGLE PRIMARY CTA — clear direction */}
@@ -133,7 +133,7 @@ export default async function HomePage() {
             {!isSignedIn && (
               <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-[#5C4813]">
                 <Link
-                  href={withUTM("/checkout/cyber-security-mastery", "hero_secondary_mastery")}
+                  href={withUTM("/checkout/cyber-security-pemula", "hero_secondary_mastery")}
                   className="font-semibold underline-offset-4 transition hover:text-[#F5A62A] hover:underline"
                 >
                   Lihat kursus Founding Members →
@@ -151,7 +151,7 @@ export default async function HomePage() {
 
           {/* Founding slot counter — social proof */}
           <div className="mt-6 max-w-md mx-auto">
-            <FoundingSlotCounter slug="cyber-security-mastery" variant="inline" />
+            <FoundingSlotCounter slug="cyber-security-pemula" variant="inline" />
           </div>
 
           {/* Trust Signals — honest & spesifik */}
@@ -451,7 +451,7 @@ export default async function HomePage() {
                 </div>
               </div>
               <h3 className="mt-4 text-xl font-extrabold text-[#2D5016]">
-                Ethical Hacking & Cyber Security — Dari Nol ke Pro
+                The Smart Vibe Coder — Kuasai Web Dev Bareng AI
               </h3>
               <p className="mt-2 text-sm text-[#444444]">
                 Founding Members 100 orang pertama dapet lifetime access ke <strong>SEMUA course Kaalupi</strong> — sekarang & yang akan rilis.
@@ -459,7 +459,7 @@ export default async function HomePage() {
               <ul className="mt-5 space-y-2.5 text-sm text-[#444] flex-1">
                 {[
                   "Lifetime access ke SEMUA course Kaalupi",
-                  "8 modul lengkap — pace lu sendiri",
+                  "7 modul lengkap — pace lu sendiri",
                   "AI Tutor 24/7 (tanya bebas per modul)",
                   "Discord eksklusif Founding Members",
                   "Sertifikat resmi + LinkedIn share",
@@ -475,10 +475,10 @@ export default async function HomePage() {
                 ))}
               </ul>
               <div className="mt-5">
-                <FoundingSlotCounter slug="cyber-security-mastery" variant="inline" />
+                <FoundingSlotCounter slug="cyber-security-pemula" variant="inline" />
               </div>
               <Link
-                href={withUTM("/checkout/cyber-security-mastery", "comparison_paid")}
+                href={withUTM("/checkout/cyber-security-pemula", "comparison_paid")}
                 className="mt-4 block rounded-xl bg-[#F5A62A] px-6 py-3 text-center text-sm font-extrabold text-[#2D5016] hover:opacity-90 shadow-md transition"
               >
                 Daftar Founding Members →
@@ -503,7 +503,7 @@ export default async function HomePage() {
                 Dari Nol,<br /><span className="text-[#F5A62A]">Sampai Bisa Kerja</span>
               </h2>
               <p className="mt-4 max-w-2xl text-base leading-7 text-[#444444]">
-                Kursus cyber security paling lengkap dalam Bahasa Indonesia — 8 modul, langsung praktik, dengan akses lifetime.
+                Kursus web development paling praktis dalam Bahasa Indonesia — 7 modul, bikin web beneran bareng AI, dengan akses lifetime.
               </p>
             </div>
 
@@ -526,7 +526,7 @@ export default async function HomePage() {
                     {spotlightCourse.category}
                   </span>
                   <span className="rounded-full bg-[#FFF3D6] px-3 py-1 text-xs font-semibold text-[#5C4813]">
-                    8 modul
+                    {spotlightCourse.modules.length} modul
                   </span>
                 </div>
 
@@ -554,7 +554,7 @@ export default async function HomePage() {
 
                 <div className="mt-8 flex flex-wrap items-center gap-4">
                   <Link
-                    href={withUTM("/checkout/cyber-security-mastery", "spotlight_mastery")}
+                    href={withUTM("/checkout/cyber-security-pemula", "spotlight_mastery")}
                     className="rounded-xl bg-[#F5A62A] px-8 py-3.5 text-sm font-bold text-[#2D5016] shadow-md transition hover:opacity-90 hover:shadow-lg"
                   >
                     Daftar Founding Members →
@@ -790,7 +790,7 @@ export default async function HomePage() {
             {[
               {
                 q: "Apa yang didapat Founding Members?",
-                a: "Founding Members (100 orang pertama) dapet: 8 modul lengkap Ethical Hacking & Cyber Security + akses LIFETIME ke SEMUA course Kaalupi (sekarang & yang akan rilis), AI Tutor 24/7, badge eksklusif, Discord khusus founding members, sertifikat resmi, dan update materi gratis selamanya. Harga Rp 199.000 — setelah 100 slot habis, harga balik ke Rp 499.000.",
+                a: "Founding Members (100 orang pertama) dapet: 7 modul lengkap The Smart Vibe Coder (Web Dev bareng AI) + akses LIFETIME ke SEMUA course Kaalupi yang bakal rilis (Network, Design, dan lainnya), AI Tutor 24/7, badge eksklusif, Discord khusus founding members, sertifikat resmi, dan update materi gratis selamanya. Harga Rp 199.000 — setelah 100 slot habis, harga balik ke Rp 499.000.",
               },
               {
                 q: "Cara bayarnya gimana?",
@@ -863,7 +863,7 @@ export default async function HomePage() {
             </p>
             <div className="relative mt-8 flex flex-wrap justify-center gap-4">
               <Link
-                href={withUTM("/checkout/cyber-security-mastery", "cta_founding")}
+                href={withUTM("/checkout/cyber-security-pemula", "cta_founding")}
                 className="rounded-xl bg-[#F5A62A] px-8 py-3.5 text-sm font-bold text-[#2D5016] transition hover:opacity-90"
               >
                 Daftar Founding Members — Rp 199K →

@@ -28,7 +28,7 @@ const milestones = [
   {
     label: "Hari ini",
     title: "Founding Members buka",
-    body: "Course gratis 'Cyber Security untuk Pemula' siap akses. Slot 100 Founding Members dibuka — early supporters dapet akses lifetime ke semua course Kaalupi.",
+    body: "Course 'The Smart Vibe Coder' (Web Dev bareng AI) siap rilis. Slot 100 Founding Members dibuka — early supporters dapet akses lifetime ke semua course Kaalupi.",
   },
 ];
 

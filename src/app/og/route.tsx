@@ -48,7 +48,7 @@ export async function GET() {
             marginTop: 12,
           }}
         >
-          AI-First Career Platform Indonesia
+          Platform Belajar Skill Digital Indonesia
         </p>
         <p
           style={{
@@ -59,7 +59,7 @@ export async function GET() {
             maxWidth: "70%",
           }}
         >
-          Dari Nol ke AI Specialist — Course IT dengan integrasi AI Tools
+          Dari Nol ke Pro — Web Dev, Network, Design & lainnya
         </p>
 
         {/* Bottom badge */}
@@ -74,10 +74,10 @@ export async function GET() {
             fontWeight: 600,
           }}
         >
-          <span>#AI</span>
-          <span>#Programming</span>
-          <span>#CyberSecurity</span>
+          <span>#WebDev</span>
           <span>#Network</span>
+          <span>#Design</span>
+          <span>#Akademik</span>
         </div>
       </div>
     ),

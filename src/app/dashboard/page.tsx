@@ -76,7 +76,7 @@ export default async function DashboardPage() {
     earnedBadgeIds = new Set(userBadgesData?.map((ub: { badge_id: string }) => ub.badge_id) ?? []);
   } catch {}
 
-  const isFoundingMember = enrollments.includes("cyber-security-mastery");
+  const isFoundingMember = enrollments.includes("cyber-security-pemula");
   const inProgressCount = coursesWithProgress.filter((c) => c.progress > 0 && c.progress < 100).length;
   const completedCount = coursesWithProgress.filter((c) => c.progress === 100).length;
   const totalModulesEnrolled = coursesWithProgress.reduce((s, c) => s + c.modules.length, 0);
@@ -241,7 +241,7 @@ export default async function DashboardPage() {
               </h1>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-[#444]">
                 {ownedCourses.length === 0
-                  ? "Belum ada course aktif. Mulai dari Foundation gratis di bawah."
+                  ? "Belum ada course aktif. Daftar Founding Member di bawah buat akses semua course."
                   : `Lu lagi pegang ${ownedCourses.length} course aktif. Modul ${totalModulesDone}/${totalModulesEnrolled} selesai.`}
               </p>
 
@@ -376,7 +376,7 @@ export default async function DashboardPage() {
                 <div className="mt-6 rounded-2xl border-2 border-dashed border-[#F0E8D8] bg-[#FEFBF5] p-10 text-center">
                   <p className="text-base font-bold text-[#2D5016]">Belum ada course aktif</p>
                   <p className="mt-2 text-sm text-[#444]">
-                    Mulai dari Foundation gratis biar dashboard ngga kosong.
+                    Daftar Founding Member biar dashboard ngga kosong.
                   </p>
                   <Link
                     href="/courses"

@@ -144,11 +144,11 @@ export async function PATCH(request: Request) {
     );
 
     // Founding Member badge untuk Mastery enrollee
-    if (submission.course_slug === "cyber-security-mastery") {
+    if (submission.course_slug === "cyber-security-pemula") {
       const { count: enrolledCount } = await supabase
         .from("enrollments")
         .select("id", { count: "exact", head: true })
-        .eq("course_slug", "cyber-security-mastery")
+        .eq("course_slug", "cyber-security-pemula")
         .eq("status", "active");
 
       if ((enrolledCount ?? 0) <= 100) {

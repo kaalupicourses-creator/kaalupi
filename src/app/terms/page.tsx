@@ -46,7 +46,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-extrabold text-[#2D5016] mb-3">3. Pembayaran</h2>
             <ul className="list-disc pl-5 space-y-2">
-              <li>Pembayaran dilakukan manual via DANA / BCA / BSI / QRIS (kalau tersedia).</li>
+              <li>Pembayaran dilakukan manual via DANA / BCA / BSI.</li>
               <li>Akses course aktif setelah admin Kaalupi memverifikasi dana masuk.
                 Verifikasi biasanya &lt; 1 jam jam kerja.</li>
               <li>Kalau dana belum masuk dalam 24 jam dan kamu yakin udah transfer, hubungi

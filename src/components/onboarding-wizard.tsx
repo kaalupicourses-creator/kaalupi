@@ -53,10 +53,10 @@ const interests = [
     desc: "Jaringan, routing, switching, infra",
   },
   {
-    id: "cyber",
-    icon: "🔒",
-    title: "Cyber Security",
-    desc: "Blue team, security analyst, hardening",
+    id: "webdev",
+    icon: "💻",
+    title: "Web Development",
+    desc: "Bikin website, HTML/CSS/JS, bareng AI",
   },
   {
     id: "data",
@@ -183,7 +183,7 @@ export function OnboardingWizard() {
             <div className="mt-10 grid w-full max-w-xl gap-4 sm:grid-cols-3">
               {[
                 { icon: "🎯", text: "Pilih tujuan belajar" },
-                { icon: "📚", text: "Auto-enroll course gratis" },
+                { icon: "📚", text: "Mulai course pertama" },
                 { icon: "💬", text: "Gabung komunitas" },
               ].map((item) => (
                 <div
@@ -361,8 +361,8 @@ export function OnboardingWizard() {
 
             <div className="mt-6 rounded-xl bg-[#E8F5E9] p-4 text-center">
               <p className="text-xs text-[#2D5016]">
-                <strong>♾️ Bonus:</strong> Begitu setup selesai, kami otomatis enroll kamu ke course{" "}
-                <strong>Cyber Security untuk Pemula</strong> (gratis · lifetime).
+                <strong>♾️ Bonus:</strong> Begitu setup selesai, kamu bisa langsung mulai course{" "}
+                <strong>The Smart Vibe Coder</strong> — Web Dev bareng AI.
               </p>
             </div>
 
@@ -393,14 +393,14 @@ export function OnboardingWizard() {
               Lu siap mulai!
             </h2>
             <p className="mt-3 max-w-md text-base leading-7 text-[#444444]">
-              Kami udah enroll lu ke course gratis dan siapin dashboard personal.
+              Kami udah siapin dashboard personal buat lu. Yuk mulai belajar.
             </p>
 
             <div className="mt-8 grid w-full max-w-2xl gap-4 sm:grid-cols-3">
               <div className="rounded-2xl border border-[#F0E8D8] bg-white p-5 text-left">
                 <span className="text-2xl">📚</span>
                 <p className="mt-2 text-sm font-bold text-[#2D5016]">Course Aktif</p>
-                <p className="mt-1 text-xs text-[#444]">Cyber Security untuk Pemula auto-enrolled</p>
+                <p className="mt-1 text-xs text-[#444]">The Smart Vibe Coder — Web Dev bareng AI</p>
               </div>
               <div className="rounded-2xl border border-[#F0E8D8] bg-white p-5 text-left">
                 <span className="text-2xl">🎯</span>
