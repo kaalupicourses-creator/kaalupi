@@ -13,11 +13,21 @@ const formatter = new Intl.NumberFormat("id-ID", {
   maximumFractionDigits: 0,
 });
 
-export default async function CheckoutPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function CheckoutPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ ref?: string }>;
+}) {
   const { slug } = await params;
+  const { ref } = await searchParams;
+  const refCode = ref?.trim() || null;
   const { userId } = await auth();
   if (!userId) {
-    redirect(`/login?redirect=/checkout/${slug}`);
+    // Preserve referral code through the login redirect
+    const dest = refCode ? `/checkout/${slug}?ref=${encodeURIComponent(refCode)}` : `/checkout/${slug}`;
+    redirect(`/login?redirect=${encodeURIComponent(dest)}`);
   }
 
   const user = await currentUser();
@@ -76,6 +86,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ slug:
             userName={userName}
             isMastery={isMastery}
             paymentMethods={siteConfig.payment.methods}
+            referralCode={refCode}
           />
 
           {/* SIDEBAR — order summary */}

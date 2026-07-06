@@ -10,6 +10,7 @@ type Body = {
   course_slug?: string;
   payment_method?: "dana" | "bca" | "bsi";
   sender_account?: string;
+  referral_code?: string | null;
 };
 
 const VALID_METHODS = new Set(["dana", "bca", "bsi"]);
@@ -35,7 +36,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { course_slug, payment_method, sender_account } = body;
+  const { course_slug, payment_method, sender_account, referral_code } = body;
   if (!course_slug || !payment_method) {
     return NextResponse.json(
       { error: "course_slug dan payment_method wajib" },
@@ -52,6 +53,18 @@ export async function POST(request: Request) {
   }
 
   const supabase = getSupabaseAdmin();
+
+  // Validasi kode referral (kalau ada) — hanya simpan kalau kodenya beneran ada
+  let validReferral: string | null = null;
+  if (referral_code) {
+    const code = referral_code.trim().toUpperCase();
+    const { data: affiliate } = await supabase
+      .from("affiliates")
+      .select("code")
+      .eq("code", code)
+      .maybeSingle();
+    if (affiliate) validReferral = affiliate.code;
+  }
 
   // Cek apakah user sudah enrolled (kalau iya, redirect ke access)
   const { data: existingEnrollment } = await supabase
@@ -105,6 +118,7 @@ export async function POST(request: Request) {
       amount: course.price,
       payment_method,
       sender_account: sender_account || null,
+      referral_code: validReferral,
       status: "pending",
     })
     .select()

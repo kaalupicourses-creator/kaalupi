@@ -12,6 +12,7 @@ interface Props {
   userName: string;
   isMastery: boolean;
   paymentMethods: PaymentMethod[];
+  referralCode?: string | null;
 }
 
 const formatter = new Intl.NumberFormat("id-ID", {
@@ -28,6 +29,7 @@ export function ManualCheckout({
   userName,
   isMastery,
   paymentMethods,
+  referralCode,
 }: Props) {
   const [selected, setSelected] = useState<string | null>(null);
   const [senderAccount, setSenderAccount] = useState("");
@@ -60,6 +62,7 @@ export function ManualCheckout({
           course_slug: courseSlug,
           payment_method: selected,
           sender_account: senderAccount.trim() || null,
+          referral_code: referralCode || null,
         }),
       });
       const d = await r.json();
@@ -93,6 +96,14 @@ export function ManualCheckout({
           Pilih metode → transfer manual → klik &quot;Saya Sudah Bayar&quot; → kirim bukti via WhatsApp.
           Akses course aktif begitu admin konfirmasi (biasanya &lt; 1 jam jam kerja).
         </p>
+        {referralCode && (
+          <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-[#E8F5E9] px-3 py-1.5 text-xs font-bold text-[#2D5016]">
+            <svg className="h-3.5 w-3.5 text-[#7AB648]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            Kode referral <span className="font-mono">{referralCode}</span> kepasang
+          </div>
+        )}
       </div>
 
       {/* Step 1: Pick method */}

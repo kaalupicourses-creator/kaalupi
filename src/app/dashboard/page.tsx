@@ -7,6 +7,7 @@ import { getCourses } from "@/lib/content";
 import { CourseThumbnail } from "@/components/course-thumbnail";
 import { DashboardOnboarding } from "@/components/dashboard-onboarding";
 import { siteConfig } from "@/lib/data";
+import { isSuperAdmin } from "@/lib/auth";
 
 export default async function DashboardPage() {
   const { userId } = await auth();
@@ -201,6 +202,17 @@ export default async function DashboardPage() {
                     Analytics Platform
                   </Link>
                 </>
+              )}
+              {isSuperAdmin(userEmail) && (
+                <Link
+                  href="/dashboard/affiliates"
+                  className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-[#2D5016] transition hover:bg-[#FFF3D6]"
+                >
+                  <svg className="h-4 w-4 text-[#F5A62A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  </svg>
+                  Sistem Afiliasi
+                </Link>
               )}
             </nav>
 
