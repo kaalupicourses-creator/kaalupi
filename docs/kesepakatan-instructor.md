@@ -48,10 +48,12 @@
 
 ## 5. Batas waktu bagi hasil
 
-- Bagi hasil berlaku selama **2 tahun** sejak course rilis.
+- Bagi hasil berlaku selama **2 tahun sejak PEMBELI PERTAMA** course lu (bukan sejak course selesai dibuat).
 - Setelah itu materi jadi milik penuh Kaalupi (bagi hasil berhenti).
 
-> **Kenapa dibatasi?** Ini kayak royalti di penerbitan/musik — ada periodenya. 2 tahun instructor dapet passive income penuh dari kerja sekali. Setelah itu materi biasanya perlu update besar, dan yang ngerjain tim Kaalupi.
+> **Kenapa dihitung dari pembeli pertama?** Biar fair buat instructor. Kalau dihitung dari course selesai, tapi ternyata baru laku 6 bulan kemudian, instructor rugi 6 bulan. Dengan mulai dari pembeli pertama, jatah 2 tahun passive income-nya utuh — mulai pas duit beneran masuk.
+
+> **Kenapa dibatasi 2 tahun?** Ini kayak royalti di penerbitan/musik — ada periodenya. Setelah 2 tahun materi biasanya perlu update besar, dan yang ngerjain tim Kaalupi.
 
 ---
 
