@@ -13,8 +13,33 @@ export default async function StudioPage({
   if (!userId) redirect("/login?redirect=/dashboard/studio");
 
   const user = await currentUser();
-  const role = (user?.publicMetadata as { role?: string })?.role;
+  const meta = (user?.publicMetadata ?? {}) as { role?: string; instructor_banned?: boolean };
+  const role = meta.role;
   if (role !== "admin" && role !== "instructor") redirect("/dashboard");
+
+  // Instructor yang kena pause/ban ga bisa buka studio
+  if (role === "instructor" && meta.instructor_banned === true) {
+    return (
+      <div className="bg-[#FEFBF5] min-h-screen">
+        <div className="mx-auto max-w-2xl px-6 py-20 text-center">
+          <div className="rounded-2xl border-2 border-[#E06C5A] bg-[#FBEEEA] p-8">
+            <p className="text-4xl">⛔</p>
+            <h1 className="mt-3 text-2xl font-extrabold text-[#B23A22]">Akun Lu Lagi Di-pause</h1>
+            <p className="mt-3 text-sm leading-7 text-[#7A3020]">
+              Upload materi lagi dikunci sementara karena telat dari target yang disepakati.
+              Hubungi admin buat diskusi biar dibuka lagi.
+            </p>
+            <Link
+              href="/dashboard/instructor"
+              className="mt-6 inline-block rounded-xl bg-[#2D5016] px-6 py-2.5 text-sm font-bold text-white transition hover:opacity-90"
+            >
+              ← Balik ke Room Instructor
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const allCourses = await getCourses();
   const sp = await searchParams;

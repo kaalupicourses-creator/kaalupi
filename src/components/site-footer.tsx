@@ -27,8 +27,8 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
   return (
     <footer className="border-t border-[#F0E8D8] bg-[#2D5016]">
-      <div className="mx-auto max-w-7xl px-6 py-12">
-        <div className="grid gap-10 md:grid-cols-4">
+      <div className="mx-auto max-w-7xl px-5 sm:px-6 py-10 sm:py-12">
+        <div className="grid gap-8 sm:gap-10 md:grid-cols-4">
           <div className="md:col-span-2">
             <Link href="/" className="text-2xl font-black text-white tracking-tight">
               Kaalupi
@@ -57,18 +57,18 @@ export function SiteFooter() {
                 { icon: "M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z", value: siteConfig.phone },
                 { icon: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z", value: siteConfig.address },
               ].map((item) => (
-                <div key={item.value} className="flex items-center gap-2 text-sm text-white/60">
-                  <svg className="h-4 w-4 text-[#F5A62A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <div key={item.value} className="flex items-start gap-2 text-sm text-white/60">
+                  <svg className="h-4 w-4 shrink-0 mt-0.5 text-[#F5A62A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
                   </svg>
-                  {item.value}
+                  <span className="min-w-0 break-words">{item.value}</span>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        <div className="mt-12 space-y-4 border-t border-white/10 pt-8">
+        <div className="mt-10 sm:mt-12 space-y-4 border-t border-white/10 pt-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-xs text-white/40">&copy; {year} Kaalupi. All rights reserved.</p>
             <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-white/60">

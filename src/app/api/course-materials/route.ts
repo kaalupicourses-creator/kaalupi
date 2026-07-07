@@ -8,9 +8,18 @@ async function requireStaff() {
   if (!userId) return { ok: false as const, status: 401, error: "Akses ditolak." };
   const clerk = await clerkClient();
   const user = await clerk.users.getUser(userId);
-  const role = (user.publicMetadata as { role?: string })?.role;
+  const meta = (user.publicMetadata ?? {}) as { role?: string; instructor_banned?: boolean };
+  const role = meta.role;
   if (role !== "admin" && role !== "instructor") {
     return { ok: false as const, status: 403, error: "Hanya admin/instructor." };
+  }
+  // Instructor yang kena ban (telat target) ga bisa upload sampai super admin buka
+  if (role === "instructor" && meta.instructor_banned === true) {
+    return {
+      ok: false as const,
+      status: 403,
+      error: "Akun lu lagi di-pause karena telat target. Hubungi admin buat diskusi.",
+    };
   }
   return { ok: true as const, role, userId };
 }
