@@ -6,6 +6,7 @@ import { getEnrollments } from "@/lib/db";
 import { CourseThumbnail } from "@/components/course-thumbnail";
 import { ManualCheckout } from "@/components/manual-checkout";
 import { siteConfig } from "@/lib/data";
+import { priceForUser } from "@/lib/pricing";
 
 const formatter = new Intl.NumberFormat("id-ID", {
   style: "currency",
@@ -61,6 +62,16 @@ export default async function CheckoutPage({
 
   const isMastery = !!course.founding_members_limit;
 
+  // Founding member: diskon buat course premium (yang bukan founding_free)
+  const isFoundingMember = user?.publicMetadata?.is_founding_member === true;
+  const amount = priceForUser(course, isFoundingMember);
+  const foundingDiscount = isFoundingMember && !course.founding_free && amount < course.price;
+
+  // Course founding_free + udah founding member = gratis, langsung ke akses
+  if (isFoundingMember && course.founding_free) {
+    redirect(`/access/${slug}`);
+  }
+
   return (
     <div className="bg-[#FEFBF5] min-h-screen">
       <div className="mx-auto max-w-6xl px-6 py-12">
@@ -81,7 +92,7 @@ export default async function CheckoutPage({
           <ManualCheckout
             courseSlug={course.slug}
             courseTitle={course.title}
-            amount={course.price}
+            amount={amount}
             userEmail={userEmail}
             userName={userName}
             isMastery={isMastery}
@@ -112,17 +123,31 @@ export default async function CheckoutPage({
                     </span>
                   </div>
                 )}
+                {foundingDiscount && (
+                  <div className="flex justify-between">
+                    <span className="text-[#7AB648]">Diskon khusus Founding Member (25%)</span>
+                    <span className="font-semibold text-[#7AB648]">
+                      -{formatter.format(course.price - amount)}
+                    </span>
+                  </div>
+                )}
                 <div className="flex justify-between border-t border-[#F0E8D8] pt-3 text-base">
                   <span className="font-bold text-[#2D5016]">Total Bayar</span>
-                  <span className="font-extrabold text-[#F5A62A]">{formatter.format(course.price)}</span>
+                  <span className="font-extrabold text-[#F5A62A]">{formatter.format(amount)}</span>
                 </div>
               </div>
+
+              {foundingDiscount && (
+                <div className="mt-4 rounded-xl bg-[#E8F5E9] px-4 py-3 text-xs font-semibold text-[#2D5016]">
+                  🎉 Sebagai Founding Member, lu dapet diskon 25% buat course premium ini.
+                </div>
+              )}
 
               {isMastery && (
                 <div className="mt-5 rounded-xl bg-[#FFF3D6] p-4 text-xs leading-6 text-[#5C4813]">
                   <strong className="block text-[#2D5016] mb-1">Founding Member Privilege</strong>
-                  Lifetime access ke <strong>SEMUA course</strong> Kaalupi sekarang &amp; yang akan rilis,
-                  badge eksklusif, +100 bonus poin.
+                  <strong>Gratis</strong> course pemula &amp; akademik, <strong>diskon 25%</strong> buat semua
+                  course premium, badge eksklusif, Discord khusus, +100 bonus poin.
                 </div>
               )}
             </div>

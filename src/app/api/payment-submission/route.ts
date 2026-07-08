@@ -3,6 +3,7 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { getCourseBySlug } from "@/lib/content";
 import { siteConfig } from "@/lib/data";
+import { priceForUser } from "@/lib/pricing";
 
 export const runtime = "nodejs";
 
@@ -51,6 +52,10 @@ export async function POST(request: Request) {
   if (!course) {
     return NextResponse.json({ error: "Course ngga ditemukan" }, { status: 404 });
   }
+
+  // Harga dihitung server-side: founding member dapet diskon buat course premium
+  const isFoundingMember = user?.publicMetadata?.is_founding_member === true;
+  const amount = priceForUser(course, isFoundingMember);
 
   const supabase = getSupabaseAdmin();
 
@@ -115,7 +120,7 @@ export async function POST(request: Request) {
       user_id_clerk: userId,
       course_slug,
       course_title: course.title,
-      amount: course.price,
+      amount,
       payment_method,
       sender_account: sender_account || null,
       referral_code: validReferral,
@@ -140,7 +145,7 @@ export async function POST(request: Request) {
     `Halo Admin Kaalupi, saya udah bayar:`,
     ``,
     `Course: ${course.title}`,
-    `Jumlah: Rp ${course.price.toLocaleString("id-ID")}`,
+    `Jumlah: Rp ${amount.toLocaleString("id-ID")}`,
     `Metode: ${methodLabel}`,
     `Email akun Kaalupi: ${userEmail}`,
     `Nama: ${userName}`,

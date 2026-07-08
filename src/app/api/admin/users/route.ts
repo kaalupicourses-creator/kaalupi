@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { isSuperAdmin } from "@/lib/auth";
+import { courses } from "@/lib/data";
 
 export const runtime = "nodejs";
 
@@ -116,15 +117,15 @@ export async function PATCH(request: Request) {
     if (!badge) return NextResponse.json({ error: "Founding Member badge not found" }, { status: 404 });
 
     if (action === "grant_founding") {
-      // Enroll into ALL published courses (founding = lifetime access everywhere)
-      const { data: allCourses } = await supabase
-        .from("courses")
-        .select("slug")
-        .eq("is_published", true);
+      // Enroll HANYA ke course founding_free (gratis buat founding member).
+      // Course premium: founding member beli sendiri (dapet diskon di checkout).
+      const freeSlugs = courses
+        .filter((c) => c.founding_free && c.is_published !== false)
+        .map((c) => c.slug);
 
-      const enrollUpserts = (allCourses ?? []).map((c: { slug: string }) =>
+      const enrollUpserts = freeSlugs.map((slug) =>
         supabase.from("enrollments").upsert(
-          { user_email: targetEmail, course_slug: c.slug, status: "active" },
+          { user_email: targetEmail, course_slug: slug, status: "active" },
           { onConflict: "user_email,course_slug" },
         )
       );

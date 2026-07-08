@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth, currentUser, clerkClient } from "@clerk/nextjs/server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { sendApprovalEmail } from "@/lib/email";
+import { courses } from "@/lib/data";
 
 export const runtime = "nodejs";
 
@@ -179,6 +180,31 @@ export async function PATCH(request: Request) {
             { onConflict: "user_email,badge_id" },
           );
           foundingBadgeAwarded = true;
+
+          // Set Clerk metadata + auto-enroll ke course founding_free lain (perk founding member)
+          try {
+            const clerk = await clerkClient();
+            const ul = await clerk.users.getUserList({ emailAddress: [submission.user_email], limit: 1 });
+            const tu = ul.data[0];
+            if (tu) {
+              await clerk.users.updateUserMetadata(tu.id, {
+                publicMetadata: { ...(tu.publicMetadata ?? {}), is_founding_member: true },
+              });
+            }
+            const freeSlugs = courses
+              .filter((c) => c.founding_free && c.is_published !== false && c.slug !== submission.course_slug)
+              .map((c) => c.slug);
+            await Promise.all(
+              freeSlugs.map((slug) =>
+                supabase.from("enrollments").upsert(
+                  { user_email: submission.user_email, course_slug: slug, status: "active" },
+                  { onConflict: "user_email,course_slug" },
+                ),
+              ),
+            );
+          } catch (err) {
+            console.error("[approve] set founding metadata failed:", err);
+          }
 
           // 100 bonus poin
           const { data: existingPoints } = await supabase

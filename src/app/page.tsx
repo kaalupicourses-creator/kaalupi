@@ -430,7 +430,7 @@ export default async function HomePage() {
               Jadi yang <span className="text-[#F5A62A]">Pertama Masuk.</span>
             </h2>
             <p className="mt-4 text-base leading-7 text-[#444444]">
-              100 orang pertama dapet harga Founding Members — lifetime access ke <strong className="text-[#2D5016]">SEMUA course</strong> Kaalupi sekarang & yang akan rilis.
+              100 orang pertama dapet harga Founding Members — akses lifetime course ini, <strong className="text-[#2D5016]">course pemula & akademik gratis</strong>, plus diskon 25% buat semua course premium.
             </p>
           </div>
 
@@ -454,11 +454,12 @@ export default async function HomePage() {
                 The Smart Vibe Coder — Kuasai Web Dev Bareng AI
               </h3>
               <p className="mt-2 text-sm text-[#444444]">
-                Founding Members 100 orang pertama dapet lifetime access ke <strong>SEMUA course Kaalupi</strong> — sekarang & yang akan rilis.
+                Founding Members 100 orang pertama: akses lifetime course ini, <strong>course pemula & akademik gratis</strong>, plus diskon 25% buat semua course premium yang bakal rilis.
               </p>
               <ul className="mt-5 space-y-2.5 text-sm text-[#444] flex-1">
                 {[
-                  "Lifetime access ke SEMUA course Kaalupi",
+                  "Course pemula & akademik GRATIS selamanya",
+                  "Diskon 25% buat semua course premium (Network, dll)",
                   "7 modul lengkap — pace lu sendiri",
                   "AI Tutor 24/7 (tanya bebas per modul)",
                   "Discord eksklusif Founding Members",
@@ -790,7 +791,7 @@ export default async function HomePage() {
             {[
               {
                 q: "Apa yang didapat Founding Members?",
-                a: "Founding Members (100 orang pertama) dapet: 7 modul lengkap The Smart Vibe Coder (Web Dev bareng AI) + akses LIFETIME ke SEMUA course Kaalupi yang bakal rilis (Network, Design, dan lainnya), AI Tutor 24/7, badge eksklusif, Discord khusus founding members, sertifikat resmi, dan update materi gratis selamanya. Harga Rp 199.000 — setelah 100 slot habis, harga balik ke Rp 499.000.",
+                a: "Founding Members (100 orang pertama) dapet: 7 modul lengkap The Smart Vibe Coder (Web Dev bareng AI), akses lifetime + course pemula & akademik GRATIS (Inggris, MTK), plus DISKON 25% buat semua course premium yang bakal rilis (Network, Design, dll), AI Tutor 24/7, badge eksklusif, Discord khusus founding members, dan sertifikat resmi. Harga Rp 199.000 — setelah 100 slot habis, harga balik ke Rp 499.000.",
               },
               {
                 q: "Cara bayarnya gimana?",

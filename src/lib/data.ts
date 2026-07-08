@@ -24,7 +24,13 @@ export type Course = {
   regular_price?: number; // harga setelah quota habis
   free_modules_count?: number; // first N modules free, rest need paid enrollment
   perks?: string[]; // bullet point perks (Discord, AI Tutor, dll)
+  // Founding member: true = gratis buat founding member (auto-enroll),
+  // false/undefined = premium, founding member cuma dapet diskon (tetap bayar).
+  founding_free?: boolean;
 };
+
+// Diskon buat founding member pas beli course premium (yang bukan founding_free)
+export const FOUNDING_MEMBER_DISCOUNT = 0.25;
 
 export type BlogPost = {
   slug: string;
@@ -227,6 +233,7 @@ export const courses: Course[] = [
     is_free: false,
     is_lifetime_access: true,
     is_published: true,
+    founding_free: true,
     perks: [
       "7 modul: video + artikel + Vibe Coding Challenge (lab praktik)",
       "Lifetime access ke SEMUA course Kaalupi (sekarang & yang akan rilis)",
@@ -430,6 +437,7 @@ export const courses: Course[] = [
     is_free: false,
     is_lifetime_access: true,
     is_published: true,
+    founding_free: true,
   },
 
   {
@@ -467,6 +475,7 @@ export const courses: Course[] = [
     is_free: false,
     is_lifetime_access: true,
     is_published: true,
+    founding_free: true,
   },
 ];
 

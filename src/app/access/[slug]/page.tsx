@@ -22,12 +22,13 @@ export default async function CourseAccessPage({
   const course = await getCourseBySlug(slug);
   if (!course) redirect("/access");
 
-  // Founding members get lifetime access to ALL courses
+  // Founding member: gratis cuma buat course founding_free. Course premium tetap harus beli.
   const isFoundingMember = clerkUser?.publicMetadata?.is_founding_member === true;
 
   let enrollments: string[] = [];
   try { enrollments = await getEnrollments(userEmail); } catch {}
-  const hasPaidAccess = isFoundingMember || enrollments.includes(course.slug);
+  const hasPaidAccess =
+    (isFoundingMember && course.founding_free === true) || enrollments.includes(course.slug);
   const freeCount = course.free_modules_count ?? 0;
 
   if (freeCount === 0 && !hasPaidAccess) redirect(`/checkout/${course.slug}`);
