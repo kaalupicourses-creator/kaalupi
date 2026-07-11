@@ -33,6 +33,7 @@ export function ManualCheckout({
 }: Props) {
   const [selected, setSelected] = useState<string | null>(null);
   const [senderAccount, setSenderAccount] = useState("");
+  const [refInput, setRefInput] = useState(referralCode ?? "");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -62,7 +63,7 @@ export function ManualCheckout({
           course_slug: courseSlug,
           payment_method: selected,
           sender_account: senderAccount.trim() || null,
-          referral_code: referralCode || null,
+          referral_code: refInput.trim() || null,
         }),
       });
       const d = await r.json();
@@ -96,14 +97,26 @@ export function ManualCheckout({
           Pilih metode → transfer manual → klik &quot;Saya Sudah Bayar&quot; → kirim bukti via WhatsApp.
           Akses course aktif begitu admin konfirmasi (biasanya &lt; 1 jam jam kerja).
         </p>
-        {referralCode && (
-          <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-[#E8F5E9] px-3 py-1.5 text-xs font-bold text-[#2D5016]">
-            <svg className="h-3.5 w-3.5 text-[#7AB648]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
-            Kode referral <span className="font-mono">{referralCode}</span> kepasang
-          </div>
-        )}
+        {/* Kode referral / marketing — biar tau customer dari mana (buat komisi marketer) */}
+        <div className="mt-4 rounded-xl border border-[#F0E8D8] bg-white p-4">
+          <label className="text-xs font-bold text-[#2D5016]">
+            Kode referral / nama yang ngajak <span className="font-normal text-[#5C4813]">(opsional)</span>
+          </label>
+          <p className="mt-0.5 text-xs text-[#5C4813]">
+            Kalau lu tau Kaalupi dari temen/marketing kita, masukin kodenya di sini biar dia dapet apresiasi.
+          </p>
+          <input
+            value={refInput}
+            onChange={(e) => setRefInput(e.target.value.toUpperCase())}
+            placeholder="Contoh: RENDI20"
+            className="mt-2 w-full rounded-lg border border-[#F0E8D8] bg-[#FEFBF5] px-3 py-2 text-sm font-mono text-[#2D5016] focus:border-[#F5A62A] focus:outline-none"
+          />
+          {referralCode && (
+            <p className="mt-1.5 text-[11px] font-semibold text-[#7AB648]">
+              ✓ Kode dari link kepasang otomatis
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Step 1: Pick method */}
