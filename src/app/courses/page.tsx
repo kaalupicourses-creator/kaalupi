@@ -42,9 +42,9 @@ export default async function CoursesPage() {
             <span className="text-[#F5A62A]">dari Nol ke Pro</span>
           </h1>
           <p className="mt-6 text-base leading-8 text-[#444444]">
-            Bahasa Indonesia, langsung praktik. Daftar sekarang sebagai{" "}
-            <strong className="text-[#2D5016]">Founding Member</strong> dan dapatkan lifetime access
-            ke <strong className="text-[#2D5016]">SEMUA course</strong> Kaalupi (sekarang & yang akan rilis).
+            Bahasa Indonesia, langsung praktik. Jadi{" "}
+            <strong className="text-[#2D5016]">Founding Member</strong> (100 orang pertama) buat dapet{" "}
+            <strong className="text-[#2D5016]">course pemula & akademik gratis</strong> + diskon 25% semua course premium.
           </p>
         </div>
       </section>
@@ -174,10 +174,10 @@ export default async function CoursesPage() {
                 Course Lainnya
               </p>
               <h2 className="mt-3 text-2xl font-extrabold text-[#2D5016] md:text-3xl">
-                Segera Rilis — Founding Member Dapat Semua
+                Segera Rilis — Founding Member Untung Duluan
               </h2>
               <p className="mt-3 text-sm text-[#444444]">
-                Materi lagi disiapin instructor. Jadi Founding Member sekarang, otomatis dapat akses ke semua course ini pas rilis.
+                Materi lagi disiapin instructor. Founding Member dapet yang akademik gratis + diskon 25% buat course premium pas rilis.
               </p>
             </div>
 
@@ -204,7 +204,9 @@ export default async function CoursesPage() {
                     </h3>
                     <p className="mt-2 text-xs leading-6 text-[#444]">{c.summary}</p>
                     <p className="mt-3 text-[11px] font-bold text-[#7AB648]">
-                      ✓ Termasuk di paket Founding Member
+                      {c.founding_free
+                        ? "✓ Gratis buat Founding Member"
+                        : "✓ Diskon 25% buat Founding Member"}
                     </p>
                   </div>
                 </article>
@@ -225,7 +227,7 @@ export default async function CoursesPage() {
               Track Berikutnya di Kaalupi
             </h2>
             <p className="mt-3 text-sm text-[#444444]">
-              Ini yang bakal kita bangun selanjutnya. Founding Member otomatis dapat akses semua.
+              Ini yang bakal kita bangun selanjutnya. Founding Member dapet harga spesial pas rilis.
             </p>
           </div>
 
