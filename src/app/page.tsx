@@ -69,9 +69,9 @@ export default async function HomePage() {
     ],
     offers: {
       "@type": "Offer",
-      price: "199000",
+      price: "50000",
       priceCurrency: "IDR",
-      description: "The Smart Vibe Coder — Web Development bareng AI (Founding Members)",
+      description: "The Smart Vibe Coder — Web Development bareng AI",
     },
     hasCourse: [
       {
@@ -442,12 +442,12 @@ export default async function HomePage() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="rounded-full bg-[#F5A62A] px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-[#2D5016]">
-                  Mastery
+                  Founding
                 </span>
                 <div className="text-right">
-                  <p className="text-xs text-[#444] line-through">Rp 499.000</p>
-                  <p className="text-3xl font-black text-[#F5A62A]">Rp 199K</p>
-                  <p className="text-[10px] font-bold text-[#7AB648]">Founding Members</p>
+                  <p className="text-3xl font-black text-[#F5A62A]">Rp 150K</p>
+                  <p className="text-[10px] font-bold text-[#7AB648]">course + Founding Member</p>
+                  <p className="mt-0.5 text-[10px] text-[#444]">course aja: Rp 50K</p>
                 </div>
               </div>
               <h3 className="mt-4 text-xl font-extrabold text-[#2D5016]">
@@ -561,8 +561,8 @@ export default async function HomePage() {
                     Daftar Founding Members →
                   </Link>
                   <div className="text-sm text-[#5C4813]">
-                    <span className="line-through text-xs">Rp 499.000</span>
-                    <span className="ml-2 font-extrabold text-[#F5A62A]">Rp 199.000</span>
+                    <span className="text-xs">mulai</span>
+                    <span className="ml-2 font-extrabold text-[#F5A62A]">Rp 50.000</span>
                   </div>
                 </div>
               </div>
@@ -791,7 +791,7 @@ export default async function HomePage() {
             {[
               {
                 q: "Apa yang didapat Founding Members?",
-                a: "Founding Members (100 orang pertama) dapet: 7 modul lengkap The Smart Vibe Coder (Web Dev bareng AI), akses lifetime + course pemula & akademik GRATIS (Inggris, MTK), plus DISKON 25% buat semua course premium yang bakal rilis (Network, Design, dll), AI Tutor 24/7, badge eksklusif, Discord khusus founding members, dan sertifikat resmi. Harga Rp 199.000 — setelah 100 slot habis, harga balik ke Rp 499.000.",
+                a: "Course The Smart Vibe Coder (Web Dev bareng AI) harganya cuma Rp 50.000 — akses seumur hidup. Kalau mau SEKALIAN jadi Founding Member (Rp 150.000, cuma 100 orang pertama), lu dapet bonus: course pemula & akademik GRATIS (Inggris, MTK), DISKON 25% buat semua course premium (Network, Design, dll), badge eksklusif, Discord khusus, + sertifikat. Setelah 100 slot founding habis, tinggal opsi course aja Rp 50.000.",
               },
               {
                 q: "Cara bayarnya gimana?",
@@ -799,7 +799,7 @@ export default async function HomePage() {
               },
               {
                 q: "Founding Members ke-100 udah penuh, masih bisa daftar?",
-                a: "Bisa, tapi harga balik ke regular Rp 499.000 dan akses cuma untuk course Mastery itu sendiri — bukan lifetime ke semua course. 100 orang pertama dapet privilege khusus yang ngga ke-buka lagi.",
+                a: "Course-nya tetep bisa dibeli Rp 50.000 (akses seumur hidup). Tapi status Founding Member + bonusnya (course gratis, diskon 25%, dll) ditutup di 100 orang pertama — ga ke-buka lagi.",
               },
               {
                 q: "Apa ada garansi uang kembali?",
@@ -860,14 +860,14 @@ export default async function HomePage() {
               Slot Terbatas — 100 Orang Pertama
             </h2>
             <p className="relative mt-4 max-w-xl mx-auto text-base leading-8" style={{color: 'white'}}>
-              Setelah 100 slot habis, harga balik ke <strong>Rp 499.000</strong> dan privilege lifetime access hilang. Daftar sekarang sebelum penuh.
+              Course cuma <strong>Rp 50.000</strong> — atau sekalian jadi Founding Member <strong>Rp 150.000</strong> (100 orang pertama) buat bonus course gratis + diskon 25% semua course premium. Setelah penuh, opsi founding ditutup.
             </p>
             <div className="relative mt-8 flex flex-wrap justify-center gap-4">
               <Link
                 href={withUTM("/checkout/cyber-security-pemula", "cta_founding")}
                 className="rounded-xl bg-[#F5A62A] px-8 py-3.5 text-sm font-bold text-[#2D5016] transition hover:opacity-90"
               >
-                Daftar Founding Members — Rp 199K →
+Mulai dari Rp 50K — atau Founding Rp 150K →
               </Link>
             </div>
             <p className="relative mt-6 text-xs text-white/70">

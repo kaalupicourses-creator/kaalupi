@@ -13,6 +13,7 @@ interface Props {
   isMastery: boolean;
   paymentMethods: PaymentMethod[];
   referralCode?: string | null;
+  foundingBundlePrice?: number | null;
 }
 
 const formatter = new Intl.NumberFormat("id-ID", {
@@ -30,15 +31,21 @@ export function ManualCheckout({
   isMastery,
   paymentMethods,
   referralCode,
+  foundingBundlePrice,
 }: Props) {
   const [selected, setSelected] = useState<string | null>(null);
   const [senderAccount, setSenderAccount] = useState("");
   const [refInput, setRefInput] = useState(referralCode ?? "");
+  const [tier, setTier] = useState<"course" | "founding">(
+    foundingBundlePrice ? "founding" : "course",
+  );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const activeMethod = paymentMethods.find((m) => m.id === selected);
+  const effectiveAmount =
+    foundingBundlePrice && tier === "founding" ? foundingBundlePrice : amount;
 
   function copyValue(value: string, label: string) {
     if (typeof navigator === "undefined" || !navigator.clipboard) return;
@@ -64,6 +71,7 @@ export function ManualCheckout({
           payment_method: selected,
           sender_account: senderAccount.trim() || null,
           referral_code: refInput.trim() || null,
+          tier: foundingBundlePrice ? tier : undefined,
         }),
       });
       const d = await r.json();
@@ -118,6 +126,43 @@ export function ManualCheckout({
           )}
         </div>
       </div>
+
+      {/* Pilih paket (cuma di course flagship, kalau slot founding masih ada) */}
+      {foundingBundlePrice && (
+        <section className="rounded-2xl border border-[#F0E8D8] bg-white p-6">
+          <p className="text-xs font-bold uppercase tracking-wider text-[#7AB648] mb-4">
+            Pilih paket
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <button
+              type="button"
+              onClick={() => setTier("course")}
+              className={`rounded-xl border-2 p-4 text-left transition ${tier === "course" ? "border-[#F5A62A] bg-[#FFF3D6]" : "border-[#F0E8D8] bg-white hover:border-[#F5A62A]/50"}`}
+            >
+              <p className="text-sm font-extrabold text-[#2D5016]">Course Aja</p>
+              <p className="mt-1 text-2xl font-black text-[#2D5016]">{formatter.format(amount)}</p>
+              <p className="mt-1 text-xs text-[#5C4813]">Akses course ini seumur hidup.</p>
+            </button>
+            <button
+              type="button"
+              onClick={() => setTier("founding")}
+              className={`relative rounded-xl border-2 p-4 text-left transition ${tier === "founding" ? "border-[#F5A62A] bg-[#FFF3D6]" : "border-[#F0E8D8] bg-white hover:border-[#F5A62A]/50"}`}
+            >
+              <span className="absolute -top-2.5 right-3 rounded-full bg-[#2D5016] px-2.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-[#F5A62A]">
+                Paling Worth It
+              </span>
+              <p className="text-sm font-extrabold text-[#2D5016]">Course + Founding Member</p>
+              <p className="mt-1 text-2xl font-black text-[#F5A62A]">{formatter.format(foundingBundlePrice)}</p>
+              <p className="mt-1 text-xs text-[#5C4813]">
+                Course ini + <strong>course pemula & akademik gratis</strong> + diskon 25% semua course premium + Discord eksklusif.
+              </p>
+            </button>
+          </div>
+          <p className="mt-3 text-xs text-[#5C4813]">
+            🔥 Founding Member cuma buat <strong>100 orang pertama</strong>. Setelah penuh, opsi ini ditutup.
+          </p>
+        </section>
+      )}
 
       {/* Step 1: Pick method */}
       <section className="rounded-2xl border border-[#F0E8D8] bg-white p-6">
@@ -194,11 +239,11 @@ export function ManualCheckout({
               <p className="text-xs text-[#5C4813]">Jumlah transfer</p>
               <div className="mt-1 flex items-center gap-3">
                 <p className="text-2xl font-extrabold text-[#F5A62A]">
-                  {formatter.format(amount)}
+                  {formatter.format(effectiveAmount)}
                 </p>
                 <button
                   type="button"
-                  onClick={() => copyValue(String(amount), "amount")}
+                  onClick={() => copyValue(String(effectiveAmount), "amount")}
                   className="rounded-lg bg-[#2D5016] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#1A3A0F]"
                 >
                   {copiedField === "amount" ? "Tersalin!" : "Salin nominal"}

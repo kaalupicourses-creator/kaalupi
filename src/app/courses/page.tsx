@@ -121,17 +121,15 @@ export default async function CoursesPage() {
               <div className="mt-10 rounded-2xl border border-[#F5A62A]/40 bg-white p-6">
                 <div className="flex flex-wrap items-end justify-between gap-6">
                   <div>
-                    <p className="text-xs text-[#444] line-through">
-                      Harga normal: Rp {(flagship.original_price ?? 499000).toLocaleString("id-ID")}
-                    </p>
-                    <div className="flex items-baseline gap-2 mt-1">
-                      <span className="text-4xl font-black text-[#F5A62A]">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-black text-[#2D5016]">
                         Rp {flagship.price.toLocaleString("id-ID")}
                       </span>
-                      <span className="text-sm font-bold text-[#7AB648]">Founding Price</span>
+                      <span className="text-sm font-bold text-[#7AB648]">course aja</span>
                     </div>
-                    <p className="mt-1 text-xs text-[#444]">
-                      Lifetime access · Semua course Kaalupi · Komunitas Discord eksklusif
+                    <p className="mt-1 text-sm text-[#5C4813]">
+                      atau <strong className="text-[#F5A62A]">Rp {(flagship.founding_bundle_price ?? 150000).toLocaleString("id-ID")}</strong> sekalian jadi Founding Member —
+                      dapet course pemula & akademik gratis + diskon 25% semua course premium.
                     </p>
                   </div>
                   <div className="w-full lg:w-auto">
@@ -157,7 +155,7 @@ export default async function CoursesPage() {
                       href={`/checkout/${flagship.slug}`}
                       className="block w-full rounded-xl bg-[#F5A62A] px-6 py-3.5 text-center text-sm font-extrabold text-[#2D5016] hover:opacity-90 shadow-md transition"
                     >
-                      Daftar Founding Members — Rp {flagship.price.toLocaleString("id-ID")} →
+                      Mulai — dari Rp {flagship.price.toLocaleString("id-ID")} →
                     </Link>
                   )}
                 </div>

@@ -27,6 +27,9 @@ export type Course = {
   // Founding member: true = gratis buat founding member (auto-enroll),
   // false/undefined = premium, founding member cuma dapet diskon (tetap bayar).
   founding_free?: boolean;
+  // Harga buat sekalian jadi Founding Member (course + status founding).
+  // Cuma di course flagship. price = harga course aja.
+  founding_bundle_price?: number;
 };
 
 // Diskon buat founding member pas beli course premium (yang bukan founding_free)
@@ -201,11 +204,12 @@ export const courses: Course[] = [
     category: "Web Development",
     level: "Beginner",
     duration: "Self-paced",
-    price: 199000,
-    original_price: 499000,
+    price: 50000,
+    original_price: 150000,
     founding_members_limit: 100,
-    founding_price: 199000,
-    regular_price: 499000,
+    founding_price: 50000,
+    regular_price: 150000,
+    founding_bundle_price: 150000,
     summary:
       "Belajar web development dari nol di era AI. Bukan cuma modal prompting — lu bakal ngerti fondasinya biar bisa NGONTROL AI, bukan dikontrol. Dari setup, HTML/CSS/JS, prompt engineering, sampai bangun web pertama + challenge ala real project.",
     hero:

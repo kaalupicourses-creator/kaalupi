@@ -12,7 +12,10 @@ type Body = {
   payment_method?: "dana" | "bca" | "bsi";
   sender_account?: string;
   referral_code?: string | null;
+  tier?: "course" | "founding";
 };
+
+const FOUNDING_LIMIT = 100;
 
 const VALID_METHODS = new Set(["dana", "bca", "bsi"]);
 
@@ -37,7 +40,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { course_slug, payment_method, sender_account, referral_code } = body;
+  const { course_slug, payment_method, sender_account, referral_code, tier } = body;
   if (!course_slug || !payment_method) {
     return NextResponse.json(
       { error: "course_slug dan payment_method wajib" },
@@ -53,11 +56,31 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Course ngga ditemukan" }, { status: 404 });
   }
 
+  const supabase = getSupabaseAdmin();
+
   // Harga dihitung server-side: founding member dapet diskon buat course premium
   const isFoundingMember = user?.publicMetadata?.is_founding_member === true;
-  const amount = priceForUser(course, isFoundingMember);
+  let amount = priceForUser(course, isFoundingMember);
 
-  const supabase = getSupabaseAdmin();
+  // Tier Founding Member (bundle): cuma di course flagship, kalau slot < 100 & belum founding
+  if (tier === "founding" && course.founding_bundle_price && !isFoundingMember) {
+    let foundingCount = 0;
+    const { data: fBadge } = await supabase
+      .from("badges").select("id").eq("name", "Founding Member").single();
+    if (fBadge) {
+      const { count } = await supabase
+        .from("user_badges").select("id", { count: "exact", head: true }).eq("badge_id", fBadge.id);
+      foundingCount = count ?? 0;
+    }
+    if (foundingCount < FOUNDING_LIMIT) {
+      amount = course.founding_bundle_price;
+    } else {
+      return NextResponse.json(
+        { error: "Slot Founding Member udah penuh (100/100). Pilih paket Course Aja ya." },
+        { status: 409 },
+      );
+    }
+  }
 
   // Validasi kode referral (kalau ada) — hanya simpan kalau kodenya beneran ada
   let validReferral: string | null = null;

@@ -144,15 +144,23 @@ export async function PATCH(request: Request) {
       { onConflict: "order_id" },
     );
 
-    // Founding Member badge untuk Mastery enrollee
-    if (submission.course_slug === "cyber-security-pemula") {
-      const { count: enrolledCount } = await supabase
-        .from("enrollments")
-        .select("id", { count: "exact", head: true })
-        .eq("course_slug", "cyber-security-pemula")
-        .eq("status", "active");
+    // Founding Member badge — CUMA kalau beli tier Founding (bayar founding_bundle_price), bukan course-aja
+    const flagship = courses.find((c) => c.slug === submission.course_slug);
+    const boughtFoundingTier =
+      !!flagship?.founding_bundle_price && (submission.amount ?? 0) >= flagship.founding_bundle_price;
 
-      if ((enrolledCount ?? 0) <= 100) {
+    if (boughtFoundingTier) {
+      // Cap 100 founding member — hitung dari badge (bukan enrollment, karena tier 50K jg enroll)
+      const { data: fb } = await supabase
+        .from("badges").select("id").eq("name", "Founding Member").maybeSingle();
+      let foundingCount = 0;
+      if (fb?.id) {
+        const { count } = await supabase
+          .from("user_badges").select("id", { count: "exact", head: true }).eq("badge_id", fb.id);
+        foundingCount = count ?? 0;
+      }
+
+      if (foundingCount < 100) {
         let { data: badge } = await supabase
           .from("badges")
           .select("id")

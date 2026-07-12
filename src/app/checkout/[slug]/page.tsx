@@ -7,6 +7,23 @@ import { CourseThumbnail } from "@/components/course-thumbnail";
 import { ManualCheckout } from "@/components/manual-checkout";
 import { siteConfig } from "@/lib/data";
 import { priceForUser } from "@/lib/pricing";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
+
+const FOUNDING_LIMIT = 100;
+
+async function countFoundingMembers(): Promise<number> {
+  try {
+    const supabase = getSupabaseAdmin();
+    const { data: badge } = await supabase
+      .from("badges").select("id").eq("name", "Founding Member").single();
+    if (!badge) return 0;
+    const { count } = await supabase
+      .from("user_badges").select("id", { count: "exact", head: true }).eq("badge_id", badge.id);
+    return count ?? 0;
+  } catch {
+    return 0;
+  }
+}
 
 const formatter = new Intl.NumberFormat("id-ID", {
   style: "currency",
@@ -72,6 +89,15 @@ export default async function CheckoutPage({
     redirect(`/access/${slug}`);
   }
 
+  // Tier Founding Member (cuma di course flagship, kalau slot masih ada & belum founding)
+  let foundingBundlePrice: number | null = null;
+  if (course.founding_bundle_price && !isFoundingMember) {
+    const foundingCount = await countFoundingMembers();
+    if (foundingCount < FOUNDING_LIMIT) {
+      foundingBundlePrice = course.founding_bundle_price;
+    }
+  }
+
   return (
     <div className="bg-[#FEFBF5] min-h-screen">
       <div className="mx-auto max-w-6xl px-6 py-12">
@@ -98,6 +124,7 @@ export default async function CheckoutPage({
             isMastery={isMastery}
             paymentMethods={siteConfig.payment.methods}
             referralCode={refCode}
+            foundingBundlePrice={foundingBundlePrice}
           />
 
           {/* SIDEBAR — order summary */}
@@ -108,34 +135,43 @@ export default async function CheckoutPage({
               <h2 className="mt-2 text-lg font-extrabold text-[#2D5016]">{course.title}</h2>
               <p className="mt-2 text-sm text-[#444]">{course.summary}</p>
 
-              <div className="mt-5 space-y-2 border-t border-[#F0E8D8] pt-5 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-[#5C4813]">Harga course</span>
-                  <span className="font-semibold text-[#2D5016]">
-                    {formatter.format(course.original_price ?? course.price)}
-                  </span>
-                </div>
-                {course.original_price && course.original_price !== course.price && (
+              {foundingBundlePrice ? (
+                <div className="mt-5 space-y-2 border-t border-[#F0E8D8] pt-5 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-[#7AB648]">Diskon Founding Members</span>
-                    <span className="font-semibold text-[#7AB648]">
-                      -{formatter.format((course.original_price ?? 0) - course.price)}
-                    </span>
+                    <span className="text-[#5C4813]">Course Aja</span>
+                    <span className="font-semibold text-[#2D5016]">{formatter.format(amount)}</span>
                   </div>
-                )}
-                {foundingDiscount && (
                   <div className="flex justify-between">
-                    <span className="text-[#7AB648]">Diskon khusus Founding Member (25%)</span>
-                    <span className="font-semibold text-[#7AB648]">
-                      -{formatter.format(course.price - amount)}
-                    </span>
+                    <span className="text-[#5C4813]">Course + Founding Member</span>
+                    <span className="font-semibold text-[#2D5016]">{formatter.format(foundingBundlePrice)}</span>
                   </div>
-                )}
-                <div className="flex justify-between border-t border-[#F0E8D8] pt-3 text-base">
-                  <span className="font-bold text-[#2D5016]">Total Bayar</span>
-                  <span className="font-extrabold text-[#F5A62A]">{formatter.format(amount)}</span>
+                  <div className="flex justify-between border-t border-[#F0E8D8] pt-3 text-sm">
+                    <span className="font-bold text-[#2D5016]">Total Bayar</span>
+                    <span className="text-xs font-bold text-[#F5A62A]">Pilih paket di kiri →</span>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="mt-5 space-y-2 border-t border-[#F0E8D8] pt-5 text-sm">
+                  {foundingDiscount && (
+                    <>
+                      <div className="flex justify-between">
+                        <span className="text-[#5C4813]">Harga normal</span>
+                        <span className="font-semibold text-[#2D5016]">{formatter.format(course.price)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-[#7AB648]">Diskon Founding Member (25%)</span>
+                        <span className="font-semibold text-[#7AB648]">
+                          -{formatter.format(course.price - amount)}
+                        </span>
+                      </div>
+                    </>
+                  )}
+                  <div className="flex justify-between border-t border-[#F0E8D8] pt-3 text-base">
+                    <span className="font-bold text-[#2D5016]">Total Bayar</span>
+                    <span className="font-extrabold text-[#F5A62A]">{formatter.format(amount)}</span>
+                  </div>
+                </div>
+              )}
 
               {foundingDiscount && (
                 <div className="mt-4 rounded-xl bg-[#E8F5E9] px-4 py-3 text-xs font-semibold text-[#2D5016]">

@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 const FOUNDING_LIMIT = 100;
-const FOUNDING_PRICE = 199_000;
-const REGULAR_PRICE = 499_000;
+const FOUNDING_PRICE = 150_000;
+const REGULAR_PRICE = 150_000;
 
 export const dynamic = "force-dynamic";
 
