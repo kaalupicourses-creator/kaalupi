@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { Analytics } from "@vercel/analytics/react";
 import { SiteHeaderClient } from "@/components/site-header";
 import { ConditionalFooter } from "@/components/conditional-footer";
+import { NavProgress } from "@/components/nav-progress";
 import "./globals.css";
 
 const nunito = Nunito({
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           className="min-h-full bg-[#FEFBF5] text-[#444444]"
           style={{ fontFamily: "var(--font-nunito), 'Segoe UI', sans-serif" }}
         >
+          <NavProgress />
           <div className="relative min-h-screen flex flex-col">
             <SiteHeaderClient />
             <main className="flex-1">{children}</main>
