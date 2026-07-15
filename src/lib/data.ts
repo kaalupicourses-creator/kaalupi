@@ -59,7 +59,7 @@ export const siteConfig = {
   email: "kaalupicourses@gmail.com",
   address: "Bogor, Indonesia",
   community: {
-    discord: "https://discord.gg/hKbnPpVr",
+    discord: "https://discord.gg/gsSdCwnvCX",
     whatsapp: "https://chat.whatsapp.com/GFEmZeqQZ901xQQwobzyHl",
     instagram: "https://www.instagram.com/kaalupicourses/",
     youtube: "https://www.youtube.com/@Kaalupi-r9j",
