@@ -240,12 +240,12 @@ export const courses: Course[] = [
     founding_free: true,
     perks: [
       "7 modul: video + artikel + Vibe Coding Challenge (lab praktik)",
-      "Lifetime access ke SEMUA course Kaalupi (sekarang & yang akan rilis)",
+      "Akses course ini seumur hidup + update materi gratis",
       "Sertifikat resmi Kaalupi (PDF + LinkedIn share)",
       "AI Tutor 24/7 — tanya apa aja per modul",
-      "Akses Discord komunitas Founding Members",
-      "Badge Founding Member eksklusif & permanen di profil",
-      "Update materi gratis selamanya",
+      "Akses komunitas Discord",
+      "Founding Member (Rp 150K): course pemula & akademik GRATIS",
+      "Founding Member: diskon 25% semua course premium + badge eksklusif",
     ],
   },
 

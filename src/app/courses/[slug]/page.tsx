@@ -208,7 +208,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
                         {isFree ? (
                           <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-bold text-green-700">Gratis</span>
                         ) : (
-                          <span className="rounded-full bg-[#FFF3D6] px-2 py-0.5 text-xs font-semibold text-[#5C4813]">Founding</span>
+                          <span className="rounded-full bg-[#FFF3D6] px-2 py-0.5 text-xs font-semibold text-[#5C4813]">Berbayar</span>
                         )}
                       </div>
                     );
@@ -219,7 +219,27 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
 
             <aside>
               <div className="sticky top-24 rounded-2xl border border-[#F0E8D8] bg-white p-8 shadow-sm">
-                {course.founding_members_limit && course.original_price ? (
+                {course.founding_bundle_price ? (
+                  <>
+                    <p className="text-xs font-bold uppercase tracking-wider text-[#7AB648]">
+                      Mulai dari
+                    </p>
+                    <div className="mt-1 flex items-baseline gap-2">
+                      <p className="text-4xl font-extrabold text-[#2D5016]">
+                        {formatter.format(course.price)}
+                      </p>
+                      <p className="text-sm font-bold text-[#5C4813]">course aja</p>
+                    </div>
+                    <p className="mt-3 rounded-xl bg-[#FFF3D6] px-4 py-3 text-sm leading-6 text-[#5C4813]">
+                      atau{" "}
+                      <strong className="text-[#F5A62A]">
+                        {formatter.format(course.founding_bundle_price)}
+                      </strong>{" "}
+                      sekalian jadi <strong className="text-[#2D5016]">Founding Member</strong> — dapet
+                      course pemula &amp; akademik gratis + diskon 25% semua course premium.
+                    </p>
+                  </>
+                ) : course.founding_members_limit && course.original_price ? (
                   <>
                     <p className="text-xs font-bold uppercase tracking-wider text-[#7AB648]">
                       Founding Members Price
