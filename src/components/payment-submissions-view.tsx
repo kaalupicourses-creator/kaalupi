@@ -24,6 +24,9 @@ type Submission = {
 
 const TEAM_EMAIL_DOMAINS_OR_KEYWORDS = ["kamilalfaris", "kaalupi"]; // tweak kalau perlu
 
+// Nominal paket Founding Member (course + founding). Di bawah ini = buyer biasa (course aja).
+const FOUNDING_TIER_AMOUNT = 150_000;
+
 const formatRupiah = (n: number) => `Rp ${n.toLocaleString("id-ID")}`;
 const formatDate = (s: string) =>
   new Date(s).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" });
@@ -80,19 +83,16 @@ export function PaymentSubmissionsView() {
     return TEAM_EMAIL_DOMAINS_OR_KEYWORDS.some((kw) => email.includes(kw));
   };
 
+  // Founding = yang beli paket bundle (bayar founding_bundle_price), BUKAN yang cuma beli course.
+  const isFoundingBuy = (s: Submission) => (s.amount ?? 0) >= FOUNDING_TIER_AMOUNT;
+
   const counts = useMemo(() => {
     const pending = submissions.filter((s) => s.status === "pending" && !isTeam(s)).length;
     const founding = submissions.filter(
-      (s) =>
-        s.status === "approved" &&
-        s.course_slug === "cyber-security-pemula" &&
-        !isTeam(s),
+      (s) => s.status === "approved" && isFoundingBuy(s) && !isTeam(s),
     ).length;
     const regular = submissions.filter(
-      (s) =>
-        s.status === "approved" &&
-        s.course_slug !== "cyber-security-pemula" &&
-        !isTeam(s),
+      (s) => s.status === "approved" && !isFoundingBuy(s) && !isTeam(s),
     ).length;
     const rejected = submissions.filter((s) => s.status === "rejected").length;
     return { pending, founding, regular, rejected, all: submissions.length };
@@ -105,20 +105,10 @@ export function PaymentSubmissionsView() {
         list = list.filter((s) => s.status === "pending" && !isTeam(s));
         break;
       case "founding":
-        list = list.filter(
-          (s) =>
-            s.status === "approved" &&
-            s.course_slug === "cyber-security-pemula" &&
-            !isTeam(s),
-        );
+        list = list.filter((s) => s.status === "approved" && isFoundingBuy(s) && !isTeam(s));
         break;
       case "regular":
-        list = list.filter(
-          (s) =>
-            s.status === "approved" &&
-            s.course_slug !== "cyber-security-pemula" &&
-            !isTeam(s),
-        );
+        list = list.filter((s) => s.status === "approved" && !isFoundingBuy(s) && !isTeam(s));
         break;
       case "rejected":
         list = list.filter((s) => s.status === "rejected");
@@ -254,9 +244,13 @@ export function PaymentSubmissionsView() {
                     <span className="rounded-full bg-[#FFF3D6] px-2.5 py-0.5 text-[10px] font-bold text-[#5C4813]">
                       {METHOD_LABEL[s.payment_method] ?? s.payment_method}
                     </span>
-                    {s.course_slug === "cyber-security-pemula" && (
+                    {isFoundingBuy(s) ? (
                       <span className="rounded-full bg-[#F5A62A] px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-[#2D5016]">
-                        Mastery / Founding
+                        Founding Member
+                      </span>
+                    ) : (
+                      <span className="rounded-full bg-[#F0E8D8] px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-[#5C4813]">
+                        Course Aja
                       </span>
                     )}
                   </div>
