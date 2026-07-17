@@ -119,8 +119,10 @@ export async function PATCH(request: Request) {
     if (action === "grant_founding") {
       // Enroll HANYA ke course founding_free (gratis buat founding member).
       // Course premium: founding member beli sendiri (dapet diskon di checkout).
+      // Cuma course yang UDAH LAUNCH (bukan comingSoon) — biar dashboard ga penuh course kosong.
+      // Course comingSoon tetap gratis buat founding, tapi baru ke-enroll pas rilis.
       const freeSlugs = courses
-        .filter((c) => c.founding_free && c.is_published !== false)
+        .filter((c) => c.founding_free && c.is_published !== false && !c.comingSoon)
         .map((c) => c.slug);
 
       const enrollUpserts = freeSlugs.map((slug) =>

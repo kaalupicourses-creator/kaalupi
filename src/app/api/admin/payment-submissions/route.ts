@@ -199,8 +199,15 @@ export async function PATCH(request: Request) {
                 publicMetadata: { ...(tu.publicMetadata ?? {}), is_founding_member: true },
               });
             }
+            // Cuma course yang UDAH LAUNCH (bukan comingSoon) — biar dashboard ga penuh course kosong
             const freeSlugs = courses
-              .filter((c) => c.founding_free && c.is_published !== false && c.slug !== submission.course_slug)
+              .filter(
+                (c) =>
+                  c.founding_free &&
+                  c.is_published !== false &&
+                  !c.comingSoon &&
+                  c.slug !== submission.course_slug,
+              )
               .map((c) => c.slug);
             await Promise.all(
               freeSlugs.map((slug) =>
