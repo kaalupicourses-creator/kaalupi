@@ -1,7 +1,23 @@
 import { SignIn } from "@clerk/nextjs";
 import Link from "next/link";
 
-export default async function LoginPage() {
+// Cuma izinin path internal (mulai "/" tapi bukan "//") biar ga open-redirect
+function safeInternal(url: string | undefined, fallback: string): string {
+  if (url && url.startsWith("/") && !url.startsWith("//")) return url;
+  return fallback;
+}
+
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ redirect?: string }>;
+}) {
+  const { redirect } = await searchParams;
+  const dest = safeInternal(redirect, "/dashboard");
+  const registerHref = redirect
+    ? `/register?redirect=${encodeURIComponent(redirect)}`
+    : "/register";
+
   return (
     <div className="bg-[#FEFBF5] min-h-screen">
       <div className="mx-auto max-w-7xl px-6 py-16">
@@ -40,7 +56,7 @@ export default async function LoginPage() {
 
             <div className="mt-8 flex items-center gap-4 text-sm text-[#444444]">
               <span>Belum punya akun?</span>
-              <Link href="/register" className="font-semibold text-[#F5A62A] hover:text-[#2D5016] transition">
+              <Link href={registerHref} className="font-semibold text-[#F5A62A] hover:text-[#2D5016] transition">
                 Daftar gratis →
               </Link>
             </div>
@@ -51,8 +67,8 @@ export default async function LoginPage() {
             <div className="w-full max-w-sm">
               <div className="rounded-2xl border border-[#F0E8D8] bg-white p-8 shadow-sm">
                 <SignIn
-                  forceRedirectUrl="/dashboard"
-                  signUpForceRedirectUrl="/onboarding"
+                  forceRedirectUrl={dest}
+                  signUpForceRedirectUrl={dest === "/dashboard" ? "/onboarding" : dest}
                   appearance={{
                     elements: {
                       formButtonPrimary:
